@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../style.css">
+  <title>405Zone-Legacy | Corruption Research</title>
+  <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
+  <style>
+    html.in-spa, html.in-spa body { height:100%; overflow:hidden; }
+    html.in-spa .page-frame {
+      display:flex; flex-direction:column; justify-content:center;
+      height:calc(100vh - 2.2rem) !important;
+      min-height:0 !important;
+      padding:.5rem 1rem;
+      overflow:hidden !important; /* no internal scroll on this page */
+    }
+    html.in-spa main { flex:0; }
+
+    .cr-scene {
+      position:relative;
+      width:min(90vw, 85vh);
+      height:min(90vw, 85vh);
+      max-width:900px; max-height:900px;
+      margin:0 auto;
+    }
+
+    .cr-center {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      text-align:center; pointer-events:none;
+      padding:28%;
+    }
+    .cr-center h1 { font-size:clamp(.8rem,2.5vw,1.3rem); margin:0 0 .4rem; line-height:1.2; color: blueviolet;}
+    .cr-center p  { font-size:clamp(.6rem,1.5vw,.78rem); opacity:.72; margin:0; line-height:1.4; }
+
+    .cr-btn {
+      position:absolute;
+      display:flex; flex-direction:column; align-items:center;
+      gap:.3rem; cursor:pointer; text-decoration:none; color:#fff;
+      transform:translate(-50%,-50%);
+      user-select:none;
+    }
+
+    /* Fixed square canvas — identical box for every icon */
+    .cr-btn .cr-icon-box {
+      width:clamp(100px,13vw,160px);
+      height:clamp(100px,13vw,160px);
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+    .cr-btn .cr-icon-box img {
+      width:100%; height:100%;
+      object-fit:contain;
+      pointer-events:none;
+      -webkit-user-drag:none;
+      /* Individual outline + glow via CSS custom properties.
+         Override per-icon with #cr-N .cr-icon-box img { --cr-outline: ...; --cr-glow: ...; } */
+      --cr-outline: drop-shadow(0 0 1.5px var(--cr-outline-color, rgba(201,166,255,.55)));
+      --cr-glow:    drop-shadow(0 0 8px   var(--cr-glow-color,    rgba(201,166,255,.0)));
+      filter: var(--cr-outline) var(--cr-glow) drop-shadow(0 3px 10px rgba(0,0,0,.8));
+      transition: filter .2s, transform .15s;
+    }
+    .cr-btn:hover .cr-icon-box img {
+      --cr-glow: drop-shadow(0 0 18px var(--cr-glow-color, rgba(201,166,255,.95)));
+      transform: scale(1.10);
+    }
+
+    /* cr-0 · Global Impact */
+    #cr-0 .cr-icon-box img {
+      --cr-outline-color: rgba(130, 255, 130, .60);
+      --cr-glow-color:    rgba(130, 255, 130, .90);
+    }
+    /* cr-1 · Corrupted Spore */
+    #cr-1 .cr-icon-box img {
+      --cr-outline-color: rgba(120, 100, 255, .65);
+      --cr-glow-color:    rgba(120, 100, 255, .95);
+    }
+    /* cr-2 · Sinner Land */
+    #cr-2 .cr-icon-box img {
+      --cr-outline-color: rgba(90, 0, 125, .65);
+      --cr-glow-color:    rgba(90, 0, 125, .95);
+
+    }
+    /* cr-3 · Error_3008 (The Samside) */
+    #cr-3 .cr-icon-box img {
+      --cr-outline-color: rgba(33,  3,  3, .65);
+      --cr-glow-color:    rgba(33,  3,  3, .90);
+    }
+    /* cr-4 · broken_heaven */
+    #cr-4 .cr-icon-box img {
+      --cr-outline-color: rgba(100, 200, 255, .60);
+      --cr-glow-color:    rgba(100, 200, 255, .90);
+    }
+    /* cr-5 · Hazed Plains */
+    #cr-5 .cr-icon-box img {
+      --cr-outline-color: rgba(200,  60,  60, .65);
+      --cr-glow-color:    rgba(200,  60,  60, .90);
+    }
+    /* cr-6 · Ominous Valley */
+    #cr-6 .cr-icon-box img {
+      --cr-outline-color: rgba(180, 100, 255, .65);
+      --cr-glow-color:    rgba(180, 100, 255, .95);
+    }
+
+    .cr-btn span {
+      font-size:clamp(.55rem,1.1vw,.72rem);
+      letter-spacing:1px; opacity:.85;
+      text-shadow:0 1px 6px rgba(0,0,0,.9);
+      white-space:nowrap;
+    }
+  </style>
+</head>
+<body class="section-wiki no-wiki-nav">
+<div class="page-frame">
+  <main>
+    <div class="cr-scene" id="cr-scene">
+
+      <div class="cr-center">
+        <h1>CORRUPTION RESEARCH</h1>
+        <p><span class="important">Select a case file to read the current reports on the corrupt quarantine.</span></p>
+      </div>
+
+      <a class="cr-btn" id="cr-0" href="corruption-research/global-impact.html" draggable="false">
+        <div class="cr-icon-box"><img src="../../media/WIKI/PL_EOC/BIOMES/global_impact.png" alt="Global Impact" draggable="false"></div>
+        <span>GLOBAL IMPACT</span>
+      </a>
+      <a class="cr-btn" id="cr-1" href="corruption-research/corrupted-spore.html" draggable="false">
+        <div class="cr-icon-box"><img src="../../media/WIKI/PL_EOC/BIOMES/corrupted_spore.png" alt="Corrupted Spore" draggable="false"></div>
+        <span>CORRUPTED SPORE</span>
+      </a>
+      <a class="cr-btn" id="cr-2" href="corruption-research/sinner-land.html" draggable="false">
+        <div class="cr-icon-box"><img src="../../media/WIKI/PL_EOC/BIOMES/sinner_land.png" alt="Sinner Land" draggable="false"></div>
+        <span>SINNER LAND</span>
+      </a>
+      <a class="cr-btn" id="cr-3" href="corruption-research/error_3008-samside.html" draggable="false">
+        <div class="cr-icon-box"><img src="../../media/WIKI/PL_EOC/BIOMES/error_3008.png" alt="Error_3008 (The Samside)" draggable="false"></div>
+        <span>ERROR_3008 (THE SAMSIDE)</span>
+      </a>
+      <a class="cr-btn" id="cr-4" href="corruption-research/broken_heaven.html" draggable="false">
+        <div class="cr-icon-box"><img src="../../media/WIKI/PL_EOC/BIOMES/broken_heaven.png" alt="broken_heaven" draggable="false"></div>
+        <span>BROKEN_HEAVEN</span>
+      </a>
+      <a class="cr-btn" id="cr-5" href="corruption-research/hazed-plains.html" draggable="false">
+        <div class="cr-icon-box"><img src="../../media/WIKI/PL_EOC/BIOMES/hazed_plains.png" alt="Hazed Plains" draggable="false"></div>
+        <span>HAZED PLAINS</span>
+      </a>
+      <a class="cr-btn" id="cr-6" href="corruption-research/ominous-valley.html" draggable="false">
+        <div class="cr-icon-box"><img src="../../media/WIKI/PL_EOC/BIOMES/ominous_valley.png" alt="Ominous Valley" draggable="false"></div>
+        <span>OMINOUS VALLEY</span>
+      </a>
+    </div>
+  </main>
+
+</div>
+<script src="../../js/global.js" defer></script>
+<script src="../../js/corruption-research.js" defer></script>
+</body>
+</html>

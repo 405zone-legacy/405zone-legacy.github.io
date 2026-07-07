@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>274648</title>
+  <link rel="icon" type="image/png" href="../media/void_stare.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="samside-bg no-drag" src="../media/void_stare.png" alt="" draggable="false">
+  </div>
+  <script>
+    var music = SAMSIDE.playSafe('../sfx/im_still_here.mp3', { loop: true, volume: .8 });
+    function tryPlayOnce() {
+      if (music) music.play().catch(function(){});
+      document.removeEventListener('click', tryPlayOnce);
+      document.removeEventListener('keydown', tryPlayOnce);
+    }
+    document.addEventListener('click', tryPlayOnce);
+    document.addEventListener('keydown', tryPlayOnce);
+  </script>
+</body>
+</html>

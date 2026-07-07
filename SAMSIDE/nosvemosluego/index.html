@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nosvemosluego</title>
+  <link rel="icon" type="image/png" href="../media/NIGBEAR/nigbear_consequences.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .nvl-sprite-stack {
+      position: relative;
+      z-index: 1;
+      width: clamp(180px, 26vw, 340px);
+      height: clamp(180px, 26vw, 340px);
+    }
+
+    .nvl-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .nvl-layer-base {
+      z-index: 1;
+      filter: grayscale(1) contrast(1.05);
+      mix-blend-mode: normal;
+    }
+    .nvl-layer-red {
+      z-index: 2;
+      mix-blend-mode: screen;
+      filter: grayscale(1) brightness(1.1) sepia(1) saturate(6) hue-rotate(-50deg);
+      animation: nvl-shift-red 1.4s infinite steps(6);
+    }
+    .nvl-layer-cyan {
+      z-index: 3;
+      mix-blend-mode: screen;
+      filter: grayscale(1) brightness(1.1) sepia(1) saturate(6) hue-rotate(140deg);
+      animation: nvl-shift-cyan 1.4s infinite steps(6);
+    }
+    @keyframes nvl-shift-red {
+      0%   { transform: translate(2px, 0); }
+      16%  { transform: translate(-3px, 1px); }
+      33%  { transform: translate(1px, -2px); }
+      50%  { transform: translate(0, 0); }
+      66%  { transform: translate(-2px, -1px); }
+      83%  { transform: translate(2px, 2px); }
+      100% { transform: translate(2px, 0); }
+    }
+    @keyframes nvl-shift-cyan {
+      0%   { transform: translate(-2px, 0); }
+      16%  { transform: translate(3px, -1px); }
+      33%  { transform: translate(-1px, 2px); }
+      50%  { transform: translate(0, 0); }
+      66%  { transform: translate(2px, 1px); }
+      83%  { transform: translate(-2px, -2px); }
+      100% { transform: translate(-2px, 0); }
+    }
+
+    .nvl-textbox {
+      position: absolute;
+      bottom: 10vh;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: min(70vw, 640px);
+      min-height: 2.4em;
+      z-index: 2;
+      font-size: clamp(.95rem, 1.8vw, 1.25rem);
+      letter-spacing: 1px;
+      color: #b070ff;
+      text-shadow: 0 0 10px rgba(160, 60, 255, .7);
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <div class="nvl-sprite-stack no-drag" id="nvlStack">
+
+      <img class="nvl-layer nvl-layer-base" id="nvlBase" src="../media/NIGBEAR/nigbear_consequences.png" alt="" draggable="false">
+      <img class="nvl-layer nvl-layer-red" id="nvlRed" src="../media/NIGBEAR/nigbear_consequences.png" alt="" draggable="false">
+      <img class="nvl-layer nvl-layer-cyan" id="nvlCyan" src="../media/NIGBEAR/nigbear_consequences.png" alt="" draggable="false">
+    </div>
+    <div class="nvl-textbox" id="nvlText"></div>
+  </div>
+  <script>
+
+    var music = SAMSIDE.playSafe('../sfx/my_consequent_boy.mp3', { loop: true, volume: 1.0 });
+    function tryPlayOnce() {
+      if (music) music.play().catch(function(){});
+      document.removeEventListener('click', tryPlayOnce);
+      document.removeEventListener('keydown', tryPlayOnce);
+    }
+    document.addEventListener('click', tryPlayOnce);
+    document.addEventListener('keydown', tryPlayOnce);
+
+    var DIALOGUES = [
+      { text: "Welcome to... uh...?",                                   expr: null },
+      { text: "Wait! Why the f### am I speaking guiri?!",               expr: "provocative" },
+      { text: "Well, anyway... Guess I'll stay like this... right?",    expr: "neutral" },
+      { text: "So... yeah. Happy to see me again?",                     expr: null },
+      { text: "Actually, I don't care about your opinion at all...",    expr: "funny" },
+      { text: "But hey, at least I'm not that gone as it seemed...",    expr: "provocative" },
+      { text: "Heh... Why do I lie to myself?",                         expr: null },
+      { text: "I'm not even real, sentient, or whatever...",            expr: null },
+      { text: "But hey! At least this is better than nothing, right?",  expr: "funny" },
+      { text: "Please... do me a favor and take care of 'J', ok?",      expr: null },
+      { text: "Well! Enough drama for today!",                          expr: "joy" },
+      { text: "See ya later! ;)",                                       expr: null }
+    ];
+
+    var BASE_SRC = '../media/NIGBEAR/nigbear_consequences.png';
+    var layers = [
+      document.getElementById('nvlBase'),
+      document.getElementById('nvlRed'),
+      document.getElementById('nvlCyan')
+    ];
+
+    function setExpression(expr) {
+      var src = expr ? '../media/NIGBEAR/nigbear_consequences-' + expr + '.png' : BASE_SRC;
+      layers.forEach(function (img) {
+        img.onerror = function () { img.onerror = null; img.src = BASE_SRC; };
+        img.src = src;
+      });
+    }
+
+    var textEl = document.getElementById('nvlText');
+    var i = 0;
+
+    function nextLine() {
+      if (i >= DIALOGUES.length) {
+        SAMSIDE.redirectAfter(900);
+        return;
+      }
+      var entry = DIALOGUES[i++];
+      setExpression(entry.expr);
+      SAMSIDE.typewriter(textEl, entry.text, {
+        speed: 130,
+        onDone: function () { setTimeout(nextLine, 2000); }
+      });
+    }
+
+    setTimeout(nextLine, 2000);
+  </script>
+</body>
+</html>

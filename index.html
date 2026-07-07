@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <title>405Zone-Legacy</title>
+  <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+
+<div id="site-loading" aria-hidden="true">
+  <img src="./media/loading.gif" alt="" draggable="false">
+</div>
+
+<button id="secret-events-toggle" type="button" title="Warning!! Some events may be flashy">
+  <span id="secret-events-dot"></span>
+  Allow Secret Events
+</button>
+
+<div id="bg-layer-a" class="dynamic-bg"></div>
+<div id="bg-layer-b" class="dynamic-bg"></div>
+
+<div id="music-player">
+  <button id="mp-toggle" title="Play / Pause">▶</button>
+  <div id="mp-track-wrap" title="Now playing">
+    <span id="mp-track-name">---</span>
+  </div>
+  <input id="mp-vol" type="range" min="0" max="100" value="25" title="Volume">
+</div>
+
+<!-- HUB -->
+<div class="hub" id="hub">
+
+<div class="logo-wrapper">
+  <div class="hub-logo" id="hub-logo" data-href="./about.html" role="button" tabindex="0">
+      <img src="./media/logo.png" alt="405Zone-Legacy" draggable="false">
+  </div>
+  <div id="hub-splash" class="hub-splash"></div>
+</div>
+  <div class="hub-btn hub-btn--projects" id="btn-projects" data-href="./projects.html" role="button" tabindex="0">
+    <img src="./media/BUTTONS/projects.png" alt="Projects" draggable="false">
+    <span>PROJECTS</span>
+  </div>
+
+  <div class="hub-btn hub-btn--news" id="btn-news" data-href="./news.html" role="button" tabindex="0">
+    <img src="./media/BUTTONS/news.png" alt="News" draggable="false">
+    <span>NEWS</span>
+  </div>
+
+  <div class="hub-btn hub-btn--music" id="btn-music" data-href="./music.html" role="button" tabindex="0">
+    <img src="./media/BUTTONS/music.png" alt="Music" draggable="false">
+    <span>MUSIC</span>
+  </div>
+
+  <div class="hub-btn hub-btn--wiki" id="btn-wiki" data-href="./wiki.html" role="button" tabindex="0">
+    <img src="./media/BUTTONS/wiki.png" alt="Wiki" draggable="false">
+    <span>WIKI</span>
+  </div>
+
+</div>
+
+<!-- Panel SPA -->
+<div id="spa-panel">
+  <iframe id="spa-frame" src="about:blank" title="Content" allowtransparency="true" allow="fullscreen; autoplay; encrypted-media; picture-in-picture"></iframe>
+  <img id="spa-loading-gif" src="./media/loading.gif" alt="" aria-hidden="true" draggable="false">
+</div>
+
+<div id="spa-back" role="button" tabindex="0" aria-label="Go back">
+  <span id="spa-back-arrow">&#8592;</span>
+  <span id="spa-back-label-wrap"><span id="spa-back-label">Back</span></span>
+</div>
+
+<script src="./js/music-player.js"></script>
+<script src="./js/splashes.js"></script>
+<script src="./js/hub.js"></script>
+</body>
+</html>

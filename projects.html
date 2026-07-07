@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="stylesheet" href="./style.css">
+  <title>405Zone-Legacy | Projects</title>
+  <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
+  <style>
+    /* ── Lock the page itself: no page-level scroll ── */
+    body.section-projects {
+      height:100vh; max-height:100vh; overflow:hidden;
+    }
+    body.section-projects .page-frame {
+      height:100vh; max-height:100vh; min-height:0;
+      display:flex; flex-direction:column;
+      overflow:hidden !important;
+    }
+    body.section-projects .page-frame > main {
+      flex:1 1 auto; min-height:0;
+      display:flex; flex-direction:column; justify-content:center;
+      overflow:hidden;
+    }
+    html.in-spa, html.in-spa body.section-projects { height:100%; overflow:hidden; }
+    html.in-spa body.section-projects .page-frame { padding:1rem 2rem; }
+
+    body.section-projects h1 {
+      font-size:clamp(1.2rem,3.4vw,1.7rem);
+      margin:.2rem 0 .4rem; flex-shrink:0; text-align:center;
+    }
+
+    .projects-split {
+      display:flex; align-items:flex-start; justify-content:center;
+      gap:2rem; margin:.4rem 0; flex-wrap:wrap;
+    }
+    .projects-col {
+      flex:1 1 220px; max-width:480px;
+      display:flex; flex-direction:column; align-items:center; gap:.4rem;
+    }
+    .projects-col h2 { margin-top:0; width:100%; }
+
+    .projects-header-img {
+      will-change:transform;
+    }
+
+    .projects-row {
+      display:flex; flex-wrap:wrap;
+      justify-content:center; gap:1.2rem; width:100%;
+    }
+    .project-card {
+      display:flex; flex-direction:column; align-items:center;
+      gap:.4rem; text-align:center;
+      text-decoration:none; color:#fff; max-width:140px;
+      transition:transform .2s;
+      will-change:transform;
+    }
+    .project-card:hover { text-decoration:none; }
+    .project-card img {
+      width:clamp(80px,12vw,130px); height:auto;
+      object-fit:contain; margin:0;
+      filter:drop-shadow(0 4px 10px rgba(0,0,0,.6));
+      transition:filter .2s;
+    }
+    .project-card:hover img { filter:drop-shadow(0 0 16px rgba(201,166,255,.8)); }
+    .project-card span { font-size:.95rem; line-height:1.3; opacity:.9; }
+
+    .projects-divider {
+      width:1px; align-self:stretch;
+      background:rgba(255,255,255,.12); flex-shrink:0;
+    }
+
+    body.section-projects .site-footer {
+      margin-top:.8rem; padding-top:.8rem; flex-shrink:0;
+    }
+
+    @media(max-width:560px){
+      .projects-split{ flex-direction:column; align-items:center; }
+      .projects-divider{ width:60%; height:1px; align-self:auto; }
+    }
+  </style>
+</head>
+<body class="section-projects">
+<div class="page-frame">
+  <main>
+    <h1>PROJECTS</h1>
+
+    <div class="projects-split">
+
+      <div class="projects-col">
+        <img id="pf-header-pl" class="projects-header-img" src="./media/PROJECTS/porkys_legacy.png" alt="Porky's Legacy" draggable="false">
+        <div class="projects-row">
+          <a id="pf-card-pl-og" class="project-card" href="projects/porkys-legacy.html" draggable="false">
+            <img src="./media/PROJECTS/PL_OG_LOGO.png" alt="Porky's Legacy" draggable="false">
+            <span>Porky's Legacy<br><small>(CANCELED)</small></span>
+          </a>
+          <a id="pf-card-pl-eoc" class="project-card" href="projects/porkys-legacy-era-of-corruption.html" draggable="false">
+            <img src="./media/PROJECTS/PL_EOC_LOGO.png" alt="Era of Corruption" draggable="false">
+            <span>Porky's Legacy:<br>Era of Corruption</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="projects-divider"></div>
+
+      <div class="projects-col">
+        <img id="pf-header-rs" class="projects-header-img" src="./media/PROJECTS/rewinded_saga.png" alt="Rewinded Saga" draggable="false">
+        <div class="projects-row">
+          <a id="pf-card-rn" class="project-card" href="projects/rewinded-nights.html" draggable="false">
+            <img src="./media/PROJECTS/RN_LOGO.png" alt="Rewinded Nights" draggable="false">
+            <span>Rewinded Nights</span>
+          </a>
+          <a id="pf-card-rm" class="project-card" href="projects/rewinded-misery.html" draggable="false">
+            <img src="./media/PROJECTS/RM_LOGO.png" alt="Rewinded Misery" draggable="false">
+            <span>Rewinded Misery</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>405Zone-Legacy by <span class="footer-credit-name" id="footer-credit-name">ElProHD405</span></p>
+  </footer>
+</div>
+<script src="./js/global.js" defer></script>
+<script src="./js/projects-float.js" defer></script>
+</body>
+</html>

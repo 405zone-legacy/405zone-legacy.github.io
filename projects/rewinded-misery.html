@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../style.css">
+  <title>405Zone-Legacy | Rewinded Misery</title>
+  <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
+</head>
+<body class="section-projects">
+
+<div class="page-frame">
+
+  <main>
+
+<h1>Rewinded Misery</h1>
+
+    <h2>OVERVIEW</h2>
+<div class="overview-layout">
+  <div class="overview-text">
+  <p>Luego de que Hellbai escapara, comenzo a investigar formas de acabar con la especie humana con tal de vengarse para asi hallar la FELICIDAD que tanto tiempo llevaba buscando. Comenzo a llevar a cabo su idea original de hacerlo mediante un videojuego controlador de mentes, idea la cual descarto tras descubrir que debia aprender Java... (Yo tambien lo hubiera hecho... ._.).</p>
+  <p>A medida que sus planes fallaban, decidio hacerlo a su manera, la misma que vio varias veces en otras lineas temporales. Construyo su propio establecimiento para llevar a cabo sus planes y le puso el nombre de: "Pedro's Happy Mealing". <strong>(NO FINANCIADO POR EL GOBIERNO).</strong></p>
+  <p>Austin, con la ayuda de los Supremos (quienes conocio en "Rewinded Nights"... y es el protagonista... y tu juegas como él... <br>¡QUE SI, QUE LO HAS PILLADO! &gt;:&lcub; ), tendra que encontrar la forma de pararle los pies y acabar de una vez con su raiz corrupta.</p>
+  </div>
+  <div class="overview-img-col">
+    <img src='../media/RM.png' alt="Rewinded Misery" draggable="false">
+    <div class="overview-links">
+  <a href='https://gamejolt.com/games/Rewinded_Misery/996726' target='_blank' rel='noopener' draggable="false">Game Jolt</a>
+    </div>
+  </div>
+</div>
+
+<section id="h.w80k3gsqj175">
+  <h2>GALLERY</h2>
+<div class="img-grid img-grid--natural">
+  <img src='../media/PROJECTS/RM/1.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/2.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/3.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/4.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/5.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/6.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/7.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/8.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/9.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/10.png' alt='' class='zoomable' draggable="false">
+  <img src='../media/PROJECTS/RM/11.png' alt='' class='zoomable' draggable="false">
+</div>
+</section>
+  </main>
+
+  <footer class="site-footer">
+    <p>405Zone-Legacy by <span class="footer-credit-name" id="footer-credit-name">ElProHD405</span></p>
+  </footer>
+
+</div>
+<script src="../js/global.js" defer></script>
+<script src="../js/nav.js" defer></script>
+<script src="../js/lightbox.js" defer></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!window.SecretEvents || !SecretEvents.roll(64)) return;
+
+    var trophy = document.createElement('img');
+    trophy.src = '../media/super_secret_things/hellbai_trophy.png';
+    trophy.alt = '';
+    trophy.onerror = function () { trophy.style.display = 'none'; };
+    trophy.style.cssText =
+      'position:fixed; right:3vw; bottom:12vh; z-index:150;' +
+      'width:clamp(48px,6vw,84px); height:auto; cursor:pointer;' +
+      'filter:drop-shadow(0 0 10px rgba(0,0,0,.7)); animation:ee-rm-float 3.4s ease-in-out infinite;';
+    trophy.setAttribute('draggable', 'false');
+
+    var style = document.createElement('style');
+    style.textContent = '@keyframes ee-rm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}';
+    document.head.appendChild(style);
+
+    trophy.addEventListener('click', function () {
+      trophy.remove();
+
+      var scare = document.createElement('div');
+      scare.style.cssText =
+        'position:fixed; inset:0; z-index:9999; background:#000;' +
+        'display:flex; align-items:center; justify-content:center;';
+      var img = document.createElement('img');
+      img.src = '../media/super_secret_things/hellbai_jumpscare.png';
+      img.onerror = function () { img.style.display = 'none'; };
+      img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+      scare.appendChild(img);
+      document.body.appendChild(scare);
+
+      try {
+        var scream = new Audio('../sfx/super_secret_things/hellbai_scream.mp3');
+        scream.volume = 1;
+        scream.play().catch(function () {});
+      } catch (e) {}
+
+      setTimeout(function () {
+        window.top.location.href = 'https://youtu.be/dQw4w9WgXcQ';
+      }, 700);
+    });
+
+    document.body.appendChild(trophy);
+  });
+</script>
+</body>
+</html>

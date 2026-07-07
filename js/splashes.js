@@ -1,0 +1,141 @@
+var SPLASHES = [
+    //  PL-OG
+    { text: "Porky's Game!",                                                                      color: "#1eff00" },
+    { text: "ERROR",                                                                              color: "#ff3b3b" },
+    { text: "I'M NOT HAVING FUN",                                                                 color: "#ff3b3b" },
+    { text: "I SEE YOU",                                                                          color: "#ff3b3b" },
+    { text: "NO MORE",                                                                            color: "#ff3b3b" },
+    { text: "SO COMFY INSIDE... COME IN...",                                                      color: "#ff3b3b" },
+    { text: "HE LIED",                                                                            color: "#ff3b3b" },
+    { text: "IT'S YOUR FAULT...",                                                                 color: "#ff3b3b" },
+    { text: "HE MANIPULATED",                                                                     color: "#ff3b3b" },
+    { text: "The Porky Guy",                                                                      color: "#ffff55" },
+    //  PL-EOC
+    { text: "Don't look back!",                                                                   color: "#ffff55" },
+    { text: "Stop gazing at the shadows!",                                                        color: "#ffff55" },
+    { text: "The corruption must be slaughtered!",                                                color: "#ff3b3b" },
+    { text: "So much confusion! So much disaster!",                                               color: "#ff3b3b" },
+    { text: "Mouths DO actually lie!",                                                            color: "#ffff55" },
+    { text: "They're not real!",                                                                  color: "#8a0303" },
+    { text: "I'm feeling anguished...",                                                           color: "#ffff55" },
+    { text: "Be careful, something is watching...",                                               color: "#ffff55" },
+    { text: "Avoid the SAMSIDE at any cost!",                                                     color: "#ffff55" },
+    { text: "The ground will swallow my hope...",                                                 color: "#ffff55" },
+    { text: "THE WORLD WILL SHATTER IN HALF",                                                     color: "#ffff55" },
+    { text: "[YOU] [NOT] [BROKEN]",                                                               color: "#8a0303" },
+    { text: "SLOP! SLOP! SLOP!",                                                                  color: "#ffff55" },
+    { text: "The end is near! Well it is actually added...",                                      color: "#ffff55" },
+    { text: "Well, that actually broke the script...",                                            color: "#ff3b3b" },
+    { text: "@xsmileofficalx carried [BIG] part of the legacy!",                                  color: "#1eff00" },
+    { text: "//remember to patch this splash! YOU LEAKED TOO MUCH CONTENT ALREADY!",              color: "#1eff00" },
+    { text: "SEE YA LATER... ;)",                                                                 color: "#9b3fe0" },
+    { text: ":D",                                                                                 color: "#9b3fe0" },
+    { text: "SINBER >>>>> THAN NIGBEAR!! >:D",                                                    color: "#9b3fe0" },
+    { text: "WHEELFORM, KYS! >:3",                                                                color: "#9b3fe0" },
+    { text: "MISSCLICKING IT'S NOT A SIN! XD",                                                    color: "#9b3fe0" },
+    { text: "ADOPT ME! PLS! :3",                                                                  color: "#9b3fe0" },
+    { text: "SINBER IS LOVE... SINBER IS LIFE...",                                                color: "#9b3fe0" },
+    { text: "ABSOLUTE SINNER",                                                                    color: "#9b3fe0" },
+    { text: "SUCH A NICE FELLA! - A TROUBLEY BOY",                                                color: "#9b3fe0" },
+    { text: "I'M NOT GIVING BACK#####! YOU ARE ALL SICK! - A SINNER FELLA",                       color: "#9b3fe0" },
+    { text: "NOW YOU CAN SAY... THERE'S A FRIEND INSIDE YOUR SYS! :D",                            color: "#9b3fe0" },
+    { text: "ROSES ARE RED... SINNERS ARE BLUE... YOUR WORLD IS UNLOCKED... AND I AM WITH U! :)", color: "#9b3fe0" },
+    { text: "OH NO! ANOTHER REVIEW IS COMING! O~O",                                               color: "#9b3fe0" },
+    { text: "WHY DO YOU KEEP READING THESE? ;)",                                                  color: "#9b3fe0" },
+    //  RN
+    { text: "2-7-4-6-4-8",                                                                        color: "#1eff00" },
+    { text: "Knock! Knock!",                                                                      color: "#a16cc9" },
+    { text: "CUANDO ME ENFADO, NO USO PUERTAS!",                                                  color: "#a16cc9" },
+    { text: "Estoy un 99% seguro de que tus padres son hermanos",                                 color: "#a16cc9" },
+    { text: "MIENTES!",                                                                           color: "#ffa600" },
+    { text: "FELICIDAD",                                                                          color: "#a16cc9" },
+    { text: "Como #### se para esto?!",                                                           color: "#a16cc9" },
+    { text: "NOS VEMOS LUEGO... ;)",                                                              color: "#9b3fe0" },
+    //  RM
+    { text: "Joy; A masked void...",                                                              color: "#ffff55" },
+    { text: "My last sunshine... But why?",                                                       color: "#ffff55" },
+    { text: "C - Empotrarlo.",                                                                    color: "#ffff55" },
+    { text: "Call it... J.O.Y...",                                                                color: "#ffa600" },
+    { text: "[HD] [++]",                                                                          color: "#1eff00" },
+    { text: "CHIWUALAND?!",                                                                       color: "#1eff00" },
+    { text: "\u00bfPuedo?",                                                                       color: "#ffff55" },
+    { text: "REVIENTA A TU SUEGRA! >:D",                                                          color: "#ffff55" },
+    { text: "mercadillolamanoli.ru",                                                              color: "#1eff00" },
+    { text: "Quieres saber kuanto tu COCHE?",                                                     color: "#ffff55" },
+    { text: "Alquilo Ravoreon pa pagarme el bachi.",                                              color: "#9b3fe0" },
+    { text: "Rodolfo 4 the win!",                                                                 color: "#ffff55" },
+    { text: "20\u20ac = 400 Lemons! :D",                                                          color: "#9b3fe0" },
+    //  MISC
+    { text: "WELCOME TO MY SUPER EPIC WEBSITE! WHERE I DO THINGS...! :D",                         color: "#ff3b3b" },
+    { text: "Still using this username since 2012",                                               color: "#ff3b3b" },
+    { text: "Error 404 sanity not found",                                                         color: "#ff3b3b" },
+    { text: "Pork Jones is calling!",                                                             color: "#ffff55" },
+    { text: "[I_WAS_NOT_THERE]",                                                                  color: "#8a0303" },
+    { text: "NO MORE GAMES!",                                                                     color: "#ff3b3b" },
+    { text: "I miss the good old MLG... q_q",                                                     color: "#ff3b3b" },
+    { text: "Sa crasheao! >:3",                                                                   color: "#00aeff" },
+    { text: "The ball is outside... ;)",                                                          color: "#00aeff" },
+    { text: "BEAR PLEASE STOP BREAKING MY KAYAK! QwQ",                                            color: "#ffa600" },
+    { text: "I'll find you. :)",                                                                  color: "#ffff55" },
+    //  MEMES/REFERENCES
+    { text: "https://youtu.be/dQw4w9WgXcQ",                                                       color: "#1eff00" },
+    { text: "Graphical design is my passion!",                                                    color: "#ff3b3b" },
+    { text: "I LIKE TRAINS... OR MAYBE TURTLES! :D",                                              color: "#ffff55" },
+    { text: "YOU KNOW WHAT'S FUNNIER THAN 24?",                                                   color: "#ffff55" },
+    { text: "NO! THIS IS PATRICK!",                                                               color: "#ffff55" },
+    { text: "HE'S JUST STANDING THERE... MENACINGLY!!",                                           color: "#ffff55" },
+    { text: "360 NOSCOPE 420 BLAZE IT LOL!",                                                      color: "#ffff55" },
+    { text: "GRAND DAD?!",                                                                        color: "#ffff55" },
+    { text: "SHOUTOUTS TO SIMPLEFLIPS!",                                                          color: "#ffff55" },
+    { text: "HOW IT FEELS TO CHEW 5 GUM?",                                                        color: "#ffff55" },
+    { text: "HOW DO I TYPE?",                                                                     color: "#9b3fe0" },
+    { text: "TO GET FREE MINECOINS ON JAVA, MAKE SURE TO DELETE YOUR SYSTEM32 FOLDER!",           color: "#9b3fe0" },
+    { text: "WE'LL BE RIGHT BACK! ... MAYBE...",                                                  color: "#ff3b3b" },
+    { text: "I LOVE YOU SONIC!",                                                                  color: "#ffff55" },
+    { text: "I THINK YOU'LL BE SMARTER THAN ME!",                                                 color: "#ffff55" },
+    { text: "Oye! Quieres jugar a videojuegos? Pues yo sí!",                                      color: "#ffff55" },
+    { text: "IS BLJ ALLOWED ON THIS PAGE? :/",                                                    color: "#9b3fe0" },
+    { text: "DID YOU KNOW... IN TERMS OF...",                                                     color: "#9b3fe0" },
+    { text: "GREETINGS FROM ELBER GALARGA!",                                                      color: "#9b3fe0" },
+    { text: "THIS FEVER DREAM, SOMEDAY... WILL JUST BE A BURNING MEMORY...",                      color: "#ffff55" },
+    { text: "Di algo Peter! :3c",                                                                 color: "#00aeff" },
+    { text: "IF YOU SEE ANOTHER PERSON THAT LOOKS LIKE YOU... RUN AWAY AND HIDE! :)",             color: "#ffff55" },
+    { text: "WHAT IS 9+10?",                                                                      color: "#ffff55" },
+    { text: "THIS IS FINE!",                                                                      color: "#ffff55" },
+    { text: "HELLO EVERYBODY MY NAME IS ... UH... I FORGOR...",                                   color: "#ffff55" },
+    { text: "SHOULD I BECOME QUIRKY AT NIGHT?",                                                   color: "#ffff55" },
+    { text: "e e e e e e e e",                                                                    color: "#00aeff" },
+    { text: "I THINK... I'M OLD...",                                                              color: "#ff3b3b" },
+    { text: "THIS IS TAKING TOO LONG!! >_<",                                                      color: "#ff3b3b" },
+    { text: "ANOTHER '67' JOKE AND I'M ERASING YOUR LUNGS... : )",                                color: "#ffff55" },
+    { text: "I'VE BEEN ON THIS SCREEN BEFORE!",                                                   color: "#9b3fe0" },
+    { text: "Chicken jockey!",                                                                    color: "#ffff55" },
+    { text: "He's only ¿? years old...",                                                          color: "#ff3b3b" },
+    { text: "I AM A F###### ARCHITECT!",                                                          color: "#ff3b3b" },
+    { text: "STAY IN CHARACTER! >:(",                                                             color: "#ffff55" },
+    { text: "Now I've become death. The destroyer of [HIM]...",                                   color: "#8a0303" },
+    { text: "No, seriously... what does the fox say? ._.",                                        color: "#ffff55" },
+    { text: "Why hello there! Old Sport!",                                                        color: "#a16cc9" }
+];
+
+/* Anniversary splash: shown on project launch dates */
+var ANNIVERSARY_SPLASHES = {
+    '22/04': { project: "Porky's Legacy",                       year: 2024 },
+    '07/11': { project: "Porky's Legacy: Era of Corruption",    year: 2024 },
+    '18/04': { project: "Rewinded Nights",                      year: 2025 },
+    '06/06': { project: "Rewinded Misery",                      year: 2026 }
+};
+
+function getAnniversarySplash() {
+    var now  = new Date();
+    var dd   = String(now.getDate()).padStart(2, '0');
+    var mm   = String(now.getMonth() + 1).padStart(2, '0');
+    var key  = dd + '/' + mm;
+    if (!ANNIVERSARY_SPLASHES[key]) return null;
+    var data = ANNIVERSARY_SPLASHES[key];
+    var age  = now.getFullYear() - data.year;
+    return {
+        text:  data.project + ' WAS RELEASED ' + age + ' YEAR' + (age !== 1 ? 'S' : '') + ' AGO!!!',
+        color: '#ff9fff'
+    };
+}

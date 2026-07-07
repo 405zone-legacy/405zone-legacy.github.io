@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>consequences</title>
+  <link rel="icon" type="image/png" href="../media/my_feeled_home.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .cq-row {
+      position: relative; z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      width: 92vw;
+    }
+
+    .cq-prophecy-wrap {
+      animation: samside-float 5s ease-in-out infinite;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    .cq-prophecy {
+      display: block;
+      width: clamp(72px, 9vw, 140px);
+      height: clamp(72px, 9vw, 140px);
+      object-fit: contain;
+      transition: transform .25s ease;
+    }
+    .cq-prophecy-wrap:hover .cq-prophecy { transform: scale(1.18); }
+
+    .cq-text {
+      position: absolute;
+      bottom: 12vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      max-width: 70vw;
+      max-height: 40vh;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity .3s ease;
+      pointer-events: none;
+    }
+    .cq-text.visible { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" id="cqStage">
+    <img class="samside-bg no-drag" src="../media/my_feeled_home.png" alt="" draggable="false">
+    <div class="cq-row" id="cqRow"></div>
+    <img class="cq-text no-drag" id="cqText" src="" alt="" draggable="false">
+  </div>
+  <script>
+    var row = document.getElementById('cqRow');
+    var textEl = document.getElementById('cqText');
+
+    for (var n = 1; n <= 9; n++) {
+      (function (n) {
+        var wrap = document.createElement('div');
+        wrap.className = 'cq-prophecy-wrap';
+        wrap.style.animationDelay = (n * 0.3) + 's';
+
+        var img = document.createElement('img');
+        img.className = 'cq-prophecy';
+        img.src = '../media/PROPHECY/prophecy-' + n + '.png';
+
+        wrap.appendChild(img);
+
+        wrap.addEventListener('mouseenter', function () {
+          textEl.src = '../media/PROPHECY/prophecy-text-' + n + '.png';
+          textEl.classList.add('visible');
+        });
+        wrap.addEventListener('mouseleave', function () {
+          textEl.classList.remove('visible');
+        });
+
+        row.appendChild(wrap);
+      })(n);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>absentia</title>
+  <link rel="icon" type="image/png" href="../media/PG/absentia_pg.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .abs-sprite {
+      position: relative; z-index: 1;
+      width: clamp(200px, 26vw, 360px);
+      height: clamp(200px, 26vw, 360px);
+      object-fit: contain;
+    }
+    .abs-text {
+      position: absolute;
+      bottom: 14vh; left: 50%; transform: translateX(-50%);
+      z-index: 2;
+      font-weight: bold;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      letter-spacing: 4px;
+      color: #ff1414;
+      text-shadow:
+        1px 1px 0 #7a0000, 2px 2px 0 #7a0000, 3px 3px 0 #7a0000,
+        4px 4px 8px rgba(0,0,0,.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+
+    <img class="abs-sprite no-drag" src="../media/PG/absentia_pg.png" alt="" draggable="false">
+    <p class="abs-text">[I WAS THERE]</p>
+  </div>
+</body>
+</html>

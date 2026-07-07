@@ -1,0 +1,73 @@
+
+
+@font-face {
+  font-family: 'VCR_OSD_MONO';
+  src: url('../../fonts/VCR_OSD_MONO_1.001.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;               /* no scroll */
+  background: #000;
+  font-family: 'VCR_OSD_MONO', 'Courier New', monospace;
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-x pan-y;      /* mitigates pinch-zoom on touch without blocking taps */
+}
+
+img, video, .no-drag {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+  pointer-events: none;
+}
+
+.samside-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.samside-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.samside-caption {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(.85rem, 1.6vw, 1.2rem);
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0,0,0,.9);
+}
+
+@keyframes samside-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+@keyframes samside-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="stylesheet" href="./style.css">
+  <title>405Zone-Legacy | About</title>
+  <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
+  <style>
+    /* ── Lock the page itself: no page-level scroll on this section ── */
+    body.section-about {
+      height:100vh; max-height:100vh; overflow:hidden;
+    }
+    body.section-about .page-frame {
+      height:100vh; max-height:100vh;
+      min-height:0;
+      display:flex; flex-direction:column;
+      overflow:hidden !important;
+    }
+    body.section-about .page-frame > main {
+      flex:1 1 auto; min-height:0;
+      display:flex; flex-direction:column;
+      overflow:hidden;
+    }
+
+    html.in-spa, html.in-spa body.section-about { height:100%; overflow:hidden; }
+    html.in-spa body.section-about .page-frame {
+      justify-content:center; padding:1rem 2rem;
+    }
+
+    body.section-about h1 {
+      font-size:clamp(1.1rem,3vw,1.5rem);
+      margin:.2rem 0 .3rem; flex-shrink:0;
+    }
+
+    /* ── Two-column layout — both stretch to equal height ── */
+    .about-main {
+      display:flex; align-items:stretch; justify-content:center;
+      gap:1.4rem; flex-wrap:nowrap; padding:.4rem 0;
+      flex:1 1 auto; min-height:0;
+    }
+
+    /* Left column: avatar + bio + info-panel */
+    .about-left {
+      flex:2 1 320px; max-width:560px; min-height:0;
+      display:flex; flex-direction:column; gap:.6rem;
+      overflow:hidden;
+    }
+    .about-layout {
+      display:flex; align-items:center; justify-content:flex-start;
+      gap:1.2rem; flex-wrap:nowrap; min-height:0;
+    }
+    .about-avatar {
+      flex:0 0 auto; display:flex; flex-direction:column;
+      align-items:center; gap:.5rem;
+    }
+    .about-avatar img {
+      width:clamp(70px,9vw,110px);
+      height:clamp(70px,9vw,110px);
+      border-radius:50%; object-fit:cover;
+      border:3px solid rgba(201,166,255,.4); margin:0;
+    }
+    .linktree-btn {
+      display:inline-block; background:rgba(91,33,168,.5);
+      color:#c9a6ff; border:1px solid rgba(201,166,255,.35);
+      padding:.26rem .8rem; border-radius:20px;
+      font-size:.7rem; text-decoration:none; transition:background .15s;
+    }
+    .linktree-btn:hover { background:rgba(124,58,232,.7); text-decoration:none; }
+
+    .about-text { flex:1 1 200px; min-width:0; min-height:0; overflow:hidden; }
+    .about-text p {
+      text-align:left; max-width:100%;
+      margin:.3rem 0; font-size:.74rem; line-height:1.38;
+    }
+
+    .about-info-panel {
+      flex:1; /* grow to fill leftover height */
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:8px;
+      background:rgba(255,255,255,.03);
+      font-size:.72rem;
+      display:flex; flex-direction:column;
+      overflow-y:auto; min-height:0;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(201,166,255,.3) transparent;
+    }
+    .about-info-panel::-webkit-scrollbar { width:5px; }
+    .about-info-panel::-webkit-scrollbar-thumb { background:rgba(201,166,255,.3); border-radius:3px; }
+    .about-info-panel::-webkit-scrollbar-track { background:transparent; }
+
+    /* Section header row inside info panel */
+    .info-section-head {
+      padding:.32rem .9rem;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      letter-spacing:1.2px; font-size:.66rem;
+      color:#c9a6ff; background:rgba(201,166,255,.05);
+    }
+
+    /* Last update row */
+    .info-update {
+      padding:.4rem .9rem;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; justify-content:space-between; align-items:center;
+      color:rgba(255,255,255,.6);
+    }
+    .info-update strong { color:#c9a6ff; }
+
+    /* Credits rows */
+    .info-credits { padding:.25rem; }
+    .info-credits li {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:.3rem .9rem;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      list-style:none; gap:1rem;
+    }
+    .info-credits li:last-child { border-bottom:none; }
+    .info-credits li span:first-child { opacity:.55; flex-shrink:0; }
+    .info-credits li span:last-child  { color:#c9a6ff; text-align:right; }
+
+    .info-software { padding:.25rem; }
+    .info-software li {
+      display:block;
+      padding:.5rem .9rem;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      list-style:none;
+    }
+    .info-software li:last-child { border-bottom:none; }
+    .info-software li span:first-child {
+      display:block;
+      color:#c9a6ff;
+      font-size:.68rem;
+      letter-spacing:1px;
+      margin-bottom:.2rem;
+    }
+    .info-software li span:last-child {
+      display:block;
+      color:rgba(255,255,255,.78);
+      font-size:.72rem;
+      line-height:1.5;
+    }
+
+    /* Right column: timeline — stretch to match left */
+    .about-timeline {
+      flex:1 1 280px; max-width:440px; min-width:260px; min-height:0;
+      border:1px solid rgba(201,166,255,.25);
+      border-radius:10px;
+      background:rgba(255,255,255,.03);
+      display:flex; flex-direction:column;
+      overflow:hidden;
+    }
+    .about-timeline-header {
+      padding:.45rem 1rem;
+      border-bottom:1px solid rgba(201,166,255,.2);
+      font-size:.74rem; letter-spacing:1.5px;
+      color:#c9a6ff; text-align:center;
+      flex-shrink:0;
+    }
+    .about-timeline-scroll {
+      flex:1; overflow-y:auto;
+      padding:.6rem 1rem .8rem;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(201,166,255,.3) transparent;
+    }
+    .about-timeline-scroll::-webkit-scrollbar { width:5px; }
+    .about-timeline-scroll::-webkit-scrollbar-thumb { background:rgba(201,166,255,.3); border-radius:3px; }
+    .about-timeline-scroll::-webkit-scrollbar-track { background:transparent; }
+
+    .tl-year {
+      font-size:clamp(.85rem,2vw,1rem);
+      margin:.9rem 0 .35rem;
+      padding-bottom:.25rem;
+      border-bottom:1px solid var(--color-accent);
+      color:#fff; font-family:var(--font-main); letter-spacing:1px;
+    }
+    .tl-year:first-child { margin-top:0; }
+    .tl-entry {
+      font-size:.74rem; line-height:1.45;
+      color:rgba(255,255,255,.82);
+      margin:.3rem 0 .3rem .1rem;
+    }
+
+    @media(max-width:640px){
+      .about-main { flex-direction:column; align-items:stretch; }
+      .about-left, .about-timeline { max-width:100%; width:100%; }
+    }
+  </style>
+</head>
+<body class="section-about">
+<div class="page-frame">
+  <main>
+    <h1>WHO AM I?</h1>
+
+    <div class="about-main">
+
+      <!-- Left column -->
+      <div class="about-left">
+
+        <!-- Avatar + bio -->
+        <div class="about-layout">
+          <div class="about-avatar">
+            <img src="./media/ME.png" alt="ElProHD405" draggable="false">
+            <a class="linktree-btn" href="https://linktr.ee/ElProHD405" target="_blank" rel="noopener" draggable="false">🌐 Linktree</a>
+          </div>
+          <div class="about-text">
+            <p>Heya, I'm the typical idiot who keeps using the same stupid username since 2012. :)</p>
+            <p>I'm also a free-time indie developer/designer and maybe a musician. (IDK... How are there people that enjoy my music? ._.).</p>
+            <p>I've been coding projects since I was 13. I prefer working alone rather than trying to explain my ideas to others. ;3</p>
+            <p>I love coding even more than playing. I also love teasing/breaking codes to the limit, especially with AIs, to figure out how to evade or manipulate them, the kind of stuff useful for speedrunning. ^w^</p>
+            <p>Even if I hate AI with all my heart, I may admit I used it sometimes for my projects! XD (Maybe due to the plot's need, or maybe because I was lazy, but I try to avoid it as far as I can! [DON'T CALL ME HYPOCRITE!!!!!] &gt;:3)</p>
+            <p>And that's it. :)</p>
+          </div>
+        </div>
+
+        <!-- Info panel (last update + credits) — expands to fill remaining height -->
+        <div class="about-info-panel">
+          <div class="info-section-head">LAST SITE UPDATE</div>
+          <div class="info-update">
+            <span>Date</span>
+            <strong>27 / 06 / 2026</strong>
+          </div>
+
+          <div class="info-section-head">CREDITS</div>
+          <ul class="info-credits">
+            <li><span>Coder/Designer/Composer</span><span>ElProHD405</span></li>
+            <li><span>Tester/Helper</span><span>YGV2</span></li>
+            <li><span>Special thanks</span><span>Jaretinn_</span></li>
+          </ul>
+
+          <div class="info-section-head">SOFTWARE</div>
+          <ul class="info-software">
+            <li><span>CODING</span><span> VS. CODE OVERALL!</span></li>
+            <li><span>VIDEO</span><span>I use Sony Vegas... Yeah, quite obsolete... ._.</span></li>
+            <li><span>AUDIO</span><span>I use Audacity because... uh... why not?</span></li>
+            <li><span>MUSIC</span><span>I used to make it on FL Studio and then switched to BandLab. My last music made on FL Studio was "Deepest Hole of Remembrance"; also, I used the SM64 soundfont for most of my tracks back then.</span></li>
+            <li><span>ART</span><span>I've always used "Paint.NET" since I started making content for MC. </span></li>
+            <li><span>3D MODELING</span><span>I tried Blender, and then I wanted to blend myself in a grinder... I switched to Blockbench due to it being better adjusted to my needs. &gt;w&lt;</span></li>
+            <li><span>3D ANIMATION</span><span>I used Mineimator, ROBLOX STUDIO, Blockbench, and even sometimes sprite animations made by me in Paint.NET. (Yeah, I love torturing myself...)</span></li>
+            <li><span>WEBSITE</span><span>Well, this website was made using HTML/CSS/JS, mostly with the help of "Claude"... I must admit, this AI has impressed me so bad... Now I feel like a hypocrite... ;_; (But hey! At least I tested the website many times and tried to make it feel at least interactive... I hope so... q_q")</span></li>
+          </ul>
+        </div>
+
+      </div><!-- /about-left -->
+
+      <!-- Right column: timeline -->
+      <div class="about-timeline">
+        <div class="about-timeline-header">📅 TIMELINE</div>
+        <div class="about-timeline-scroll">
+          <p class="tl-year">MY PAST</p>
+          <p class="tl-entry">I began coding when I was 13, but most of the ideas I had came from when I was even younger than that! (IMPORTANT NOTE: DO NOT let your "inner child" write your script, even less if it's autistic... Personal experience... -_-).</p>
+          <p class="tl-entry">None of those projects I made back then were public; they were made for my friends or just for entertaining myself, feeding a story that back then I thought was never going to end.</p>
+          <p class="tl-entry">About the projects: they were buggy, confusing even to set up, full of stupid requisites (I HATE YOU, "PJRLL" &gt;:c), and also full of jokes that now I see are a bit cringy NGL (some of them are pretty good even for a childish mind NGL either XD). (Even with that, I still have them and sometimes revisit them due to nostalgic crap! &lt;3).</p>
+          <p class="tl-entry">My first "successful" creation was "Porky Jones Dungeon" (PJD); it was my first MC map with good progression (a BATIM rip-off, NGL! XD). I was 14 when I finished it. That map made me realize that storytelling and creating were more entertaining than playing games (they give me stress!). They make me feel like I'm wasting my time!</p>
+          <p class="tl-year">2020 - 2023</p>
+          <p class="tl-entry">In 2020, during covid, I learned about video editing, and then I started bringing those ideas to life! In 2021 I had depression and tried to learn to draw by myself. I made some art using "Paint.NET." I kept the cute drawings, such as the "PJ" you can see at the end of "Experiment-3008: Case Omen VHS," but the depressive ones were left forgotten. ;3 In 2022 I made my first FNF mod and also created my first song on FL Studio! :D Literally, all the other songs were remixes made with "Rave DJ," and my only original song was a joke one called "sin"; in that song, you battled against a "PG"... And yeah, that's why Porky's theme is called "Sinner." Also, fun fact, the "sin" song is a mess of notes. I don't know if I still have the FLP file, but what I know is that I still have the audio file... also another one called "sin-2" that was made for a V2 I made in 2023. Between 2021 &amp; 2023, my friends and I got into a tradition of watching a video at the end of the year (the videos were done by me with a bit of help from them); those videos were like movies. We made 3 in total. They were like our own "REWINDS" (and that's where "Rewinded Saga" comes in during 2024 until 2026). So yeah, in 2023 technically I ended the story... right? ._.</p>
+          <p class="tl-year">2024</p>
+          <p class="tl-entry">In 2024, in January, I made a remake of one of my first games (Manueh Family Dinner). The game came out really cool, but as I mentioned, I don't like to publish my old stuff! In March I came up with an idea as I was playing a modpack with one of my friends, and in April I encouraged myself to publish that idea as my first project: "Porky's Legacy." This project started as something unrelated to the lore itself, but as I began to see the chance of making a good ending to the story, I filtered the story somehow to be at least comprehensible to anyone who played! Yeah, most of my projects have Easter eggs related to my old projects, but those things are mostly "irrelevant" or reexplained inside the lore (directly/indirectly) if they're really that relevant for the storytelling! &gt;:3</p>
+          <p class="tl-entry">For me, 2022/2023 were mostly memorable years, but 2024 had a turn not only in everything but especially in me; I had a crisis while developing V2 of "Porky's Legacy" and then started to make "Rewinded Nights." I still remember that August; I started to feel empty, confused, and full of anguish. I won't lie to you when I say that every time I saw myself in the mirror, I didn't even recognize myself, as if my body were not mine; this is because in the past I was someone who changed its personality to fit, but in the end I became empty without knowing who I really was. I had to take a break and learn about psychology and philosophy in my free time (I still enjoy learning more about it! ^w^); I even played video games to escape reality itself... But it didn't work; instead, I mixed all those turmoils, and I made the character "Malform." Then I took several photos of one of my plushies, "Osit," and created the "Nigbear Consequences." Both characters had a deep trauma story but different ways of getting over it. While "Malform" was manipulable, defensive, and always trying to fit in, "Nigbear Consequences" led its trauma through humor, became self-aware of its situation, and didn't care anymore; in fact, he's a very sensible character with a really rough facade.</p>
+          <p class="tl-year">2025</p>
+          <p class="tl-entry">In 2025 I discovered in April that people were starting to make reviews about my content. I hadn't planned to continue Porky's Legacy: Era of Corruption, but that encouraged me. I published V2 just before having surgery; June was a really rough month. I hate being glued to a bed! I was feeling impotent and futile; I was also angry because the version didn't have reviews at all! I was acting like back in 2021/2023. I decided so many things! Such as abandoning "PL:EOC," I even created a mod while I was weak, switching between the PC and my bed! That mod was called "Absentia," and I obviously didn't finish it. (Basically the mod was going to be like progressive dementia, inspired mostly by "The Caretaker"; instead, I made a "Porky" cameo inside that mod. I discovered so many things I could do with it (then it was added to "PL:EOC" V3 as "PG"). During that summer I started working on "Rewinded Misery." I started writing ideas and scripts, making sprites, and also making most of the music (like 40% of the tracks were updated in 2026 before uploading the game because of consistency or leitmotifs). After finishing the "Lego Ending," I decided to make the V3 of "PL:EOC" because "Hazed Plains" was an essential piece for the development (due to the spores, which includes the "Corrupted Spore" biome itself). After publishing the version, my mod received a second boom; this time a lot of people tried it. That thing was the perfect motivation for me to finish the project as it was meant to be.</p>
+          <p class="tl-year">2026</p>
+          <p class="tl-entry">In 2026 I was preparing myself to end the story; I uploaded both V4/V5 of "PL:EOC." I also uploaded Rewinded Misery as an "ending of the story." Sadly, my grandpa died the same day that "Porky's Legacy" became 2 years old. :c</p>
+          <p class="tl-year">NOWADAY</p>
+          <p class="tl-entry">Nowadays I have updated my website, and I'm taking things with calm and not obligated due to stretched schedules! I do it just for fun! ^w^</p>
+        </div>
+      </div>
+    </div><!-- /about-main -->
+  </main>
+</div>
+<script src="./js/global.js" defer></script>
+</body>
+</html>

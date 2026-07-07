@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../style.css">
+  <title>405Zone-Legacy | Porky's Legacy: Era of Corruption</title>
+  <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
+  <style>
+    html.in-spa, html.in-spa body { height:100%; overflow:hidden; }
+    html.in-spa .page-frame {
+      display:flex; flex-direction:column; justify-content:center;
+      min-height:100vh; padding:1rem 2rem;
+    }
+
+    .eoc-split {
+      display:flex; align-items:flex-start; justify-content:center;
+      gap:2rem; margin:1.5rem 0; flex-wrap:wrap;
+    }
+    .eoc-entry {
+      flex:1 1 260px; max-width:380px;
+      display:flex; flex-direction:column; align-items:center; gap:.9rem;
+    }
+    .eoc-entry-img {
+      display:block; text-decoration:none;
+      transition:transform .2s;
+    }
+    .eoc-entry-img:hover { transform:scale(1.05); }
+    .eoc-entry-img img {
+      width:clamp(160px, 28vw, 320px);
+      height:clamp(160px, 28vw, 320px);
+      object-fit:contain; margin:0;
+      filter:drop-shadow(0 4px 14px rgba(0,0,0,.7));
+      transition:filter .2s;
+    }
+    .eoc-entry-img:hover img { filter:drop-shadow(0 0 22px rgba(201,166,255,.85)); }
+    .eoc-entry-title {
+      font-size:clamp(.82rem, 1.6vw, 1.05rem);
+      letter-spacing:1px; text-align:center; line-height:1.4;
+      color:#fff; text-decoration:none; display:block;
+    }
+    .eoc-entry-desc {
+      font-size:clamp(.68rem, 1.1vw, .8rem);
+      text-align:center; line-height:1.5;
+      opacity:.7; margin:0;
+    }
+    .eoc-divider {
+      width:1px; align-self:stretch;
+      background:rgba(255,255,255,.12); flex-shrink:0;
+    }
+    @media(max-width:600px){
+      .eoc-split{ flex-direction:column; align-items:center; }
+      .eoc-divider{ width:70%; height:1px; align-self:auto; }
+    }
+  </style>
+</head>
+<body class="section-wiki">
+
+<div class="page-frame">
+  <main>
+    <h1>Era of Corruption</h1>
+    <p><span class="leaked">&gt;&gt; Please select the topic that interests you most...</span></p>
+
+    <div class="eoc-split">
+
+      <div class="eoc-entry">
+        <a class="eoc-entry-img" href="porkys-legacy-era-of-corruption/knoweldge-research.html" draggable="false">
+          <img src="../media/WIKI/PL_EOC/knoweldge_research.png" alt="Knowledge Research" draggable="false">
+        </a>
+        <span class="eoc-entry-title">KNOWLEDGE RESEARCH</span>
+        <p class="eoc-entry-desc">Here you will find other types of knowledge that are somewhat more abstract and, in some cases, misunderstood. <br><span class="important">You may find things such as "current fear," "certain precautions you can take," and even "how to use documents."</span></p>
+      </div>
+
+      <div class="eoc-divider"></div>
+
+      <div class="eoc-entry">
+        <a class="eoc-entry-img" href="porkys-legacy-era-of-corruption/corruption-research.html" draggable="false">
+          <img src="../media/WIKI/PL_EOC/corruption_research.png" alt="Corruption Research" draggable="false">
+        </a>
+        <span class="eoc-entry-title">CORRUPTION RESEARCH</span>
+        <p class="eoc-entry-desc">Here you will find several documents dealing with entities, environment, areas, etc. <br><span class="warning">Note: if you have not yet experienced this content, it contains major spoilers.</span></p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>405Zone-Legacy by <span class="footer-credit-name" id="footer-credit-name">ElProHD405</span></p>
+  </footer>
+
+</div>
+<script src="../js/global.js" defer></script>
+<script src="../js/nav.js" defer></script>
+<script src="../js/lightbox.js" defer></script>
+</body>
+</html>

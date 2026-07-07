@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I_WAS_NOT_THERE</title>
+  <link rel="icon" type="image/png" href="../media/i_was_not_there.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .iwnt-char {
+      position: relative; z-index: 1;
+      width: clamp(200px, 28vw, 380px);
+      height: clamp(200px, 28vw, 380px);
+      object-fit: contain;
+      opacity: 0;
+    }
+    .iwnt-char.show { opacity: 1; transition: opacity .12s linear; }
+
+    .iwnt-phrase {
+      position: absolute;
+      font-family: 'VCR_OSD_MONO', monospace;
+      font-weight: bold;
+      color: #ff1414;
+      letter-spacing: 3px;
+      white-space: nowrap;
+      opacity: 0;
+      text-shadow:
+        1px 1px 0 #7a0000, 2px 2px 0 #7a0000, 3px 3px 0 #7a0000,
+        4px 4px 6px rgba(0,0,0,.8);   /* extruded 3D effect */
+      z-index: 2;
+    }
+    @keyframes iwnt-flicker {
+      0%   { opacity: 0; transform: scale(.8) rotate(-3deg); }
+      15%  { opacity: 1; transform: scale(1.05) rotate(2deg); }
+      30%  { opacity: 1; transform: scale(1) rotate(-1deg); }
+      45%  { opacity: 1; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" id="iwntStage">
+    <img class="iwnt-char no-drag" id="iwntChar" src="../media/i_was_not_there.png" alt="" draggable="false">
+  </div>
+  <script>
+    var stage = document.getElementById('iwntStage');
+    var charEl = document.getElementById('iwntChar');
+
+    var music = SAMSIDE.playSafe('../sfx/I_WAS_NOT_THERE-1.mp3', { loop: true, volume: .8 });
+    function tryPlayOnce() {
+      if (music) music.play().catch(function(){});
+      document.removeEventListener('click', tryPlayOnce);
+      document.removeEventListener('keydown', tryPlayOnce);
+    }
+      document.addEventListener('click', tryPlayOnce);
+      document.addEventListener('keydown', tryPlayOnce);
+
+    setTimeout(function () {
+      charEl.classList.add('show');
+    }, 2600);
+
+    setTimeout(function () {
+      var count = 0;
+      var maxPhrases = 99;
+      var interval = setInterval(function () {
+        spawnPhrase();
+        count++;
+        SAMSIDE.playSafe('../sfx/I_WAS_NOT_THERE-2.mp3', { volume: 1 });
+        if (count >= maxPhrases) {
+          clearInterval(interval);
+          SAMSIDE.redirectAfter(0);
+        }
+      }, 50);
+    }, 5000);
+
+    function spawnPhrase() {
+      var p = document.createElement('div');
+      p.className = 'iwnt-phrase';
+      p.textContent = 'I WAS NOT THERE';
+      p.style.fontSize = (1 + Math.random() * 4.2) + 'rem';
+      p.style.left = (Math.random() * 70) + 'vw';
+      p.style.top = (Math.random() * 80) + 'vh';
+      p.style.animation = 'iwnt-flicker ' + (0.6 + Math.random() * 0.5) + 's ease-out forwards';
+      stage.appendChild(p);
+      // setTimeout(function () { p.remove(); }, 1200);
+    }
+  </script>
+</body>
+</html>

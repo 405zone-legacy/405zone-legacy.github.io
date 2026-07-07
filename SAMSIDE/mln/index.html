@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mln</title>
+  <link rel="icon" type="image/png" href="../media/MLN/MythicalTable.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .mln-chest {
+      position: relative;
+      z-index: 1;
+      width: clamp(200px, 28vw, 460px);
+      height: auto;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+    .mln-chest.opened {
+      cursor: default;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="samside-bg no-drag" src="../media/MLN/MythicalTable.png" alt="" draggable="false">
+    <img class="mln-chest no-drag" id="mlnChest" src="../media/MLN/box-closed.png" alt="chest" draggable="false">
+  </div>
+  <script>
+    var chest = document.getElementById('mlnChest');
+    var opened = false;
+
+    chest.addEventListener('click', function () {
+      if (opened) return;
+      opened = true;
+      chest.src = '../media/MLN/box-open.png';
+      chest.alt = "Fun fact: The meme in the bottom left corner of this image was planned in April 2025 while I was planning Sinber's character and the Rewinded Misery script at the same time while yapping with a friend at a campsite during vacation. I finally did the meme on September 21st of 2025. XD"; 
+      chest.style.position = 'fixed';
+      chest.style.top = '0';
+      chest.style.left = '0';
+      chest.style.width = '100%';
+      chest.style.height = '100%';
+      chest.style.objectFit = 'cover';
+      chest.style.zIndex = '9999';
+      chest.classList.add('opened');
+    });
+  </script>
+</body>
+</html>

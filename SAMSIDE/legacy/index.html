@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>legacy</title>
+  <link rel="icon" type="image/png" href="../media/PG/pg1.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .pg-sprite {
+      position: absolute;
+      width: clamp(140px, 16vw, 260px);
+      height: clamp(140px, 16vw, 260px);
+      object-fit: contain;
+      transition: left 3.5s ease-in-out, top 3.5s ease-in-out;
+      image-rendering: pixelated;
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" id="pgStage"></div>
+  <script>
+
+    var VARIANTS = [
+      '../media/PG/pg1.png',
+      '../media/PG/pg2.png',
+      '../media/PG/pg3.png'
+    ];
+    var COUNT = 10;
+    var SWAP_INTERVAL = 1400;
+    var WANDER_INTERVAL = 3800;
+
+    var stage = document.getElementById('pgStage');
+    var sprites = [];
+
+    function randomVariant() {
+      return VARIANTS[Math.floor(Math.random() * VARIANTS.length)];
+    }
+
+    for (var i = 0; i < COUNT; i++) {
+      var img = document.createElement('img');
+      img.className = 'pg-sprite no-drag';
+      img.src = randomVariant();
+      img.onerror = function () { this.style.display = 'none'; };
+      stage.appendChild(img);
+      SAMSIDE.randomPosition(img, 80);
+      sprites.push(img);
+
+      (function (img) {
+        setInterval(function () { img.src = randomVariant(); }, SWAP_INTERVAL + Math.random() * 900);
+      })(img);
+    }
+
+    function wander() {
+      sprites.forEach(function (s) { SAMSIDE.randomPosition(s, 80); });
+    }
+    setInterval(wander, WANDER_INTERVAL);
+  </script>
+</body>
+</html>

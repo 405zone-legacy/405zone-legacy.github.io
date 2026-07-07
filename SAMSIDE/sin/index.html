@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sin</title>
+  <link rel="icon" type="image/gif" href="../media/sinber_laugh.gif">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .sin-gif {
+      position: relative;
+      z-index: 1;
+      max-width: 50vw;
+      max-height: 60vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="sin-gif no-drag" src="../media/sinber_laugh.gif" alt="" draggable="false">
+  </div>
+  <script>
+
+    var laughAudio = SAMSIDE.playSafe('../sfx/sinber_laugh.mp3', { volume: 1 });
+
+    function retryLaugh() {
+      if (laughAudio) laughAudio.play().catch(function () {});
+      document.removeEventListener('click', retryLaugh);
+      document.removeEventListener('keydown', retryLaugh);
+    }
+    document.addEventListener('click', retryLaugh);
+    document.addEventListener('keydown', retryLaugh);
+
+
+    SAMSIDE.redirectAfter(3500);
+  </script>
+</body>
+</html>

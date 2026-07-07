@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HB</title>
+  <link rel="icon" type="image/png" href="../media/mythical_tape.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .hb-hint {
+      position: absolute; bottom: 6vh; left: 50%; transform: translateX(-50%);
+      z-index: 2; font-size: .85rem; letter-spacing: 2px; opacity: .8;
+      animation: samside-fade-in 1.5s ease;
+      transition: opacity .5s ease;
+    }
+    .hb-hint.hidden { opacity: 0; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="samside-bg no-drag" src="../media/mythical_tape.png" alt="" draggable="false">
+    <p class="hb-hint" id="hbHint">[ SPACE ]</p>
+  </div>
+  <script>
+
+    var hint = document.getElementById('hbHint');
+    var used = false;
+
+    document.addEventListener('keydown', function (e) {
+      if (e.code !== 'Space' || used) return;
+      e.preventDefault();
+      used = true;
+      SAMSIDE.playSafe('../sfx/hellbai.mp3', { volume: 0.75, loop: true });
+      hint.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

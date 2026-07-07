@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>virsoul</title>
+  <link rel="icon" type="image/png" href="../media/deepest_samside.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .vs-sprite {
+      position: absolute;
+      object-fit: contain;
+      animation: virsoul-bob 4s ease-in-out infinite;
+    }
+
+    .vs-virsoul {
+      width: clamp(70px, 8vw, 130px);
+      height: clamp(70px, 8vw, 130px);
+    }
+
+    .vs-mimic {
+      width: clamp(50px, 6vw, 100px);
+      height: clamp(50px, 6vw, 100px);
+    }
+    @keyframes virsoul-bob {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-22px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" id="virStage">
+    <img class="samside-bg no-drag" src="../media/deepest_samside.png" alt="" draggable="false">
+  </div>
+  <script>
+    var stage = document.getElementById('virStage');
+
+    function spawnCategory(opts) {
+      for (var variant = 1; variant <= opts.variantCount; variant++) {
+        var img = document.createElement('img');
+        img.className = 'vs-sprite ' + opts.className + ' no-drag';
+        img.src = opts.folder + '/' + opts.prefix + '-' + variant + '.png';
+        img.onerror = function () { this.style.display = 'none'; };
+        img.style.animationDelay = (Math.random() * 4) + 's';
+        img.style.zIndex = 1;
+        stage.appendChild(img);
+        SAMSIDE.randomPosition(img, 50);
+      }
+    }
+
+    spawnCategory({
+      folder: '../media/VIRSOULS',
+      prefix: 'virsoul',
+      variantCount: 4,   // virsoul-1.png .. virsoul-4.png -> 4 sprites, one of each
+      className: 'vs-virsoul'
+    });
+
+    spawnCategory({
+      folder: '../media/MIMICS',
+      prefix: 'mimic',
+      variantCount: 11,  // mimic-1.png .. mimic-11.png -> 11 sprites, one of each
+      className: 'vs-mimic'
+    });
+  </script>
+</body>
+</html>

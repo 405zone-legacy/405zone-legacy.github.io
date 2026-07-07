@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>wrats</title>
+  <link rel="icon" type="image/png" href="../media/relic-of-past.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    body { overflow: hidden; }
+    .wrats-wrap {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.6rem; padding: 4vh 6vw;
+    }
+    .wrats-relic {
+      width: clamp(150px, 20vw, 260px);
+      height: clamp(150px, 20vw, 260px);
+      object-fit: contain;
+    }
+    .wrats-morse {
+      max-width: 74ch;
+      display: flex; flex-direction: column; gap: .7rem;
+      font-size: clamp(.7rem, 1.3vw, .95rem);
+      letter-spacing: 2px;
+      color: #7fffb0;
+      text-shadow: 0 0 8px rgba(80,255,150,.5);
+      text-align: center;
+      line-height: 1.6;
+
+      user-select: text;
+      -webkit-user-select: text;
+      cursor: text;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrats-wrap">
+    <img class="wrats-relic no-drag" src="../media/relic-of-past.png" alt="relic-of-past" draggable="false">
+    <div class="wrats-morse" id="wrats-morse"></div>
+  </div>
+  <script>
+
+    var STANZAS = [
+      "..-. .- -.- .. -. --. / - ..- .-. -- --- .. .-.. -.-.-. / --. .- --.. .. -. --. / .- - / -.. .. ... .- ... - . .-. .-.-.- /",
+      "-.- . . .--. / - .... . / .-. . -.-. --- .-. -.. ... / - --- / .- - - .- -.-. -.- / . ...- . -. / .... .- .-. -.. . .-. .-.-.- /",
+      "... .. .-.. . -. -.-. . / .. ... / .-- . .- -.- -.-.-. / -- -.-- / .--. .-. --- -... .-.. . -- --..-- / -.-- --- ..- .-. / .- -. ... .-- . .-. .-.-.- /",
+      ".- / .-. . .-.. .. -.-. / --- ..-. / .--. .- ... - -.-.-. / .- / - .... .-. . .- - / - .- -.- . -. / ..-. .- .-. - .... . .-. .-.-.-"
+    ];
+    var wrap = document.getElementById('wrats-morse');
+    STANZAS.forEach(function (s) {
+      var p = document.createElement('p');
+      p.textContent = s;
+      wrap.appendChild(p);
+    });
+  </script>
+</body>
+</html>

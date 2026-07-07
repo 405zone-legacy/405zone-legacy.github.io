@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1020</title>
+  <link rel="icon" type="image/png" href="../media/J-non_eat.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .j-sprite {
+      width: clamp(180px, 24vw, 320px);
+      height: clamp(180px, 24vw, 320px);
+      object-fit: contain;
+      cursor: pointer;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="j-sprite no-drag" id="jSprite" src="../media/J-non_eat.png" alt="" draggable="false">
+  </div>
+  <script>
+    var sprite = document.getElementById('jSprite');
+    var EAT_SRC = '../media/J-eat.png';
+    var NON_EAT_SRC = '../media/J-non_eat.png';
+    var revertTimer = null;
+
+    sprite.addEventListener('click', function () {
+
+      SAMSIDE.playSafe('../sfx/mc-eat.mp3', { volume: 1 });
+      sprite.src = EAT_SRC;
+      clearTimeout(revertTimer);
+      revertTimer = setTimeout(function () { sprite.src = NON_EAT_SRC; }, 260);
+    });
+  </script>
+</body>
+</html>

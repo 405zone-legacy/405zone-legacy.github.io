@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the_end</title>
+  <link rel="icon" type="image/png" href="../media/NO.png">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .te-layer {
+      position: absolute;
+      width: clamp(220px, 30vw, 420px);
+      height: clamp(220px, 30vw, 420px);
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 1.6s ease;
+    }
+    .te-layer.show { opacity: 1; }
+    #teWip { z-index: 1; animation: samside-float 5s ease-in-out infinite; }
+    #teNo  { z-index: 2; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="te-layer no-drag" id="teWip" src="../media/WIP.png" alt="WIP" draggable="false">
+    <img class="te-layer no-drag" id="teNo" src="../media/NO.png" alt="NO" draggable="false">
+  </div>
+  <script>
+    setTimeout(function () { document.getElementById('teWip').classList.add('show'); }, 400);
+    setTimeout(function () { document.getElementById('teNo').classList.add('show'); }, 3200);
+  </script>
+</body>
+</html>

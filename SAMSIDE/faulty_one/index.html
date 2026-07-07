@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>faulty_one</title>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    html, body { background: #000; touch-action: none; }
+
+    .fo-stage {
+      position: relative; width: 100vw; height: 100vh; overflow: hidden;
+      background: #000; cursor: crosshair;
+    }
+
+    #foCanvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      image-rendering: pixelated; image-rendering: crisp-edges;
+      display: block;
+    }
+
+    /* Crosshair */
+    #foCrosshair {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 0 4px rgba(0,0,0,.8);
+      pointer-events: none; z-index: 3;
+    }
+
+    /* Intro / lock overlay */
+    #foIntro {
+      position: absolute; inset: 0; z-index: 10;
+      background: rgba(0,0,0,.92);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.1rem; text-align: center; padding: 2rem;
+      transition: opacity .35s ease;
+    }
+    #foIntro.is-hidden { opacity: 0; pointer-events: none; }
+    #foIntro h1 {
+      font-size: clamp(1.4rem, 4vw, 2.2rem); letter-spacing: 4px;
+      color: #4bbde7; text-shadow: 0 0 16px rgb(75, 189, 231);
+      font-weight: normal;
+    }
+    #foIntro p { font-size: clamp(.72rem, 1.6vw, .92rem); line-height: 1.7; color: #00ac45; max-width: 46ch; }
+    #foIntro .fo-key { color: #0099ff; border: 1px solid rgba(246, 255, 0, 0.4); border-radius: 4px; padding: .05em .4em; }
+    #foStart {
+      margin-top: .4rem;
+      background: rgba(231,216,75,.12); border: 1px solid rgba(75, 231, 228, 0.55);
+      color: #4bcae7; font-family: 'VCR_OSD_MONO', monospace; letter-spacing: 2px;
+      font-size: .85rem; padding: .7em 1.6em; cursor: pointer; border-radius: 6px;
+      transition: background .15s ease;
+    }
+    #foStart:hover { background: rgba(231,216,75,.25); }
+
+    /* HUD */
+    #foHud {
+      position: absolute; top: .9rem; left: .9rem; z-index: 4;
+      font-size: .65rem; letter-spacing: 1px; color: rgba(255,255,255,.65);
+      text-shadow: 0 0 6px rgba(0,0,0,.9);
+      display: flex; flex-direction: column; gap: .25rem;
+      opacity: 0; transition: opacity .3s ease;
+    }
+    #foHud.visible { opacity: 1; }
+
+    /* Mobile touch controls */
+    #foTouch { display: none; }
+    @media (hover: none) and (pointer: coarse) {
+      #foTouch {
+        display: block; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+      }
+      .fo-stick {
+        position: absolute; bottom: 6vh; left: 6vw;
+        width: 34vw; max-width: 160px; height: 34vw; max-height: 160px;
+        border-radius: 50%; background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.25); pointer-events: auto;
+      }
+      .fo-stick-knob {
+        position: absolute; top: 50%; left: 50%; width: 40%; height: 40%;
+        border-radius: 50%; background: rgba(255,255,255,.25);
+        transform: translate(-50%, -50%); pointer-events: none;
+      }
+      .fo-lookzone {
+        position: absolute; top: 0; right: 0; width: 55vw; height: 100%; pointer-events: auto;
+      }
+    }
+
+    /* Win screen */
+    #foWin {
+      position: absolute; inset: 0; z-index: 20;
+      background: rgba(0,0,0,.94);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1rem; text-align: center; padding: 2rem;
+      opacity: 0; pointer-events: none; transition: opacity .6s ease;
+    }
+    #foWin.is-shown { opacity: 1; pointer-events: auto; }
+    #foWin h2 {
+      font-size: clamp(1.4rem, 4vw, 2.4rem); letter-spacing: 5px;
+      color: #7fffb0; text-shadow: 0 0 18px rgba(127,255,176,.6); font-weight: normal;
+    }
+    #foWin p { font-size: .8rem; color: #ccc; max-width: 40ch; line-height: 1.6; }
+    #foAgain {
+      background: rgba(127,255,176,.12); border: 1px solid rgba(127,255,176,.5);
+      color: #7fffb0; font-family: 'VCR_OSD_MONO', monospace; letter-spacing: 2px;
+      font-size: .8rem; padding: .6em 1.4em; cursor: pointer; border-radius: 6px;
+    }
+    #foAgain:hover { background: rgba(127,255,176,.25); }
+
+    /* Minimap */
+    #foMinimap {
+      position: absolute; top: .9rem; right: .9rem; z-index: 4;
+      width: 130px; height: 130px; border-radius: 8px;
+      background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.25);
+      opacity: 0; transition: opacity .3s ease;
+    }
+    #foMinimap.visible { opacity: 1; }
+
+    /* Eyes-closed overlay */
+    #foEyesClosed {
+      position: absolute; inset: 0; z-index: 15;
+      background: #000;
+      opacity: 0; pointer-events: none; transition: opacity .15s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #foEyesClosed.is-shown { opacity: 1; }
+    #foEyesClosed span {
+      font-size: .68rem; letter-spacing: 2px; color: rgba(255,255,255,.35);
+    }
+
+    /* Caught screen */
+    #foCaught {
+      position: absolute; inset: 0; z-index: 25;
+      background: #4a0000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1rem; text-align: center; padding: 2rem;
+      opacity: 0; pointer-events: none; transition: opacity .25s ease;
+    }
+    #foCaught.is-shown { opacity: 1; pointer-events: auto; }
+    #foCaught h2 {
+      font-size: clamp(1.5rem, 5vw, 2.6rem); letter-spacing: 4px;
+      color: #ff5555; text-shadow: 0 0 20px rgba(255,0,0,.7); font-weight: normal;
+    }
+    #foCaught p { font-size: .8rem; color: #eee; max-width: 38ch; line-height: 1.6; }
+    #foRetry {
+      background: rgba(255,85,85,.15); border: 1px solid rgba(255,85,85,.6);
+      color: #ff9d9d; font-family: 'VCR_OSD_MONO', monospace; letter-spacing: 2px;
+      font-size: .8rem; padding: .6em 1.4em; cursor: pointer; border-radius: 6px;
+    }
+    #foRetry:hover { background: rgba(255,85,85,.3); }
+  </style>
+</head>
+<body>
+  <div class="fo-stage" id="foStage">
+    <canvas id="foCanvas"></canvas>
+    <div id="foCrosshair"></div>
+
+    <div id="foHud">
+      <span id="foHint">FIND THE WAY OUT</span>
+    </div>
+
+    <canvas id="foMinimap" width="130" height="130"></canvas>
+
+    <div id="foTouch">
+      <div class="fo-stick" id="foStick"><div class="fo-stick-knob" id="foStickKnob"></div></div>
+      <div class="fo-lookzone" id="foLookZone"></div>
+    </div>
+
+    <div id="foEyesClosed"><span>( eyes closed — it can't see you, but neither can you )</span></div>
+
+    <div id="foIntro">
+      <h1>//FAULTY_ONE</h1>
+      <p>
+        // IMPORTANT NOT FOR ALL THE PGs!! <br>
+        /*  THE PAGES FROM THE SAMSIDE MUST BE PRESERVED AS TESTING!! IF ANY OF YOU LEAKS ANY OF THIS S###, I'LL LEAVE THIS FOREVER!  */
+      </p>
+      <p>
+        Desktop:
+          <span class="fo-key">WASD</span> to move, mouse to look around;<br>
+          hold <span class="fo-key">B</span> to close your eyes;<br>
+        <span class="fo-key">ESC</span> to unlock mouse;<br>
+        <br>
+        Mobile: drag the stick to move, drag the right side of the screen to look.
+      </p>
+      <button id="foStart" type="button">step inside</button>
+    </div>
+
+    <div id="foWin">
+      <h2>[GAME] [WON]</h2>
+      <p>//INSERT WINNING SUBTITTLE...</p>
+      <button id="foAgain" type="button">MISSING_ENDLESS_BUTTON</button>
+    </div>
+
+    <div id="foCaught">
+      <h2>[GAME] [END]</h2>
+      <p>It find you...</p>
+      <button id="foRetry" type="button">try again</button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     MAZE GENERATION
+     Grid cells are carved with a randomized depth-first search
+     (recursive backtracker). The resulting cell graph is baked
+     into a (2W+1) x (2H+1) wall/floor grid: even rows/columns are
+     always walls, odd ones are cells or the corridors between
+     them — a standard way to turn a cell-graph maze into a grid
+     a raycaster can collide against.
+     ============================================================ */
+  var MAZE_W = 11, MAZE_H = 11;
+
+  function generateMaze(w, h) {
+    var visited = [];
+    for (var y = 0; y < h; y++) { visited.push(new Array(w).fill(false)); }
+
+    var grid = [];
+    for (var gy = 0; gy < 2 * h + 1; gy++) { grid.push(new Array(2 * w + 1).fill(1)); }
+
+    function carveCell(x, y) { grid[2 * y + 1][2 * x + 1] = 0; }
+    function carveWall(x1, y1, x2, y2) { grid[y1 + y2 + 1][x1 + x2 + 1] = 0; }
+
+    var stack = [{ x: 0, y: 0 }];
+    visited[0][0] = true;
+    carveCell(0, 0);
+
+    var DIRS = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+
+    while (stack.length) {
+      var cur = stack[stack.length - 1];
+      var options = [];
+      for (var i = 0; i < DIRS.length; i++) {
+        var nx = cur.x + DIRS[i][0], ny = cur.y + DIRS[i][1];
+        if (nx >= 0 && nx < w && ny >= 0 && ny < h && !visited[ny][nx]) options.push({ x: nx, y: ny });
+      }
+      if (!options.length) { stack.pop(); continue; }
+      var next = options[(Math.random() * options.length) | 0];
+      visited[next.y][next.x] = true;
+      carveWall(cur.x, cur.y, next.x, next.y);
+      carveCell(next.x, next.y);
+      stack.push(next);
+    }
+
+    /* Farthest cell from the start (via BFS) becomes the exit, so
+       there's always a real path to walk, not just an adjacent cell. */
+    var dist = [];
+    for (var yy = 0; yy < h; yy++) dist.push(new Array(w).fill(-1));
+    var queue = [{ x: 0, y: 0 }];
+    dist[0][0] = 0;
+    var farthest = { x: 0, y: 0 };
+    while (queue.length) {
+      var c = queue.shift();
+      var d = dist[c.y][c.x];
+      if (d > dist[farthest.y][farthest.x]) farthest = c;
+      for (var j = 0; j < DIRS.length; j++) {
+        var ax = c.x + DIRS[j][0], ay = c.y + DIRS[j][1];
+        if (ax < 0 || ax >= w || ay < 0 || ay >= h || dist[ay][ax] !== -1) continue;
+        if (grid[c.y + ay + 1][c.x + ax + 1] === 1) continue; /* wall between them */
+        dist[ay][ax] = d + 1;
+        queue.push({ x: ax, y: ay });
+      }
+    }
+
+    return { grid: grid, exitCell: farthest, dist: dist };
+  }
+
+  var mazeData = generateMaze(MAZE_W, MAZE_H);
+  var MAP = mazeData.grid;
+  var MAP_W = MAP[0].length, MAP_H = MAP.length;
+  var exitGX = mazeData.exitCell.x * 2 + 1, exitGY = mazeData.exitCell.y * 2 + 1;
+
+  function isWall(x, y) {
+    var ix = Math.floor(x), iy = Math.floor(y);
+    if (ix < 0 || iy < 0 || ix >= MAP_W || iy >= MAP_H) return true;
+    return MAP[iy][ix] === 1;
+  }
+
+  /* ============================================================
+     WALL TEXTURE — a real image file, sampled column-by-column at
+     render time so it scrolls correctly with the wall instead of
+     looking pasted onto the screen. Drop the file at
+     media/FAULTY_ONE/wall.png (any resolution, ideally square).
+     ============================================================ */
+  var wallImg = new Image();
+  wallImg.src = '../media/FAULTY_ONE/wall.png';
+  var CEIL_COLOR = '#000000', FLOOR_COLOR = '#000000';
+
+  /* ============================================================
+     PLAYER / CAMERA
+     ============================================================ */
+  var player = {
+    x: 1.5, y: 1.5,
+    dirX: 1, dirY: 0,
+    planeX: 0, planeY: 0.66
+  };
+
+  function rotate(angle) {
+    var oldDirX = player.dirX;
+    player.dirX = player.dirX * Math.cos(angle) - player.dirY * Math.sin(angle);
+    player.dirY = oldDirX * Math.sin(angle) + player.dirY * Math.cos(angle);
+    var oldPlaneX = player.planeX;
+    player.planeX = player.planeX * Math.cos(angle) - player.planeY * Math.sin(angle);
+    player.planeY = oldPlaneX * Math.sin(angle) + player.planeY * Math.cos(angle);
+  }
+
+  function tryMove(dx, dy) {
+    var margin = 0.2;
+    if (dx !== 0) {
+      var checkX = player.x + dx + margin * (dx > 0 ? 1 : -1);
+      if (!isWall(checkX, player.y)) player.x += dx;
+    }
+    if (dy !== 0) {
+      var checkY = player.y + dy + margin * (dy > 0 ? 1 : -1);
+      if (!isWall(player.x, checkY)) player.y += dy;
+    }
+  }
+
+  var keys = {};
+  document.addEventListener('keydown', function (e) {
+    keys[e.key.toLowerCase()] = true;
+    if (e.key === ' ') e.preventDefault();
+    if (e.key.toLowerCase() === 'b' && !eyesClosed) {
+      eyesClosed = true;
+      document.getElementById('foEyesClosed').classList.add('is-shown');
+    }
+  });
+  document.addEventListener('keyup', function (e) {
+    keys[e.key.toLowerCase()] = false;
+    if (e.key.toLowerCase() === 'b') {
+      eyesClosed = false;
+      document.getElementById('foEyesClosed').classList.remove('is-shown');
+    }
+  });
+
+  var MOUSE_SENS = 0.0022;
+  document.addEventListener('mousemove', function (e) {
+    if (document.pointerLockElement !== canvas) return;
+    rotate(e.movementX * MOUSE_SENS);
+  });
+
+  /* ============================================================
+     HUNTER ENTITY
+     Uses u_succ.png. It re-plans a path to the player's current
+     cell every few hundred ms via BFS over the walkable grid
+     cells, then walks that path. While the player's eyes are
+     closed it freezes in place instead of re-planning or moving,
+     so it can't "see" you.
+     ============================================================ */
+  var huntImg = new Image();
+  huntImg.src = '../media/FAULTY_ONE/threat.png';
+
+  var entity = { x: 0, y: 0, path: [], pathAge: 1e9, alive: false };
+
+  function cellWalkable(x, y) {
+    if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return false;
+    return MAP[y][x] === 0;
+  }
+
+  function bfsPath(fromX, fromY, toX, toY) {
+    if (!cellWalkable(fromX, fromY) || !cellWalkable(toX, toY)) return [];
+    var key = function (x, y) { return x + ',' + y; };
+    var visited = {}; visited[key(fromX, fromY)] = true;
+    var prev = {};
+    var queue = [[fromX, fromY]];
+    var DIRS = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+    var found = false;
+    while (queue.length && !found) {
+      var c = queue.shift();
+      for (var i = 0; i < DIRS.length; i++) {
+        var nx = c[0] + DIRS[i][0], ny = c[1] + DIRS[i][1];
+        if (!cellWalkable(nx, ny) || visited[key(nx, ny)]) continue;
+        visited[key(nx, ny)] = true;
+        prev[key(nx, ny)] = c;
+        if (nx === toX && ny === toY) { found = true; break; }
+        queue.push([nx, ny]);
+      }
+    }
+    if (!found) return [];
+    var path = [[toX, toY]];
+    var k = key(toX, toY);
+    while (prev[k]) { path.push(prev[k]); k = key(prev[k][0], prev[k][1]); }
+    path.reverse();
+    return path;
+  }
+
+  var ENT_SPEED = 4.05;   /* cells/sec while hunting */
+  var ENT_WANDER_SPEED = 10.0; /* cells/sec while wandering blind */
+
+  function spawnEntity() {
+    /* Pick among cells that are genuinely far from the player's start,
+       measured in actual path distance (not raw grid position, since a
+       winding corridor can put the "farthest" cell spatially close to
+       the start) — so the entity never spawns breathing down your neck,
+       and never sits right on top of the exit either. */
+    var dist = mazeData.dist;
+    var maxDist = dist[mazeData.exitCell.y][mazeData.exitCell.x];
+    var minSafeDist = Math.max(6, Math.floor(maxDist * 0.5));
+
+    var candidates = [];
+    for (var cy = 0; cy < MAZE_H; cy++) {
+      for (var cx = 0; cx < MAZE_W; cx++) {
+        if (dist[cy][cx] < minSafeDist) continue;
+        if (cx === mazeData.exitCell.x && cy === mazeData.exitCell.y) continue; /* keep the exit clear */
+        candidates.push([cx, cy]);
+      }
+    }
+    if (!candidates.length) candidates.push([mazeData.exitCell.x, mazeData.exitCell.y]);
+
+    var pick = candidates[(Math.random() * candidates.length) | 0];
+    entity.x = pick[0] * 2 + 1 + 0.5; entity.y = pick[1] * 2 + 1 + 0.5;
+    entity.path = []; entity.pathAge = 1e9; entity.alive = true;
+  }
+
+  function updateEntity(dt) {
+    if (!entity.alive) return;
+
+    entity.pathAge += dt;
+
+    if (eyesClosed) {
+      /* It can't see you, so it just wanders — freely, not pinned in
+         place, which makes it genuinely risky to keep your eyes shut
+         for too long since it could wander right up to you. */
+      if (entity.path.length <= 1 || entity.pathAge > 0.5) {
+        var cx = Math.floor(entity.x), cy = Math.floor(entity.y);
+        var options = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]].filter(function (n) {
+          return cellWalkable(n[0], n[1]);
+        });
+        if (options.length) {
+          var next = options[(Math.random() * options.length) | 0];
+          entity.path = [[cx, cy], next];
+        }
+        entity.pathAge = 0;
+      }
+    } else if (entity.pathAge > 0.5) {
+      var targetX = Math.floor(player.x), targetY = Math.floor(player.y);
+      entity.path = bfsPath(Math.floor(entity.x), Math.floor(entity.y), targetX, targetY);
+      entity.pathAge = 0;
+    }
+
+    if (entity.path.length > 1) {
+      var wp = entity.path[1];
+      var tx = wp[0] + 0.5, ty = wp[1] + 0.5;
+      var dx = tx - entity.x, dy = ty - entity.y;
+      var d = Math.hypot(dx, dy);
+      var entSpeed = (eyesClosed ? ENT_WANDER_SPEED : ENT_SPEED) * dt;
+      if (d < entSpeed) {
+        entity.x = tx; entity.y = ty;
+        entity.path.shift();
+      } else {
+        entity.x += (dx / d) * entSpeed;
+        entity.y += (dy / d) * entSpeed;
+      }
+    }
+  }
+
+  /* ============================================================
+     "CLOSE YOUR EYES" MECHANIC (hold B)
+     ============================================================ */
+  var eyesClosed = false;
+
+  /* ============================================================
+     RENDERING (DDA raycasting)
+     ============================================================ */
+  var canvas = document.getElementById('foCanvas');
+  var ctx = canvas.getContext('2d');
+  var RH = 220, RW = 220;
+
+  function resizeRenderTarget() {
+    var aspect = window.innerWidth / window.innerHeight;
+    RW = Math.max(160, Math.round(RH * aspect));
+    canvas.width = RW; canvas.height = RH;
+  }
+  resizeRenderTarget();
+  window.addEventListener('resize', resizeRenderTarget);
+
+  function render() {
+    ctx.fillStyle = CEIL_COLOR; ctx.fillRect(0, 0, RW, RH / 2);
+    ctx.fillStyle = FLOOR_COLOR; ctx.fillRect(0, RH / 2, RW, RH / 2);
+
+    if (!zBuffer || zBuffer.length !== RW) zBuffer = new Array(RW);
+
+    for (var x = 0; x < RW; x++) {
+      var cameraX = 2 * x / RW - 1;
+      var rayDirX = player.dirX + player.planeX * cameraX;
+      var rayDirY = player.dirY + player.planeY * cameraX;
+
+      var mapX = Math.floor(player.x), mapY = Math.floor(player.y);
+
+      var deltaDistX = (rayDirX === 0) ? 1e30 : Math.abs(1 / rayDirX);
+      var deltaDistY = (rayDirY === 0) ? 1e30 : Math.abs(1 / rayDirY);
+
+      var stepX, stepY, sideDistX, sideDistY;
+      if (rayDirX < 0) { stepX = -1; sideDistX = (player.x - mapX) * deltaDistX; }
+      else { stepX = 1; sideDistX = (mapX + 1 - player.x) * deltaDistX; }
+      if (rayDirY < 0) { stepY = -1; sideDistY = (player.y - mapY) * deltaDistY; }
+      else { stepY = 1; sideDistY = (mapY + 1 - player.y) * deltaDistY; }
+
+      var hit = 0, side = 0, guard = 0;
+      while (hit === 0 && guard < 256) {
+        guard++;
+        if (sideDistX < sideDistY) { sideDistX += deltaDistX; mapX += stepX; side = 0; }
+        else { sideDistY += deltaDistY; mapY += stepY; side = 1; }
+        if (mapX < 0 || mapY < 0 || mapX >= MAP_W || mapY >= MAP_H || MAP[mapY][mapX] === 1) hit = 1;
+      }
+
+      var perpWallDist = (side === 0)
+        ? (mapX - player.x + (1 - stepX) / 2) / (rayDirX || 1e-9)
+        : (mapY - player.y + (1 - stepY) / 2) / (rayDirY || 1e-9);
+      perpWallDist = Math.abs(perpWallDist) || 0.0001;
+
+      var lineHeight = Math.floor(RH / perpWallDist);
+      var drawStart = Math.max(0, -lineHeight / 2 + RH / 2);
+      var drawEnd = Math.min(RH - 1, lineHeight / 2 + RH / 2);
+
+      var wallX = (side === 0) ? (player.y + perpWallDist * rayDirY) : (player.x + perpWallDist * rayDirX);
+      wallX -= Math.floor(wallX);
+      var isExitWall = (Math.abs(mapX - exitGX) + Math.abs(mapY - exitGY) === 1);
+
+      if (wallImg.complete && wallImg.naturalWidth > 0) {
+        var texX = Math.floor(wallX * wallImg.naturalWidth);
+        if (side === 0 && rayDirX > 0) texX = wallImg.naturalWidth - texX - 1;
+        if (side === 1 && rayDirY < 0) texX = wallImg.naturalWidth - texX - 1;
+        texX = Math.max(0, Math.min(wallImg.naturalWidth - 1, texX));
+        ctx.drawImage(wallImg, texX, 0, 1, wallImg.naturalHeight, x, drawStart, 1, Math.max(1, drawEnd - drawStart));
+      } else {
+        ctx.fillStyle = '#4a4433';
+        ctx.fillRect(x, drawStart, 1, Math.max(1, drawEnd - drawStart));
+      }
+
+      if (isExitWall) {
+        ctx.fillStyle = 'rgba(231,216,75,.4)';
+        ctx.fillRect(x, drawStart, 1, Math.max(1, drawEnd - drawStart));
+      }
+
+      var shade = Math.min(0.88, perpWallDist / 12) + (side === 1 ? 0.14 : 0);
+      if (shade > 0.02) {
+        ctx.fillStyle = 'rgba(0,0,0,' + shade + ')';
+        ctx.fillRect(x, drawStart, 1, Math.max(1, drawEnd - drawStart));
+      }
+
+      zBuffer[x] = perpWallDist;
+    }
+
+    if (entity.alive && huntImg.complete && huntImg.naturalWidth > 0) {
+      drawSprite(entity.x, entity.y, huntImg);
+    }
+  }
+
+  var zBuffer = null;
+
+  function drawSprite(spriteWorldX, spriteWorldY, img) {
+    var spriteX = spriteWorldX - player.x;
+    var spriteY = spriteWorldY - player.y;
+
+    var det = player.planeX * player.dirY - player.dirX * player.planeY;
+    if (det === 0) return;
+    var invDet = 1 / det;
+
+    var transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
+    var transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY);
+
+    if (transformY <= 0.05) return; /* behind the camera */
+
+    var spriteScreenX = Math.floor((RW / 2) * (1 + transformX / transformY));
+    var spriteSize = Math.abs(Math.floor(RH / transformY));
+    if (spriteSize > 4000) return; /* absurdly close, skip to avoid a giant fill */
+
+    var drawStartY = Math.max(0, Math.floor(-spriteSize / 2 + RH / 2));
+    var drawEndY = Math.min(RH - 1, Math.floor(spriteSize / 2 + RH / 2));
+    var drawStartX = Math.floor(-spriteSize / 2 + spriteScreenX);
+    var drawEndX = Math.floor(spriteSize / 2 + spriteScreenX);
+
+    var stripeStart = Math.max(0, drawStartX);
+    var stripeEnd = Math.min(RW - 1, drawEndX);
+    var fog = Math.min(0.75, transformY / 12);
+
+    for (var stripe = stripeStart; stripe <= stripeEnd; stripe++) {
+      if (transformY >= zBuffer[stripe]) continue; /* hidden behind a wall */
+      var texXf = (stripe - drawStartX) / (drawEndX - drawStartX || 1);
+      var texX = Math.max(0, Math.min(img.naturalWidth - 1, Math.floor(texXf * img.naturalWidth)));
+      ctx.drawImage(
+        img, texX, 0, 1, img.naturalHeight,
+        stripe, drawStartY, 1, Math.max(1, drawEndY - drawStartY)
+      );
+      if (fog > 0.02) {
+        ctx.fillStyle = 'rgba(0,0,0,' + fog + ')';
+        ctx.fillRect(stripe, drawStartY, 1, Math.max(1, drawEndY - drawStartY));
+      }
+    }
+  }
+
+  /* ============================================================
+     MINIMAP (top-right)
+     ============================================================ */
+  var mmCanvas = document.getElementById('foMinimap');
+  var mmCtx = mmCanvas.getContext('2d');
+
+  function hasLineOfSight(x1, y1, x2, y2) {
+    var dx = x2 - x1, dy = y2 - y1;
+    var dist = Math.hypot(dx, dy);
+    var steps = Math.ceil(dist * 6); /* sample densely enough to not skip thin walls */
+    if (steps === 0) return true;
+    for (var i = 1; i < steps; i++) {
+      var t = i / steps;
+      if (isWall(x1 + dx * t, y1 + dy * t)) return false;
+    }
+    return true;
+  }
+
+  function drawMinimap() {
+    var W = mmCanvas.width, H = mmCanvas.height;
+    var cell = Math.min(W / MAP_W, H / MAP_H);
+    mmCtx.clearRect(0, 0, W, H);
+
+    for (var y = 0; y < MAP_H; y++) {
+      for (var x = 0; x < MAP_W; x++) {
+        var isExitWall = Math.abs(x - exitGX) + Math.abs(y - exitGY) === 1;
+        mmCtx.fillStyle = isExitWall ? 'rgba(231,216,75,.9)' : (MAP[y][x] === 1 ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.04)');
+        mmCtx.fillRect(x * cell, y * cell, cell + 0.5, cell + 0.5);
+      }
+    }
+
+    if (entity.alive && hasLineOfSight(player.x, player.y, entity.x, entity.y)) {
+      mmCtx.fillStyle = '#ff5555';
+      mmCtx.beginPath();
+      mmCtx.arc(entity.x * cell, entity.y * cell, Math.max(2, cell * 0.6), 0, Math.PI * 2);
+      mmCtx.fill();
+    }
+
+    mmCtx.save();
+    mmCtx.translate(player.x * cell, player.y * cell);
+    mmCtx.rotate(Math.atan2(player.dirY, player.dirX));
+    mmCtx.fillStyle = '#7fffb0';
+    mmCtx.beginPath();
+    var s = Math.max(3, cell * 0.9);
+    mmCtx.moveTo(s, 0);
+    mmCtx.lineTo(-s * 0.6, s * 0.6);
+    mmCtx.lineTo(-s * 0.6, -s * 0.6);
+    mmCtx.closePath();
+    mmCtx.fill();
+    mmCtx.restore();
+  }
+
+  /* ============================================================
+     GAME LOOP + STATE
+     ============================================================ */
+  var running = false;
+  var lastTime = null;
+  var touchMove = { x: 0, y: 0 };
+  var touchLookDX = 0;
+  var footstepDist = 0;
+
+  function frame(now) {
+    if (!running) return;
+    if (lastTime === null) lastTime = now;
+    var dt = Math.min(0.05, (now - lastTime) / 1000);
+    lastTime = now;
+
+    var speed = 2.6 * dt;
+    var strafeSpeed = 2.2 * dt;
+    var beforeX = player.x, beforeY = player.y;
+
+    if (keys.w || touchMove.y < -0.15) tryMove(player.dirX * speed, player.dirY * speed);
+    if (keys.s || touchMove.y > 0.15) tryMove(-player.dirX * speed, -player.dirY * speed);
+    var strafeLen = Math.hypot(player.dirX, player.dirY) || 1;
+    var strafeX = -player.dirY / strafeLen, strafeY = player.dirX / strafeLen;
+    if (keys.a || touchMove.x < -0.15) tryMove(-strafeX * strafeSpeed, -strafeY * strafeSpeed);
+    if (keys.d || touchMove.x > 0.15) tryMove(strafeX * strafeSpeed, strafeY * strafeSpeed);
+
+    footstepDist += Math.hypot(player.x - beforeX, player.y - beforeY);
+    if (footstepDist > 0.9) { footstepDist = 0; footstep(); }
+
+    if (touchLookDX !== 0) { rotate(touchLookDX * 0.0028); touchLookDX = 0; }
+
+    updateEntity(dt);
+    render();
+    drawMinimap();
+
+    if (entity.alive) {
+      var d = Math.hypot(entity.x - player.x, entity.y - player.y);
+      if (faultyMusic) faultyMusic.volume = Math.max(0.05, Math.min(0.9, 1 - d / 9));
+      if (entitySound) entitySound.volume = Math.max(0.05, Math.min(1, 1 - d / 7));
+    }
+
+    if (entity.alive && !eyesClosed) {
+      var catchDist = Math.hypot(entity.x - player.x, entity.y - player.y);
+      if (catchDist < 0.45) { caught(); return; }
+    }
+
+    if (Math.floor(player.x) === exitGX && Math.floor(player.y) === exitGY) win();
+
+    requestAnimationFrame(frame);
+  }
+
+  function resetPlayer() {
+    player.x = 1.5; player.y = 1.5;
+    player.dirX = 1; player.dirY = 0;
+    player.planeX = 0; player.planeY = 0.66;
+  }
+
+  /* ============================================================
+     AUDIO
+     lights_loop.mp3 hums constantly in the background; faulty_music.mp3
+     also loops constantly, but its volume rises the closer the entity
+     gets (see the volume update in frame()) so it works as an audio
+     tension cue as well as music. footsteps.mp3 plays a short burst
+     every time the player has walked far enough to warrant one step,
+     and augh.mp3 loops constantly on the entity, with its volume tied
+     to distance the same way faulty_music's is.
+     ============================================================ */
+  var lightsLoop = null, faultyMusic = null, entitySound = null;
+  var footstepAudio = null;
+
+  function footstep() {
+    if (!footstepAudio) {
+      footstepAudio = SAMSIDE.playSafe('../sfx/footsteps.mp3', { volume: 0.05 });
+      return;
+    }
+    try {
+      footstepAudio.currentTime = 0;
+      footstepAudio.play().catch(function () {});
+    } catch (e) {}
+  }
+
+  function startAudio() {
+    if (!lightsLoop) {
+      lightsLoop = SAMSIDE.playSafe('../sfx/lights_loop.mp3', { loop: true, volume: 0.015 });
+    } else {
+      lightsLoop.play().catch(function () {});
+    }
+    if (!faultyMusic) {
+      faultyMusic = SAMSIDE.playSafe('../sfx/where_am_i.mp3', { loop: true, volume: 0.75 });
+    } else {
+      faultyMusic.play().catch(function () {});
+    }
+    if (!entitySound) {
+      entitySound = SAMSIDE.playSafe('../sfx/threat.mp3', { loop: true, volume: 0.0015 });
+    } else {
+      entitySound.play().catch(function () {});
+    }
+  }
+
+  function stopAudio() {
+    if (lightsLoop) lightsLoop.pause();
+    if (faultyMusic) faultyMusic.pause();
+    if (entitySound) entitySound.pause();
+  }
+
+  function win() {
+    running = false;
+    document.getElementById('foWin').classList.add('is-shown');
+    stopAudio();
+    try { document.exitPointerLock(); } catch (e) {}
+  }
+
+  function caught() {
+    running = false;
+    entity.alive = false;
+    document.getElementById('foCaught').classList.add('is-shown');
+    SAMSIDE.playSafe('../sfx/u_succ.mp3', { volume: 1 });
+    stopAudio();
+    try { document.exitPointerLock(); } catch (e) {}
+  }
+
+  function startGame() {
+    document.getElementById('foIntro').classList.add('is-hidden');
+    document.getElementById('foHud').classList.add('visible');
+    document.getElementById('foMinimap').classList.add('visible');
+    document.getElementById('foEyesClosed').classList.remove('is-shown');
+    eyesClosed = false;
+    footstepDist = 0;
+    resetPlayer();
+    spawnEntity();
+    startAudio();
+    running = true;
+    lastTime = null;
+    if (canvas.requestPointerLock && !('ontouchstart' in window)) {
+      canvas.requestPointerLock();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  document.getElementById('foStart').addEventListener('click', function (e) {
+    e.currentTarget.blur();
+    startGame();
+  });
+  document.getElementById('foAgain').addEventListener('click', function (e) {
+    e.currentTarget.blur();
+    document.getElementById('foWin').classList.remove('is-shown');
+    mazeData = generateMaze(MAZE_W, MAZE_H);
+    MAP = mazeData.grid; MAP_W = MAP[0].length; MAP_H = MAP.length;
+    exitGX = mazeData.exitCell.x * 2 + 1; exitGY = mazeData.exitCell.y * 2 + 1;
+    startGame();
+  });
+  document.getElementById('foRetry').addEventListener('click', function (e) {
+    e.currentTarget.blur();
+    document.getElementById('foCaught').classList.remove('is-shown');
+    mazeData = generateMaze(MAZE_W, MAZE_H);
+    MAP = mazeData.grid; MAP_W = MAP[0].length; MAP_H = MAP.length;
+    exitGX = mazeData.exitCell.x * 2 + 1; exitGY = mazeData.exitCell.y * 2 + 1;
+    startGame();
+  });
+
+  canvas.addEventListener('click', function () {
+    if (!running) return;
+    if (canvas.requestPointerLock && !('ontouchstart' in window)) canvas.requestPointerLock();
+  });
+
+  /* ============================================================
+     TOUCH CONTROLS
+     ============================================================ */
+  var stick = document.getElementById('foStick');
+  var stickKnob = document.getElementById('foStickKnob');
+  var lookZone = document.getElementById('foLookZone');
+  var stickActive = false, stickId = null, stickOrigin = { x: 0, y: 0 };
+
+  stick.addEventListener('touchstart', function (e) {
+    e.preventDefault();
+    var t = e.changedTouches[0];
+    stickActive = true; stickId = t.identifier;
+    var r = stick.getBoundingClientRect();
+    stickOrigin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }, { passive: false });
+
+  document.addEventListener('touchmove', function (e) {
+    for (var i = 0; i < e.changedTouches.length; i++) {
+      var t = e.changedTouches[i];
+      if (stickActive && t.identifier === stickId) {
+        e.preventDefault();
+        var dx = t.clientX - stickOrigin.x, dy = t.clientY - stickOrigin.y;
+        var max = 40;
+        dx = Math.max(-max, Math.min(max, dx));
+        dy = Math.max(-max, Math.min(max, dy));
+        stickKnob.style.transform = 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px))';
+        touchMove.x = dx / max; touchMove.y = dy / max;
+      }
+    }
+  }, { passive: false });
+
+  document.addEventListener('touchend', function (e) {
+    for (var i = 0; i < e.changedTouches.length; i++) {
+      if (e.changedTouches[i].identifier === stickId) {
+        stickActive = false; stickId = null;
+        touchMove.x = 0; touchMove.y = 0;
+        stickKnob.style.transform = 'translate(-50%, -50%)';
+      }
+    }
+  });
+
+  var lookTouchId = null, lastLookX = 0;
+  lookZone.addEventListener('touchstart', function (e) {
+    e.preventDefault();
+    var t = e.changedTouches[0];
+    lookTouchId = t.identifier; lastLookX = t.clientX;
+  }, { passive: false });
+  document.addEventListener('touchmove', function (e) {
+    for (var i = 0; i < e.changedTouches.length; i++) {
+      var t = e.changedTouches[i];
+      if (t.identifier === lookTouchId) {
+        e.preventDefault();
+        touchLookDX += (t.clientX - lastLookX) * 4;
+        lastLookX = t.clientX;
+      }
+    }
+  }, { passive: false });
+  document.addEventListener('touchend', function (e) {
+    for (var i = 0; i < e.changedTouches.length; i++) {
+      if (e.changedTouches[i].identifier === lookTouchId) lookTouchId = null;
+    }
+  });
+
+  /* Initial static frame behind the intro overlay */
+  render();
+})();
+</script>
+</body>
+</html>

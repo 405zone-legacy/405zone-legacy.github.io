@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <title>ERROR 405 — 405Zone-Legacy</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: linear-gradient(160deg, #05000d 0%, #1a083b 55%, #000 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .error405-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
+      text-align: center; padding: 2rem;
+      animation: samside-fade-in .8s ease;
+    }
+    @keyframes samside-fade-in { from { opacity: 0; } to { opacity: 1; } }
+    .error405-sprite {
+      width: clamp(200px, 30vw, 380px);
+      height: clamp(200px, 30vw, 380px);
+      object-fit: contain;
+      -webkit-user-drag: none;
+      filter: drop-shadow(0 0 20px rgba(120,0,0,.6));
+      margin-bottom: -0.8rem; /* pulls it closer to the message text below */
+    }
+    .error405-code {
+      font-family: 'VCR_OSD_MONO', 'Courier New', monospace;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      letter-spacing: 4px;
+      color: #ff5555;
+      text-shadow: 0 0 14px rgba(255,0,0,.6);
+    }
+    .error405-msg {
+      font-family: 'VCR_OSD_MONO', 'Courier New', monospace;
+      font-size: clamp(.85rem, 1.6vw, 1.1rem);
+      color: #ddd;
+      max-width: 34ch;
+      line-height: 1.5;
+    }
+    .error405-back {
+      margin-top: .6rem;
+      font-family: 'VCR_OSD_MONO', 'Courier New', monospace;
+      font-size: .85rem;
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="error405-wrap">
+
+    <!-- <div class="error405-code">ERROR 405</div> -->
+    <img class="error405-sprite error405-code" src="./media/error405.png" alt="ERROR 405" onerror="this.style.display='none'" draggable="false">
+    <p class="error405-msg">The result maybe exists but not really in the mood to give it to ya ;)</p>
+    <a class="error405-back" href="./index.html" draggable="false">
+      <span class="consequence">Go back you moron :)</span>
+    </a>
+  </div>
+  <script src="./js/global.js" defer></script>
+</body>
+</html>

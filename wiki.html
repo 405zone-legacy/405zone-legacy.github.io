@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="stylesheet" href="./style.css">
+  <title>405Zone-Legacy | Wiki</title>
+  <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
+  <style>
+    html.in-spa, html.in-spa body { height:100%; overflow:hidden; }
+    html.in-spa .page-frame {
+      display:flex; flex-direction:column; justify-content:center;
+      min-height:100vh; padding:1rem 2rem;
+    }
+
+    .wiki-split {
+      display:flex; align-items:flex-start; justify-content:center;
+      gap:1.5rem; margin:1.5rem 0; flex-wrap:wrap;
+    }
+
+    .wiki-divider {
+      width:1px; align-self:stretch;
+      background:rgba(255,255,255,.12); flex-shrink:0;
+    }
+
+    @media(max-width:600px){
+      .wiki-split{ flex-direction:column; align-items:center; }
+      .wiki-divider{ width:70%; height:1px; align-self:auto; }
+    }
+  </style>
+</head>
+<body class="section-wiki">
+<div class="page-frame">
+  <main>
+    <h1>WIKI</h1>
+    <p>Tip: You can understand the instructions if you can read.</p>
+    <p><span class="consequence">For more information read the instructions for this medicine and consult your pharmacist.</span></p>
+
+    <ul class="button-menu button-menu--plain wiki-split">
+
+      <li id="wiki-btn-og">
+        <a href="wiki/porkys-legacy-og.html" draggable="false">
+          <img src="./media/PL_OG.png" alt="Porky's Legacy OG" draggable="false">
+          <p>PORKY'S LEGACY</p>
+        </a>
+      </li>
+
+      <div class="wiki-divider"></div>
+
+      <li id="wiki-btn-eoc">
+        <a href="wiki/porkys-legacy-era-of-corruption.html" draggable="false">
+          <img src="./media/PL_EOC.gif" alt="Era of Corruption" draggable="false">
+          <p>PORKY'S LEGACY<br><small>Era of Corruption</small></p>
+        </a>
+      </li>
+
+    </ul>
+  </main>
+
+  <footer class="site-footer">
+    <p>405Zone-Legacy by <span class="footer-credit-name" id="footer-credit-name">ElProHD405</span></p>
+  </footer>
+</div>
+
+<script src="./js/global.js" defer></script>
+</body>
+</html>
