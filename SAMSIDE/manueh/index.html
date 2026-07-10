@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>manueh</title>
-  <link rel="icon" type="image/png" href="../media/ORANGE.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/samside-base.css">
   <script src="../js/samside-base.js"></script>
   <style>
@@ -25,34 +25,12 @@
       );
     }
 
-    .manueh-flames {
-      position: absolute; inset: -10% -10% -10% -10%;
-      mix-blend-mode: screen;
-      filter: blur(6px);
-      background-repeat: no-repeat;
-      background-image:
-        radial-gradient(closest-side, rgba(255,200,60,.9), rgba(255,120,0,.5) 55%, transparent 75%),
-        radial-gradient(closest-side, rgba(255,150,20,.85), rgba(200,40,0,.4) 60%, transparent 78%),
-        radial-gradient(closest-side, rgba(255,220,120,.8), rgba(255,90,0,.4) 55%, transparent 75%);
-      background-size: 38% 55%, 30% 46%, 26% 40%;
-      background-position: 20% 100%, 62% 100%, 42% 100%;
-      animation: manueh-flicker 2.4s ease-in-out infinite alternate;
-    }
-
-    @keyframes manueh-flicker {
-      0%   { background-position: 20% 100%, 62% 100%, 42% 100%; opacity: .85; filter: blur(6px) brightness(1); }
-      25%  { background-position: 18% 92%,  64% 96%,  44% 90%;  opacity: 1;   filter: blur(5px) brightness(1.15); }
-      50%  { background-position: 23% 100%, 60% 90%,  40% 96%;  opacity: .9;  filter: blur(7px) brightness(1); }
-      75%  { background-position: 19% 94%,  63% 100%, 45% 92%;  opacity: 1;   filter: blur(5px) brightness(1.2); }
-      100% { background-position: 21% 98%,  61% 94%,  43% 98%;  opacity: .88; filter: blur(6px) brightness(1.05); }
-    }
   </style>
 </head>
 <body>
   <div class="samside-stage">
     <div class="manueh-bg no-drag"></div>
     <div class="manueh-gradient"></div>
-    <div class="manueh-flames"></div>
   </div>
 </body>
 </html>

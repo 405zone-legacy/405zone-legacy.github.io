@@ -186,10 +186,10 @@ table { width: 100%; max-width: 640px; margin: 0 auto; border-collapse: collapse
 th,td { border: 1px solid rgba(255,255,255,.15); padding: .5rem .8rem; text-align: center; white-space: nowrap; }
 thead th { background: rgba(106,47,179,.35); text-transform: uppercase; letter-spacing: .5px; font-size: .8rem; }
 tbody tr:nth-child(even) { background: rgba(255,255,255,.04); }
-.music-table { max-width: 600px; }
+.music-table { max-width: 900px; }
 .music-table td { white-space: normal; text-align: left; vertical-align: center; }
-.music-table td:first-child { width: 360px; }
-.music-table .video-embed { margin: 0; max-width: 200px;}
+.music-table td:first-child { width: 300px; }
+.music-table .video-embed { margin: 0; max-width: 480px; width: 100%; }
 
 main { padding-top: 1rem; }
 main section, main article { margin-bottom: 2rem; }
@@ -369,7 +369,50 @@ main section, main article { margin-bottom: 2rem; }
 .overview-layout .overview-img-col img { width: clamp(160px, 18vw, 240px); height: auto; max-height: 280px; object-fit: contain; margin: 0; cursor: zoom-in; transition: transform .2s; }
 .overview-layout .overview-img-col img:hover { transform: scale(1.04); }
 .overview-links { display: flex; flex-direction: column; gap: .5rem; align-items: center; width: 100%; }
-.overview-links a { display: block; border: 1px solid var(--color-accent); padding: .35rem .8rem; border-radius: 4px; font-size: .82rem; text-align: center; width: 100%; }
+
+.platform-btn {
+  --pf-color: var(--color-accent);
+  position: relative;
+  display: flex; align-items: center; justify-content: center; gap: .55rem;
+  width: 100%; padding: .5rem .9rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 6px;
+  background: rgba(106, 47, 179, .08);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: .82rem;
+  letter-spacing: .03em;
+  text-align: center;
+  overflow: hidden;
+  transition: border-color .25s ease, background-color .25s ease,
+              transform .18s ease, box-shadow .25s ease, color .25s ease;
+}
+.platform-btn:hover, .platform-btn:focus-visible {
+  border-color: var(--pf-color);
+  background: color-mix(in srgb, var(--pf-color) 18%, transparent);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .4);
+}
+.platform-btn .pf-icon {
+  width: 18px; height: 18px; flex-shrink: 0;
+  fill: var(--pf-color);
+  transition: transform .35s ease, fill .25s ease;
+}
+.platform-btn:hover .pf-icon, .platform-btn:focus-visible .pf-icon {
+  fill: #fff;
+  transform: scale(1.15) rotate(-6deg);
+}
+.platform-btn--curseforge { --pf-color: #f16436; }
+.platform-btn--modrinth   { --pf-color: #00af5c; }
+.platform-btn--gamejolt   { --pf-color: #4bd37b; }
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-btn, .platform-btn .pf-icon { transition: none; }
+  .platform-btn:hover, .platform-btn:focus-visible { transform: none; }
+  .platform-btn:hover .pf-icon, .platform-btn:focus-visible .pf-icon { transform: none; }
+}
 
 .cr-row { display: flex; gap: 1.5rem; align-items: flex-start; margin: 1.2rem 0; flex-wrap: wrap; }
 .cr-row .cr-text { flex: 1 1 220px; }

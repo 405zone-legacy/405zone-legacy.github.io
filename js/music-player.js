@@ -42,24 +42,24 @@
     };
 
     var MAP = [
-        { re: /^$/,                                              tracks: ['dark_like_abyss'] },
-        { re: /^about$/,                                         tracks: ['an_empty_lotus_is_all_I_am'] },
-        { re: /^music$/,                                         tracks: ['deepest_hole_of_remembrance'] },
-        { re: /^news$/,                                          tracks: ['mist_void_of_decayed_hopes'] },
-        { re: /^projects$/,                                      tracks: ['your_free_extra'] },
-        { re: /^wiki$/,                                          tracks: ['tapped_tragedy'] },
-        { re: /wiki\/porkys-legacy-og/,                         tracks: ['sinner_retake'] },
-        { re: /wiki\/porkys-legacy-era-of-corruption(?!\/)/,    tracks: ['ur_ma_bst_fren'] },
-        { re: /wiki\/porkys-legacy-era-of-corruption\/knoweldge-research/, tracks: ['ur_ma_bst_fren'] },
-        { re: /corruption-research(?!\/)/,                      tracks: ['the_wind_is_blowing_and_the_roses_are_growing', 'an_empty_lotus_is_all_I_am'], mode: 'hour8to18' },
-        { re: /corruption-research\/global.impact/,             tracks: ['tape_jingle'] },
-        { re: /corruption-research\/ominous.valley/,            tracks: ['calmed1', 'decayed1', 'passed_out1'], mode: 'rand' },
-        { re: /corruption-research\/corrupted.spore/,           tracks: ['i_was_something_now_im_nothing'] },
-        { re: /corruption-research\/hazed.plains/,              tracks: ['happy_i_was', 'slave_to_trust', 'mouths_do_lie'], mode: 'hour3' },
-        { re: /corruption-research\/sinner.land/,               tracks: ['that_place_youve_called_paradise'] },
-        { re: /corruption-research\/broken.heaven/,             tracks: ['broken_heaven'] },
-        { re: /corruption-research\/error.3008/,                tracks: ['void_ambiance'] },
-        { re: /^projects/,                                        tracks: ['your_free_extra'] }
+        { re: /^$/,                                                         tracks: ['dark_like_abyss'] },
+        { re: /^about$/,                                                    tracks: ['an_empty_lotus_is_all_I_am'] },
+        { re: /^music$/,                                                    tracks: ['deepest_hole_of_remembrance'] },
+        { re: /^news$/,                                                     tracks: ['mist_void_of_decayed_hopes'] },
+        { re: /^projects$/,                                                 tracks: ['your_free_extra'] },
+        { re: /^wiki$/,                                                     tracks: ['tapped_tragedy'] },
+        { re: /wiki\/porkys-legacy-og/,                                     tracks: ['sinner_retake'] },
+        { re: /wiki\/porkys-legacy-era-of-corruption(?!\/)/,                tracks: ['ur_ma_bst_fren'] },
+        { re: /wiki\/porkys-legacy-era-of-corruption\/knoweldge-research/,  tracks: ['ur_ma_bst_fren'] },
+        { re: /corruption-research(?!\/)/,                                  tracks: ['the_wind_is_blowing_and_the_roses_are_growing', 'an_empty_lotus_is_all_I_am'], mode: 'hour8to18' },
+        { re: /corruption-research\/global.impact/,                         tracks: ['tape_jingle'] },
+        { re: /corruption-research\/ominous.valley/,                        tracks: ['calmed1', 'decayed1', 'passed_out1'], mode: 'rand' },
+        { re: /corruption-research\/corrupted.spore/,                       tracks: ['i_was_something_now_im_nothing'] },
+        { re: /corruption-research\/hazed.plains/,                          tracks: ['happy_i_was', 'slave_to_trust', 'mouths_do_lie'], mode: 'hour3' },
+        { re: /corruption-research\/sinner.land/,                           tracks: ['that_place_youve_called_paradise'] },
+        { re: /corruption-research\/broken.heaven/,                         tracks: ['broken_heaven'] },
+        { re: /corruption-research\/error.3008/,                            tracks: ['void_ambiance'] },
+        { re: /^projects/,                                                  tracks: ['your_free_extra'] }
     ];
 
     function todayKey() {
@@ -102,10 +102,26 @@
 
     function resolveTrack(param) { return resolveTrackInfo(param).track; }
 
+    /* Persisted preferences: last volume and whether music was playing,
+       so the player picks up where the user left it on their next visit. */
+    var VOL_KEY = 'mp_vol', PLAYING_KEY = 'mp_playing';
+
+    function loadStoredVol() {
+        try {
+            var v = parseFloat(localStorage.getItem(VOL_KEY));
+            return isNaN(v) ? 0.25 : Math.max(0, Math.min(1, v));
+        } catch (e) { return 0.25; }
+    }
+    function loadStoredPlaying() {
+        try { return localStorage.getItem(PLAYING_KEY) === 'true'; } catch (e) { return false; }
+    }
+    function saveVol(v)     { try { localStorage.setItem(VOL_KEY, String(v)); } catch (e) {} }
+    function savePlaying(v) { try { localStorage.setItem(PLAYING_KEY, v ? 'true' : 'false'); } catch (e) {} }
+
     var els = [new Audio(), new Audio()];
     els.forEach(function (el) { el.loop = true; el.volume = 0; el.preload = 'auto'; });
 
-    var ai = 0, playing = false, vol = 0.25, curTrack = null, curParam = null;
+    var ai = 0, playing = false, vol = loadStoredVol(), curTrack = null, curParam = null;
     var currentRandPool = null;
     var _scrollRaf = null, _scrollPos = 0, _scrollDir = 1, _scrollPause = 0;
 
@@ -216,6 +232,7 @@
 
     function toggle() {
         playing = !playing;
+        savePlaying(playing);
         var el = els[ai];
         if (playing) {
             /* Always make sure src matches the current track before playing —
@@ -232,7 +249,38 @@
 
     function setVol(v) {
         vol = Math.max(0, Math.min(1, v));
+        saveVol(vol);
         if (playing && !els[ai]._raf) els[ai].volume = vol;
+    }
+
+    /* Try to resume playback on load per the user's saved preference.
+       Browsers block audio autoplay until the user has interacted with the
+       page, so if the initial play() is rejected we quietly wait for the
+       first click/tap/keypress anywhere on the page and start then —
+       the toggle button will flip to "playing" the moment it actually is. */
+    function attemptAutoResume() {
+        if (!curTrack) return;
+        var el = els[ai];
+        var expectedSrc = BASE + curTrack + '.mp3';
+        if (!el.src.endsWith(expectedSrc)) { el.src = expectedSrc; el.loop = !currentRandPool; }
+        el.volume = vol;
+
+        function markPlaying() { playing = true; updateUI(); }
+
+        var p = el.play();
+        if (p && p.then) {
+            p.then(markPlaying).catch(function () {
+                function retry() {
+                    document.removeEventListener('pointerdown', retry);
+                    document.removeEventListener('keydown', retry);
+                    el.play().then(markPlaying).catch(function () {});
+                }
+                document.addEventListener('pointerdown', retry, { once: true });
+                document.addEventListener('keydown', retry, { once: true });
+            });
+        } else {
+            markPlaying();
+        }
     }
 
     function updateUI() {
@@ -247,6 +295,7 @@
         if (slider) { slider.value = Math.round(vol * 100); slider.addEventListener('input', function () { setVol(Number(this.value) / 100); }); }
         updateUI();
         if (curTrack) updateTrackName(curTrack);
+        if (loadStoredPlaying()) attemptAutoResume();
     });
 
     window.MusicPlayer = { changePage: changePage, toggle: toggle, setVol: setVol };

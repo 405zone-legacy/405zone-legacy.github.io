@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>missingno</title>
-  <link rel="icon" type="image/png" href="../media/u_succ.png">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/samside-base.css">
   <script src="../js/samside-base.js"></script>
   <style>
@@ -91,7 +91,7 @@
     var RODOLFO_SRC   = '../media/rodolfo.png';
     var BG_TEXTURE_SRC   = '../media/MISSINGNO/bg_texture.png';
     var PIPE_TEXTURE_SRC = '../media/MISSINGNO/pipe_texture.png';
-    var BG_MUSIC_SRC     = '../sfx/missingno_theme.mp3';
+    var BG_MUSIC_SRC     = '../sfx/rodolfos_epic_flight.mp3';
     var FLAP_SFX_SRC     = '../sfx/flap.mp3';
     var HIT_SFX_SRC      = '../sfx/hit.mp3';
     var DEATH_JINGLE_SRC = '../sfx/u_succ.mp3';
@@ -123,7 +123,7 @@
     var musicOn = false;
     function ensureMusicStarted() {
       if (bgMusic) return;
-      bgMusic = SAMSIDE.playSafe(BG_MUSIC_SRC, { loop: true, volume: .6 });
+      bgMusic = SAMSIDE.playSafe(BG_MUSIC_SRC, { loop: true, volume: .2 });
       musicOn = !!bgMusic;
       updateMuteLabel();
     }
