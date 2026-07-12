@@ -8,22 +8,24 @@
   <title>405Zone-Legacy</title>
   <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
   <style>
-    /* PAGE LOCK :3c */
-    body.section-projects {
-      height:100vh; max-height:100vh; overflow:hidden;
+    /* PAGE LOCK :3c (solo escritorio; en movil siempre debe poder hacerse scroll) */
+    @media(min-width:901px){
+      body.section-projects {
+        height:100vh; max-height:100vh; overflow:hidden;
+      }
+      body.section-projects .page-frame {
+        height:100vh; max-height:100vh; min-height:0;
+        display:flex; flex-direction:column;
+        overflow:hidden !important;
+      }
+      body.section-projects .page-frame > main {
+        flex:1 1 auto; min-height:0;
+        display:flex; flex-direction:column; justify-content:center;
+        overflow:hidden;
+      }
+      html.in-spa, html.in-spa body.section-projects { height:100%; overflow:hidden; }
+      html.in-spa body.section-projects .page-frame { padding:1rem 2rem; }
     }
-    body.section-projects .page-frame {
-      height:100vh; max-height:100vh; min-height:0;
-      display:flex; flex-direction:column;
-      overflow:hidden !important;
-    }
-    body.section-projects .page-frame > main {
-      flex:1 1 auto; min-height:0;
-      display:flex; flex-direction:column; justify-content:center;
-      overflow:hidden;
-    }
-    html.in-spa, html.in-spa body.section-projects { height:100%; overflow:hidden; }
-    html.in-spa body.section-projects .page-frame { padding:1rem 2rem; }
 
     body.section-projects h1 {
       font-size:clamp(1.2rem,3.4vw,1.7rem);
@@ -74,9 +76,22 @@
       margin-top:.8rem; padding-top:.8rem; flex-shrink:0;
     }
 
+    /* MOVIL: mantenemos los 2 grupos LADO A LADO (no apilados) para que los
+       4 botones de proyectos queden practicamente en una sola fila; los
+       carteles de arriba solo se reducen de forma proporcional (responsive),
+       sin tocar su posicionamiento. */
     @media(max-width:900px){
-      .projects-split{ flex-direction:column; align-items:center; }
-      .projects-divider{ width:60%; height:1px; align-self:auto; }
+      .projects-split{ align-items:center; gap:.9rem; }
+      .projects-col{ flex:1 1 0; min-width:0; gap:.3rem; }
+      .projects-divider{ align-self:stretch; }
+    }
+    @media(max-width:600px){
+      .projects-split{ gap:.5rem; }
+      .project-card { max-width:70px; gap:.25rem; }
+      .project-card img { width:clamp(46px,16vw,70px); }
+      .project-card span { font-size:.56rem; line-height:1.2; }
+      .projects-row { flex-wrap:nowrap; gap:.5rem; }
+      .projects-col { gap:.25rem; }
     }
   </style>
 </head>

@@ -8,7 +8,9 @@
   <title>405Zone-Legacy</title>
   <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
   <style>
-    html.in-spa, html.in-spa body { height:100%; overflow:hidden; }
+    @media(min-width:901px){
+      html.in-spa, html.in-spa body { height:100%; overflow:hidden; }
+    }
     html.in-spa .page-frame {
       display:flex; flex-direction:column; justify-content:center;
       height:calc(100vh - 2.2rem) !important;

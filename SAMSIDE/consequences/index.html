@@ -44,6 +44,22 @@
       pointer-events: none;
     }
     .cq-text.visible { opacity: 1; }
+
+    /* MOVIL: en pantallas estrechas los 9 cuadros no caben en una sola fila.
+       Los repartimos en 2 filas (5 arriba / 4 abajo) para que se vean todos
+       sin necesidad de scroll. */
+    @media (max-width:600px){
+      .cq-row{
+        flex-wrap: wrap;
+        width: 94vw;
+        row-gap: 1.4rem;
+        align-content: center;
+      }
+      .cq-prophecy{
+        width: clamp(52px, 17vw, 78px);
+        height: clamp(52px, 17vw, 78px);
+      }
+    }
   </style>
 </head>
 <body>

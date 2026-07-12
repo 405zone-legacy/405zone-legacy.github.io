@@ -15,25 +15,46 @@
       transition: opacity .5s ease;
     }
     .hb-hint.hidden { opacity: 0; }
+    .hb-hint { cursor: pointer; pointer-events: auto; }
+    .hb-hint-mobile { display: none; }
+    @media (hover: none) and (pointer: coarse) {
+      .hb-hint-desktop { display: none; }
+      .hb-hint-mobile { display: inline; }
+    }
   </style>
 </head>
 <body>
   <div class="samside-stage">
     <img class="samside-bg no-drag" src="../media/mythical_tape.png" alt="" draggable="false">
-    <p class="hb-hint" id="hbHint">[ SPACE ]</p>
+    <p class="hb-hint" id="hbHint">
+      <span class="hb-hint-desktop">[ SPACE ]</span>
+      <span class="hb-hint-mobile">[ TAP ]</span>
+    </p>
   </div>
   <script>
 
     var hint = document.getElementById('hbHint');
     var used = false;
 
-    document.addEventListener('keydown', function (e) {
-      if (e.code !== 'Space' || used) return;
-      e.preventDefault();
+    function triggerHb() {
+      if (used) return;
       used = true;
       SAMSIDE.playSafe('../sfx/hellbai.mp3', { volume: 0.75, loop: true });
       hint.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.code !== 'Space' || used) return;
+      e.preventDefault();
+      triggerHb();
     });
+
+    /* Movil: no hay teclado, asi que tambien se puede tocar la pantalla */
+    document.addEventListener('touchend', function (e) {
+      e.preventDefault();
+      triggerHb();
+    }, { passive: false });
+    hint.addEventListener('click', triggerHb);
   </script>
 </body>
 </html>

@@ -8,10 +8,12 @@
   <title>405Zone-Legacy</title>
   <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
   <style>
-    html.in-spa, html.in-spa body { height:100%; overflow:hidden; }
-    html.in-spa .page-frame {
-      display:flex; flex-direction:column; justify-content:center;
-      min-height:100vh; padding:1rem 2rem;
+    @media(min-width:901px){
+      html.in-spa, html.in-spa body { height:100%; overflow:hidden; }
+      html.in-spa .page-frame {
+        display:flex; flex-direction:column; justify-content:center;
+        min-height:100vh; padding:1rem 2rem;
+      }
     }
 
     .wiki-split {

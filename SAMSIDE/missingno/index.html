@@ -61,6 +61,12 @@
       transition: opacity .3s ease;
     }
     .flappy-preload.is-hidden { opacity: 0; pointer-events: none; }
+
+    .flappy-hint-mobile { display: none; }
+    @media (hover: none) and (pointer: coarse) {
+      .flappy-hint-desktop { display: none; }
+      .flappy-hint-mobile { display: inline; }
+    }
   </style>
 </head>
 <body>
@@ -71,7 +77,10 @@
     <canvas id="flappyCanvas"></canvas>
 
     <img class="flappy-usucc no-drag" id="usuccSprite" src="../media/u_succ.png" alt="" draggable="false">
-    <div class="flappy-hint">[ CLICK / TAP / SPACE ] to fly — [ R ] to restart</div>
+    <div class="flappy-hint">
+      <span class="flappy-hint-desktop">[ CLICK / SPACE ] to fly — [ R ] to restart</span>
+      <span class="flappy-hint-mobile">[ TAP ] to fly / restart</span>
+    </div>
   </div>
   <script>
     var canvas = document.getElementById('flappyCanvas');

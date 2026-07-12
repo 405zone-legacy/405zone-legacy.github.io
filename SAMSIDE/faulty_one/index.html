@@ -85,6 +85,16 @@
       .fo-lookzone {
         position: absolute; top: 0; right: 0; width: 55vw; height: 100%; pointer-events: auto;
       }
+      .fo-eyebtn {
+        position: absolute; bottom: 6vh; right: 6vw; z-index: 6;
+        width: 22vw; max-width: 78px; height: 22vw; max-height: 78px;
+        border-radius: 50%; background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.3); color: rgba(255,255,255,.75);
+        font-size: 2rem; line-height: 1;
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        pointer-events: auto; user-select: none;
+      }
+      .fo-eyebtn.is-active { background: rgba(255,255,255,.28); color: #fff; }
     }
 
     /* Win screen */
@@ -165,6 +175,7 @@
     <div id="foTouch">
       <div class="fo-stick" id="foStick"><div class="fo-stick-knob" id="foStickKnob"></div></div>
       <div class="fo-lookzone" id="foLookZone"></div>
+      <div class="fo-eyebtn" id="foEyeBtn">👁</div>
     </div>
 
     <div id="foEyesClosed"><span>( eyes closed — it can't see you, but neither can you )</span></div>
@@ -181,7 +192,7 @@
           hold <span class="fo-key">B</span> to close your eyes;<br>
         <span class="fo-key">ESC</span> to unlock mouse;<br>
         <br>
-        Mobile: drag the stick to move, drag the right side of the screen to look.
+        Mobile: drag the stick to move, drag the right side of the screen to look, hold the eye button to close your eyes.
       </p>
       <button id="foStart" type="button">step inside</button>
     </div>
@@ -875,6 +886,27 @@
       if (e.changedTouches[i].identifier === lookTouchId) lookTouchId = null;
     }
   });
+
+  /* Mobile "hold to close eyes" button — mirrors the desktop hold-B logic */
+  var eyeBtn = document.getElementById('foEyeBtn');
+  function eyeBtnOn(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    eyeBtn.classList.add('is-active');
+    if (!eyesClosed) {
+      eyesClosed = true;
+      document.getElementById('foEyesClosed').classList.add('is-shown');
+    }
+  }
+  function eyeBtnOff(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    eyeBtn.classList.remove('is-active');
+    eyesClosed = false;
+    document.getElementById('foEyesClosed').classList.remove('is-shown');
+  }
+  eyeBtn.addEventListener('touchstart', eyeBtnOn, { passive: false });
+  eyeBtn.addEventListener('touchend', eyeBtnOff, { passive: false });
+  eyeBtn.addEventListener('touchcancel', eyeBtnOff, { passive: false });
 
   /* Initial static frame behind the intro overlay */
   render();
