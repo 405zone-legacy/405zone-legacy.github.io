@@ -78,7 +78,7 @@
         var h = new Date().getHours();
         var dk = todayKey();
 
-        /* Special dates override only on HOME */
+        /* SPECIAL DATES ONLY IN HOME */
         if (/^$/.test(param) && SPECIAL_DATES[dk]) {
             var sd = SPECIAL_DATES[dk];
             if (sd.mode === 'rand') {
@@ -102,8 +102,7 @@
 
     function resolveTrack(param) { return resolveTrackInfo(param).track; }
 
-    /* Persisted preferences: last volume and whether music was playing,
-       so the player picks up where the user left it on their next visit. */
+    /* PERSISTENCE ON MUSIC VOLUME AND CURRENT TRACK (IDK WHY THE LAST ONE... ._.) */
     var VOL_KEY = 'mp_vol', PLAYING_KEY = 'mp_playing';
 
     function loadStoredVol() {
@@ -184,8 +183,7 @@
             fadeTo(prevEl, 0, function () { if (prevEl.src === prevSrc) { prevEl.pause(); prevEl.src = ''; } });
             fadeTo(nextEl, vol);
         } else {
-            /* Not playing yet: stop/clear the old element so toggle() picks up
-               the new track instead of resuming whatever was loaded before. */
+            /* Stop and clear the old audio element so toggle() loads the new track instead of resuming the previous one. */
             cancelFade(prevEl);
             prevEl.pause();
             prevEl.src = '';
@@ -212,12 +210,7 @@
         crossfade(info.track, info.randPool);
     }
 
-    /* Re-evaluate the track for the current page every minute, so that
-       hour/date-dependent tracks (e.g. Hazed Plains' day/night cycle,
-       Corruption Research's 8→18 / 19→7 split) switch live without
-       needing to navigate away and back. Random-mode tracks ('rand')
-       are intentionally excluded — re-rolling them every minute would
-       be jarring, they should only re-roll on actual navigation. */
+    /* Poll hourly tracks every minute for live updates; skip random mode to preserve user experience. */
     setInterval(function () {
         if (curParam === null) return;
         var dk = todayKey();
@@ -235,8 +228,7 @@
         savePlaying(playing);
         var el = els[ai];
         if (playing) {
-            /* Always make sure src matches the current track before playing —
-               guards against stale/empty src from a page change while paused. */
+            /* Ensure src matches the current track before playing to prevent stale sources after page changes while paused. */
             var expectedSrc = curTrack ? (BASE + curTrack + '.mp3') : '';
             if (curTrack && !el.src.endsWith(expectedSrc)) {
                 el.src = expectedSrc;
@@ -253,11 +245,7 @@
         if (playing && !els[ai]._raf) els[ai].volume = vol;
     }
 
-    /* Try to resume playback on load per the user's saved preference.
-       Browsers block audio autoplay until the user has interacted with the
-       page, so if the initial play() is rejected we quietly wait for the
-       first click/tap/keypress anywhere on the page and start then —
-       the toggle button will flip to "playing" the moment it actually is. */
+    /* Attempt autoplay on load; if blocked by the browser, defer playback until the first user interaction. */
     function attemptAutoResume() {
         if (!curTrack) return;
         var el = els[ai];

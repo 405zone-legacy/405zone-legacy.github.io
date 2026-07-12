@@ -14,7 +14,7 @@
       height:calc(100vh - 2.2rem) !important;
       min-height:0 !important;
       padding:.5rem 1rem;
-      overflow:hidden !important; /* no internal scroll on this page */
+      overflow:hidden !important; /* NO SCROLL */
     }
     html.in-spa main { flex:0; }
 
@@ -44,7 +44,7 @@
       user-select:none;
     }
 
-    /* Fixed square canvas — identical box for every icon */
+    /* SQUARE CANVAS FOR EVERY ICON */
     .cr-btn .cr-icon-box {
       width:clamp(100px,13vw,160px);
       height:clamp(100px,13vw,160px);
@@ -56,8 +56,7 @@
       object-fit:contain;
       pointer-events:none;
       -webkit-user-drag:none;
-      /* Individual outline + glow via CSS custom properties.
-         Override per-icon with #cr-N .cr-icon-box img { --cr-outline: ...; --cr-glow: ...; } */
+      /* OUTLINE AND GLOW */
       --cr-outline: drop-shadow(0 0 1.5px var(--cr-outline-color, rgba(201,166,255,.55)));
       --cr-glow:    drop-shadow(0 0 8px   var(--cr-glow-color,    rgba(201,166,255,.0)));
       filter: var(--cr-outline) var(--cr-glow) drop-shadow(0 3px 10px rgba(0,0,0,.8));
@@ -110,6 +109,59 @@
       letter-spacing:1px; opacity:.85;
       text-shadow:0 1px 6px rgba(0,0,0,.9);
       white-space:nowrap;
+    }
+
+    @media (max-width: 900px) {
+      html.in-spa .page-frame {
+        height: auto !important;
+        min-height: calc(100vh - 2.2rem) !important;
+        overflow-y: auto !important;
+        justify-content: flex-start !important;
+        padding-top: 3.2rem !important;
+      }
+      html.in-spa main { flex: initial; }
+
+      .cr-scene {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items: center;
+        align-items: start;
+        gap: 1.6rem 1rem;
+        width: 100%; height: auto;
+        max-width: none; max-height: none;
+        margin: 0;
+      }
+      .cr-center {
+        grid-column: 1 / -1;
+        position: static;
+        pointer-events: auto;
+        padding: 0 2vw 1rem;
+      }
+      .cr-btn {
+        position: static !important;
+        transform: none !important;
+      }
+      .cr-btn .cr-icon-box {
+        width: clamp(96px, 28vw, 136px);
+        height: clamp(96px, 28vw, 136px);
+      }
+      .cr-btn span {
+        white-space: normal;
+        text-align: center;
+        font-size: clamp(.62rem, 2.4vw, .78rem);
+      }
+
+      #cr-0 { order: 1; }
+      #cr-6 { order: 2; }
+      #cr-1 { order: 3; }
+      #cr-5 { order: 4; }
+      #cr-2 { order: 5; }
+      #cr-4 { order: 6; }
+      #cr-3 {
+        order: 7;
+        grid-column: 1 / -1;
+        justify-self: center;
+      }
     }
   </style>
 </head>

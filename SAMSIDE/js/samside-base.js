@@ -3,11 +3,11 @@
   'use strict';
 
   window.addEventListener('wheel', function (e) {
-    if (e.ctrlKey) e.preventDefault();               // pinch-zoom via trackpad/ctrl+wheel
+    if (e.ctrlKey) e.preventDefault();               // AVOID ZOOMING
   }, { passive: false });
 
   window.addEventListener('keydown', function (e) {
-    // Blocks keyboard zoom (Ctrl/Cmd + '+' '-' '0') and scroll via arrow keys/space
+    // UNABLE "MOVES" :3c
     var zoomKeys = ['+', '-', '=', '0'];
     if ((e.ctrlKey || e.metaKey) && zoomKeys.indexOf(e.key) !== -1) e.preventDefault();
   }, { passive: false });

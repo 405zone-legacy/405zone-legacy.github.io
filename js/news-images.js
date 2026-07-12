@@ -2,7 +2,7 @@
 (function () {
   var MEDIA_BASE = "media/NEWS";
 
-  var EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"];
+  var EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif"];
 
   function tryExtensions(img, year, index, extIndex) {
     if (extIndex >= EXTENSIONS.length) {

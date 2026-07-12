@@ -118,7 +118,7 @@ var SPLASHES = [
     { text: "Why hello there! Old Sport!",                                                        color: "#a16cc9" }
 ];
 
-/* Anniversary splash: shown on project launch dates */
+/* SPECIAL DATES */
 var ANNIVERSARY_SPLASHES = {
     '22/04': { project: "Porky's Legacy",                       year: 2024 },
     '07/11': { project: "Porky's Legacy: Era of Corruption",    year: 2024 },

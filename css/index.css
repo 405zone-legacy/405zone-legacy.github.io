@@ -116,8 +116,7 @@
       transform: translateY(100%);
       transition: transform .4s cubic-bezier(.4,0,.2,1);
       pointer-events: none;
-      /* Transparent: lets the blurred hub (.hub.panel-open) show through
-         behind the floating page-frame card */
+      /* BLUR WHEN PAGE OPEN */
     }
     #spa-panel.is-open { transform: translateY(0); pointer-events: all; }
     #spa-frame { width: 100%; height: 100%; border: 0; display: block; transition: opacity .15s ease; }
@@ -229,57 +228,97 @@
     #mp-vol::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%; background: #c9a6ff; cursor: pointer; }
     #mp-vol::-moz-range-thumb { width: 10px; height: 10px; border: none; border-radius: 50%; background: #c9a6ff; cursor: pointer; }
 
-    @media (max-width: 640px) {
-      #music-player { display: none !important; }
+    @media (max-width: 900px) {
       #secret-events-toggle { display: none !important; }
 
-      .hub { overflow: hidden; }
+      #music-player {
+        top: max(.7rem, env(safe-area-inset-top));
+        left: max(.7rem, env(safe-area-inset-left));
+        bottom: auto;
+        max-width: 200px;
+        min-width: 150px;
+        padding: .35rem .6rem;
+        font-size: .68rem;
+      }
+      #mp-vol { width: 42px; }
 
-      /* Logo: dead-center of the screen */
-      .logo-wrapper { top: 50%; left: 50%; }
-      .hub-logo img {
-        width: clamp(90px, 28vw, 170px);
-        height: clamp(90px, 28vw, 170px);
+      .hub {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "logo    logo"
+          "projects news"
+          "music   wiki";
+        justify-items: center;
+        align-content: start;
+        align-items: center;
+        row-gap: 1.6rem;
+        column-gap: 2.4rem;
+        height: 100vh;
+        padding: 3.4rem 1.2rem 1.6rem;
+        overflow-y: auto;
+        box-sizing: border-box;
       }
 
-      /* Splash: small enough to never reach the corner buttons */
+      .logo-wrapper {
+        grid-area: logo;
+        position: relative;
+        top: auto; left: auto; transform: none;
+        margin-bottom: .4rem;
+      }
+      .hub-logo img {
+        width: clamp(130px, 34vw, 210px);
+        height: clamp(130px, 34vw, 210px);
+      }
+
       .hub-splash {
-        max-width: 62vw;
-        font-size: clamp(0.5rem, 2.4vw, 0.66rem);
+        position: static;
+        left: auto;
+        transform: none !important;
+        margin-top: .5rem;
+        max-width: 80vw;
+        font-size: clamp(0.68rem, 2.8vw, 1rem);
         line-height: 1.3;
       }
 
-      /* Buttons: one per corner, safe-area aware for notched phones */
       .hub-btn {
-        transform: none !important;
-        gap: .3rem;
-        font-size: clamp(.55rem, 2.4vw, .68rem);
+        position: static !important;
+        gap: .4rem;
+        font-size: clamp(.6rem, 2.6vw, .74rem);
       }
       .hub-btn img {
-        width: clamp(56px, 17vw, 92px);
-        height: clamp(56px, 17vw, 92px);
+        width: clamp(90px, 25vw, 132px);
+        height: clamp(90px, 25vw, 132px);
       }
-      .hub-btn--projects {
-        top: max(1rem, env(safe-area-inset-top));
-        left: max(1rem, env(safe-area-inset-left));
-      }
+      .hub-btn--projects,
       .hub-btn--news {
-        top: max(1rem, env(safe-area-inset-top));
-        right: max(1rem, env(safe-area-inset-right));
+        margin-top: 1.4rem;
       }
-      .hub-btn--music {
-        bottom: max(1rem, env(safe-area-inset-bottom));
-        left: max(1rem, env(safe-area-inset-left));
+      .hub-btn--projects { grid-area: projects; }
+      .hub-btn--news     { grid-area: news; }
+      .hub-btn--music    { grid-area: music; }
+      .hub-btn--wiki     { grid-area: wiki; }
+
+      #spa-back {
+        width: 44px; height: 44px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+        top: max(.7rem, env(safe-area-inset-top));
+        right: max(.7rem, env(safe-area-inset-right));
       }
-      .hub-btn--wiki {
-        bottom: max(1rem, env(safe-area-inset-bottom));
-        right: max(1rem, env(safe-area-inset-right));
-      }
+      #spa-back-label-wrap { display: none; }
+      #spa-back-arrow { font-size: 1.15rem; }
     }
 
-    /* Very small phones: shrink further so nothing crowds the corners */
-    @media (max-width: 360px) {
-      .hub-logo img { width: clamp(72px, 26vw, 100px); height: clamp(72px, 26vw, 100px); }
-      .hub-btn img  { width: clamp(46px, 16vw, 64px);  height: clamp(46px, 16vw, 64px); }
-      .hub-splash   { font-size: clamp(0.44rem, 2.2vw, 0.58rem); max-width: 58vw; }
+    @media (max-width: 480px) {
+      .hub {
+        row-gap: 1.1rem;
+        column-gap: 1.6rem;
+        padding-top: 3rem;
+      }
+      .hub-logo img { width: clamp(100px, 30vw, 130px); height: clamp(100px, 30vw, 130px); }
+      .hub-btn img  { width: clamp(74px, 22vw, 98px);  height: clamp(74px, 22vw, 98px); }
+      .hub-splash   { font-size: clamp(0.56rem, 2.6vw, 0.78rem); max-width: 78vw; }
+      #music-player { max-width: 160px; min-width: 130px; }
     }

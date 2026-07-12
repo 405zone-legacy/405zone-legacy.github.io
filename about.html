@@ -8,56 +8,34 @@
   <title>405Zone-Legacy</title>
   <script>if(window.self!==window.top)document.documentElement.classList.add('in-spa');</script>
   <style>
-    /* ── Lock the page itself: no page-level scroll on this section ── */
-    body.section-about {
-      height:100vh; max-height:100vh; overflow:hidden;
-    }
-    body.section-about .page-frame {
-      height:100vh; max-height:100vh;
-      min-height:0;
-      display:flex; flex-direction:column;
-      overflow:hidden !important;
-    }
-    body.section-about .page-frame > main {
-      flex:1 1 auto; min-height:0;
-      display:flex; flex-direction:column;
-      overflow:hidden;
-    }
-
-    html.in-spa, html.in-spa body.section-about { height:100%; overflow:hidden; }
-    html.in-spa body.section-about .page-frame {
-      justify-content:center; padding:1rem 2rem;
-    }
-
     body.section-about h1 {
       font-size:clamp(1.1rem,3vw,1.5rem);
-      margin:.2rem 0 .3rem; flex-shrink:0;
+      margin:.2rem 0 .3rem;
     }
 
-    /* ── Two-column layout — both stretch to equal height ── */
+    /* 2 COLUMNS LAYOUT */
     .about-main {
-      display:flex; align-items:stretch; justify-content:center;
-      gap:1.4rem; flex-wrap:nowrap; padding:.4rem 0;
-      flex:1 1 auto; min-height:0;
+      display:flex; flex-direction:column;
+      gap:1.4rem; padding:.4rem 0;
     }
 
-    /* Left column: avatar + bio + info-panel */
+    /* SHORT DESC */
     .about-left {
-      flex:2 1 320px; max-width:560px; min-height:0;
       display:flex; flex-direction:column; gap:.6rem;
-      overflow:hidden;
+      width:100%;
     }
     .about-layout {
-      display:flex; align-items:center; justify-content:flex-start;
-      gap:1.2rem; flex-wrap:nowrap; min-height:0;
+      display:flex; flex-wrap:wrap;
+      align-items:center; justify-content:center; text-align:center;
+      gap:1rem;
     }
     .about-avatar {
       flex:0 0 auto; display:flex; flex-direction:column;
       align-items:center; gap:.5rem;
     }
     .about-avatar img {
-      width:clamp(70px,9vw,110px);
-      height:clamp(70px,9vw,110px);
+      width:clamp(80px,20vw,110px);
+      height:clamp(80px,20vw,110px);
       border-radius:50%; object-fit:cover;
       border:3px solid rgba(201,166,255,.4); margin:0;
     }
@@ -69,20 +47,19 @@
     }
     .linktree-btn:hover { background:rgba(124,58,232,.7); text-decoration:none; }
 
-    .about-text { flex:1 1 200px; min-width:0; min-height:0; overflow:hidden; }
+    .about-text { width:100%; }
     .about-text p {
       text-align:left; max-width:100%;
-      margin:.3rem 0; font-size:.74rem; line-height:1.38;
+      margin:.4rem 0; font-size:.82rem; line-height:1.5;
     }
 
     .about-info-panel {
-      flex:1; /* grow to fill leftover height */
+      width:100%;
       border:1px solid rgba(255,255,255,.12);
       border-radius:8px;
       background:rgba(255,255,255,.03);
-      font-size:.72rem;
+      font-size:.78rem;
       display:flex; flex-direction:column;
-      overflow-y:auto; min-height:0;
       scrollbar-width:thin;
       scrollbar-color:rgba(201,166,255,.3) transparent;
     }
@@ -90,15 +67,15 @@
     .about-info-panel::-webkit-scrollbar-thumb { background:rgba(201,166,255,.3); border-radius:3px; }
     .about-info-panel::-webkit-scrollbar-track { background:transparent; }
 
-    /* Section header row inside info panel */
+    /* HEADER INFO PANEL */
     .info-section-head {
       padding:.32rem .9rem;
       border-bottom:1px solid rgba(255,255,255,.08);
-      letter-spacing:1.2px; font-size:.66rem;
+      letter-spacing:1.2px; font-size:.68rem;
       color:#c9a6ff; background:rgba(201,166,255,.05);
     }
 
-    /* Last update row */
+    /* LAST UPDATE */
     .info-update {
       padding:.4rem .9rem;
       border-bottom:1px solid rgba(255,255,255,.08);
@@ -107,7 +84,7 @@
     }
     .info-update strong { color:#c9a6ff; }
 
-    /* Credits rows */
+    /* CREDITS */
     .info-credits { padding:.25rem; }
     .info-credits li {
       display:flex; justify-content:space-between; align-items:center;
@@ -130,25 +107,24 @@
     .info-software li span:first-child {
       display:block;
       color:#c9a6ff;
-      font-size:.68rem;
+      font-size:.7rem;
       letter-spacing:1px;
       margin-bottom:.2rem;
     }
     .info-software li span:last-child {
       display:block;
       color:rgba(255,255,255,.78);
-      font-size:.72rem;
-      line-height:1.5;
+      font-size:.78rem;
+      line-height:1.55;
     }
 
-    /* Right column: timeline — stretch to match left */
+    /* TIMELINE */
     .about-timeline {
-      flex:1 1 280px; max-width:440px; min-width:260px; min-height:0;
+      width:100%;
       border:1px solid rgba(201,166,255,.25);
       border-radius:10px;
       background:rgba(255,255,255,.03);
       display:flex; flex-direction:column;
-      overflow:hidden;
     }
     .about-timeline-header {
       padding:.45rem 1rem;
@@ -158,7 +134,6 @@
       flex-shrink:0;
     }
     .about-timeline-scroll {
-      flex:1; overflow-y:auto;
       padding:.6rem 1rem .8rem;
       scrollbar-width:thin;
       scrollbar-color:rgba(201,166,255,.3) transparent;
@@ -176,14 +151,69 @@
     }
     .tl-year:first-child { margin-top:0; }
     .tl-entry {
-      font-size:.74rem; line-height:1.45;
+      font-size:.8rem; line-height:1.5;
       color:rgba(255,255,255,.82);
       margin:.3rem 0 .3rem .1rem;
     }
 
-    @media(max-width:640px){
-      .about-main { flex-direction:column; align-items:stretch; }
-      .about-left, .about-timeline { max-width:100%; width:100%; }
+    @media(min-width:901px){
+      /* PAGE LOCK :3c */
+      body.section-about {
+        height:100vh; max-height:100vh; overflow:hidden;
+      }
+      body.section-about .page-frame {
+        height:100vh; max-height:100vh;
+        min-height:0;
+        display:flex; flex-direction:column;
+        overflow:hidden !important;
+      }
+      body.section-about .page-frame > main {
+        flex:1 1 auto; min-height:0;
+        display:flex; flex-direction:column;
+        overflow:hidden;
+      }
+
+      html.in-spa, html.in-spa body.section-about { height:100%; overflow:hidden; }
+      html.in-spa body.section-about .page-frame {
+        justify-content:center; padding:1rem 2rem;
+      }
+
+      .about-main {
+        flex-direction:row; align-items:stretch; justify-content:center;
+        flex-wrap:nowrap;
+        flex:1 1 auto; min-height:0;
+      }
+
+      .about-left {
+        flex:2 1 320px; max-width:560px; min-height:0;
+        overflow:hidden;
+      }
+      .about-layout {
+        flex-wrap:nowrap; justify-content:flex-start; text-align:left;
+        gap:1.2rem;
+      }
+      .about-avatar img {
+        width:clamp(70px,9vw,110px);
+        height:clamp(70px,9vw,110px);
+      }
+
+      .about-text { flex:1 1 200px; min-width:0; min-height:0; overflow:hidden; }
+      .about-text p { font-size:.74rem; line-height:1.38; margin:.3rem 0; }
+
+      .about-info-panel {
+        flex:1; overflow-y:auto; min-height:0;
+        font-size:.72rem;
+      }
+      .info-section-head { font-size:.66rem; }
+      .info-software li span:first-child { font-size:.68rem; }
+      .info-software li span:last-child { font-size:.72rem; line-height:1.5; }
+
+      .about-timeline {
+        flex:1 1 280px; max-width:440px; min-width:260px; min-height:0;
+        overflow:hidden;
+      }
+      .about-timeline-scroll { flex:1; overflow-y:auto; }
+      .tl-entry { font-size:.74rem; line-height:1.45; }
     }
   </style>
 </head>
@@ -194,10 +224,10 @@
 
     <div class="about-main">
 
-      <!-- Left column -->
+      <!-- LEFT SIDE -->
       <div class="about-left">
 
-        <!-- Avatar + bio -->
+        <!-- SHORT DESC -->
         <div class="about-layout">
           <div class="about-avatar">
             <img src="./media/ME.png" alt="ElProHD405" draggable="false">
@@ -213,7 +243,7 @@
           </div>
         </div>
 
-        <!-- Info panel (last update + credits) — expands to fill remaining height -->
+        <!-- LAST UPDATE / CREDITS / SOFTWARE -->
         <div class="about-info-panel">
           <div class="info-section-head">LAST SITE UPDATE</div>
           <div class="info-update">
@@ -241,9 +271,9 @@
           </ul>
         </div>
 
-      </div><!-- /about-left -->
+      </div><!-- /LEFT SIDE -->
 
-      <!-- Right column: timeline -->
+      <!-- RIGHT SIDE -->
       <div class="about-timeline">
         <div class="about-timeline-header">TIMELINE</div>
         <div class="about-timeline-scroll">
@@ -265,7 +295,7 @@
           <p class="tl-entry">Nowadays I have updated my website, and I'm taking things with calm and not obligated due to stretched schedules! I do it just for fun! ^w^</p>
         </div>
       </div>
-    </div><!-- /about-main -->
+    </div><!-- /RIGHT SIDE -->
   </main>
 </div>
 <script src="./js/global.js" defer></script>

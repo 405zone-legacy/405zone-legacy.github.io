@@ -90,27 +90,27 @@
   }
 
   var LABELS = {
-    '':                                                                       'Home',
-    'wiki':                                                                   'Wiki',
-    'projects':                                                               'Projects',
-    'news':                                                                   'News',
-    'about':                                                                  'About',
-    'music':                                                                  'Music',
-    'wiki/porkys-legacy-og':                                                  "Wiki Pork's Legacy (OG)",
-    'wiki/porkys-legacy-era-of-corruption':                                   "Wiki Pork's Legacy: (EOC)",
-    'wiki/porkys-legacy-era-of-corruption/knoweldge-research':                'Knowledge Research',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research':               'Corruption Research',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research/global-impact': 'Global Impact',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research/ominous-valley':'Ominous Valley',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research/corrupted-spore':'Corrupted Spore',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research/hazed-plains':  'Hazed Plains',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research/sinner-land':   'Sinner Land',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research/broken_heaven': 'Broken Heaven',
-    'wiki/porkys-legacy-era-of-corruption/corruption-research/error_3008-samside':'Error 3008',
-    'projects/porkys-legacy':                                                  "Porky's Legacy",
-    'projects/porkys-legacy-era-of-corruption':                               "Era of Corruption",
-    'projects/rewinded-nights':                                               'Rewinded Nights',
-    'projects/rewinded-misery':                                               'Rewinded Misery',
+    '':                                                                             'Home',
+    'wiki':                                                                         'Wiki',
+    'projects':                                                                     'Projects',
+    'news':                                                                         'News',
+    'about':                                                                        'About',
+    'music':                                                                        'Music',
+    'wiki/porkys-legacy-og':                                                        "Pork's Legacy",
+    'wiki/porkys-legacy-era-of-corruption':                                         "Pork's Legacy: Era of Corruption",
+    'wiki/porkys-legacy-era-of-corruption/knoweldge-research':                      'Knowledge Research',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research':                     'Corruption Research',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research/global-impact':       'Global Impact',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research/ominous-valley':      'Ominous Valley',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research/corrupted-spore':     'Corrupted Spore',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research/hazed-plains':        'Hazed Plains',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research/sinner-land':         'Sinner Land',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research/broken_heaven':       'broken_heaven',
+    'wiki/porkys-legacy-era-of-corruption/corruption-research/error_3008-samside':  'Error3008 (THE SAMSIDE)',
+    'projects/porkys-legacy':                                                       "Porky's Legacy",
+    'projects/porkys-legacy-era-of-corruption':                                     "Porky's Legacy: Era of Corruption",
+    'projects/rewinded-nights':                                                     'Rewinded Nights',
+    'projects/rewinded-misery':                                                     'Rewinded Misery',
   };
 
   function labelFor(param) {
@@ -138,9 +138,7 @@
     var label  = labelFor(parent ? hrefToParam(parent) : '');
     backLabel.textContent = label;
 
-    /* Reset and re-measure scroll: same ping-pong pattern as the music
-       player's track name, so long page names scroll instead of
-       stretching/cutting the button. */
+    /* Reset and measure scroll to apply ping-pong animation for long titles without overflowing the button. */
     backLabel.style.transform = 'translateX(0)';
     _backScrollPos = 0; _backScrollDir = 1; _backScrollPause = 0;
     if (_backScrollRaf) { cancelAnimationFrame(_backScrollRaf); _backScrollRaf = null; }
@@ -169,22 +167,11 @@
     else         closePanel();
   }
 
-  /* Track the href we actually WANT to load (may differ from what's in the
-     frame if the user navigates quickly). Only the load event for the
-     matching expectedHref should update state. */
+  /* Only update state if the load matches the expectedHref, ignoring obsolete navigations. */
   var expectedHref = null;
   var loadTimeout  = null;
 
-  /* Navigate the iframe without letting it push its own entry into the
-     browser's joint session history. Plain `frame.src = href` creates a
-     SEPARATE history entry for the iframe's own navigable, so one press
-     of the browser's back/forward buttons could pop that entry alone —
-     visually showing the right page, but never firing this window's
-     popstate, leaving currentHref/expectedHref (and therefore the music
-     player) stuck on the previous page until a real click navigated
-     again. location.replace() swaps the iframe's document without adding
-     a history entry, so the outer pushState/popstate above stays the
-     single source of truth for back/forward. */
+  /* Use location.replace() to navigate the iframe without adding history entries, keeping the main state synchronized. */
   function navigateFrame(href) {
     try {
       frame.contentWindow.location.replace(href);
@@ -280,10 +267,7 @@
     }
   });
 
-  /* Sync URL when iframe finishes loading.
-     Don't rely on reading frame.contentDocument.URL — that throws/returns
-     empty under file:// (no server), which silently broke music updates.
-     We already know what we asked the iframe to load via expectedHref. */
+  /* Sync URL when iframe finishes loading. */
   frame.addEventListener('load', function () {
     if (!expectedHref) return; /* about:blank or stale load */
 
@@ -332,26 +316,30 @@
   var splashDiv = document.getElementById('hub-splash');
   var t = 0;
 
+  var MOBILE_MQ = window.matchMedia('(max-width: 900px)');
+
   function tick() {
-    if (animRunning && window.innerWidth > 640) {
+    if (animRunning) {
       t += 0.08;
+      var mobile = MOBILE_MQ.matches;
       btnEls.forEach(function(item){
         var c=item.c;
         var x=c.ax*Math.sin(c.fx*t+c.px), y=c.ay*Math.cos(c.fy*t+c.py);
-        item.el.style.transform = TM[item.el.id]+' translate('+x+'px,'+y+'px)';
+        item.el.style.transform = (mobile ? '' : TM[item.el.id]+' ') + 'translate('+x+'px,'+y+'px)';
       });
       var rot = 12 * Math.sin(0.28 * t);
       if (logoEl)    logoEl.style.transform = 'rotate('+rot+'deg)';
       if (splashDiv) {
+        //  ULTRA NECESSARY COMMENT IN THIS LINE OF CODE SPECIALLY ;3 ... WHY ARE YOU LOOKING IN HERE SILLY?! >:3c
         var b = 1 + 0.08*Math.abs(Math.sin(t*1.8));
-        splashDiv.style.transform = 'translateX(-50%) rotate('+(-rot*.9)+'deg) scale('+b+')';
+        splashDiv.style.transform = (mobile ? '' : 'translateX(-50%) ') + 'rotate('+(-rot*.9)+'deg) scale('+b+')';
       }
     }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 
-  var GIFS=[5,17,27], TOTAL=40;
+  var GIFS=[17,27], TOTAL=40;
   var lA=document.getElementById('bg-layer-a'), lB=document.getElementById('bg-layer-b');
   if (lA && lB) {
     var active=lA, hidden=lB, cur=-1;

@@ -78,12 +78,12 @@ html.in-spa .page-frame {
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
   padding: var(--page-pad-top) var(--page-pad-x) 3rem;
-  /* Footer always at bottom even when content is short */
+  /* FOOTER AT BOTTOM */
   display: flex;
   flex-direction: column;
 }
 
-/* main grows to fill remaining space so footer is always pushed down */
+/* MAIN FILL */
 .page-frame > main {
   flex: 1;
 }
@@ -229,7 +229,7 @@ main section, main article { margin-bottom: 2rem; }
 .zoomable:hover { transform: scale(1.08); box-shadow: 0 4px 18px rgba(0,0,0,.5); }
 .zoomable-solo { cursor: zoom-in; transition: transform .2s ease; }
 .zoomable-solo:hover { transform: scale(1.05); }
-/* Hover-only: scales on mouse-over, no special cursor or lightbox */
+/* IMAGE HOVER ZOOM */
 .img-hover-only { cursor: default; transition: transform .2s ease; }
 .img-hover-only:hover { transform: scale(1.05); }
 
@@ -296,29 +296,24 @@ main section, main article { margin-bottom: 2rem; }
 .skin-preview-desc { margin: 0; max-width: 50ch; }
 
 .media-layout {
-  display: flex;
-  flex-direction: row;   /* text left, images right */
-  gap: 1.8rem;
-  align-items: flex-start;
-  justify-content: center;
   margin: 1.8rem auto;
-  flex-wrap: nowrap;
   max-width: 900px;
 }
+.media-layout::after { content: ""; display: table; clear: both; }
 
 .media-layout .media-images {
-  flex: 0 0 auto;
-  max-width: 340px;
+  float: right;
+  max-width: 240px;
+  margin: 0 0 1.2rem 1.6rem;
   display: flex;
   flex-direction: column;
   gap: .8rem;
   align-items: center;
-  order: 2;
 }
 
 .media-layout .media-images img {
   width: 100%;
-  max-width: 320px;
+  max-width: 220px;
   height: auto;
   object-fit: contain;
   margin: 0;
@@ -340,11 +335,6 @@ main section, main article { margin-bottom: 2rem; }
   box-shadow: none;
 }
 
-.media-layout .media-content {
-  flex: 1 1 260px;
-  min-width: 200px;
-  order: 1;
-}
 .media-layout .media-content p {
   margin: .6rem 0;
   text-align: left;
@@ -353,11 +343,19 @@ main section, main article { margin-bottom: 2rem; }
 
 .media-content.text-left    { text-align: left; }
 
-@media (max-width: 640px) {
-  .media-layout { flex-direction: column; align-items: center; flex-wrap: wrap; }
-  .media-layout .media-images { max-width: 100%; order: 2; }
-  .media-layout .media-content { order: 1; }
+@media (max-width: 900px) {
+  .media-layout .media-images {
+    float: right;
+    max-width: min(150px, 40vw);
+    margin: 0 0 1rem 1.2rem;
+  }
+
+  html.in-spa .wiki-nav {
+    margin-top: 2.8rem;
+    border-radius: 14px;
+  }
 }
+
 
 .overview-layout { display: flex; gap: 2rem; align-items: flex-start; margin: 1.5rem 0; flex-wrap: nowrap; }
 .overview-layout .overview-text { flex: 1 1 260px; order: 1; }
@@ -414,12 +412,11 @@ main section, main article { margin-bottom: 2rem; }
   .platform-btn:hover .pf-icon, .platform-btn:focus-visible .pf-icon { transform: none; }
 }
 
-.cr-row { display: flex; gap: 1.5rem; align-items: flex-start; margin: 1.2rem 0; flex-wrap: wrap; }
-.cr-row .cr-text { flex: 1 1 220px; }
+.cr-row { margin: 1.2rem 0; }
+.cr-row::after { content: ""; display: table; clear: both; }
 .cr-row .cr-text p, .cr-row .cr-text ul { text-align: left; max-width: 100%; margin: .5rem 0; }
-.cr-row .cr-img { flex: 0 0 auto; width: 260px; cursor: default; transition: transform .2s; }
+.cr-row .cr-img { float: left; width: 200px; margin: 0 1.4rem 1rem 0; cursor: default; transition: transform .2s; }
 .cr-row .cr-img:hover { transform: scale(1.04); }
-.cr-row--left .cr-img { order: -1; }
 
 .threat-box {
   --color-threat: 200, 200, 200;
@@ -481,16 +478,12 @@ main section, main article { margin-bottom: 2rem; }
 .button-menu img { width: 140px; height: 140px; object-fit: contain; margin: 0; border-radius: 8px; flex-shrink: 0; }
 .button-menu a p { margin: 0; line-height: 1.3; }
 
-/* Compact modifier: smaller cards that size to their content (used by wiki
-   category grids such as porkys-legacy-og.html) instead of the fixed
-   190x280 box used by the default button-menu (music.html). */
+/* THIS VERSION IS LIKE DE ONE USED ON MUSIC BUT FOR THE PL(OG) WIKI SECTION */
 .button-menu--compact a { width: 160px; height: auto; padding: .9rem .7rem 1rem; }
 .button-menu--compact img { width: auto; height: auto; max-width: 100%; }
 .button-menu--compact p.menu-desc { font-size: .68rem; line-height: 1.5; opacity: .55; margin-top: .2rem; }
 
-/* Plain modifier: borderless image-only buttons (used by wiki.html's
-   top-level category picker) — same markup/behaviour as button-menu,
-   just without the card chrome. */
+/* WIKI BUTTONS */
 .button-menu--plain a {
   width: auto; height: auto; padding: 0; border: none; background: none; gap: .7rem;
 }
@@ -509,9 +502,9 @@ main section, main article { margin-bottom: 2rem; }
 
 .dj-inner { display:flex; gap:1rem; align-items:flex-start; margin-top:.5rem; }
 .dj-inner-text { flex:1 1 0; min-width:0; }
-.dj-inner-img-wrap { flex:0 0 auto; text-align:center; }
-.dj-inner-img-wrap img { max-width:160px; height:auto; border-radius:6px; }
-.dj-entity-caption { font-size:.50rem; color:rgba(255,255,255,.6); text-align:center; margin:.2rem 0 0; font-style:italic; max-width:160px; }
+.dj-inner-img-wrap { flex:0 0 auto; width:160px; text-align:center; }
+.dj-inner-img-wrap img { width:160px; height:auto; border-radius:6px; }
+.dj-entity-caption { font-size:.50rem; color:rgba(255,255,255,.6); text-align:center; margin:.2rem auto 0; font-style:italic; width:160px; }
 
 .site-footer {
   margin-top: 3rem; padding-top: 1.5rem;
@@ -550,86 +543,24 @@ main section, main article { margin-bottom: 2rem; }
 }
 #mp-vol::-moz-range-thumb { width: 12px; height: 12px; border: none; border-radius: 50%; background: #c9a6ff; cursor: pointer; }
 
-/* POSSIBLE TRASH CODE: .hub-splash only exists on index.html, and
-   index.html has its own self-contained <style> block (it never links
-   style.css at all) — so this whole rule and the @keyframes below it
-   never actually apply to anything. The real, active .hub-splash rule
-   lives inline in index.html's <head>. */
-.hub-splash {
-    position: relative !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    transform: none !important;
-
-    /* 3. Centering and spacing */
-    margin: 20px auto 0 auto !important; /* 20px above the logo, centered horizontally */
-    width: fit-content !important;
-    max-width: min(90%, 42vw); /* stays clear of the projects/news buttons, which sit at ~18% from each edge */
-
-    animation: splash-bounce 3s ease-in-out infinite !important;
-
-    font-size: clamp(0.65rem, 1.7vw, 1.2rem);
-    line-height: 1.35;
-    font-weight: bold;
-    text-align: center;
-    pointer-events: none;
-    white-space: pre-line;
-    overflow-wrap: break-word;
-    color: yellow !important;
-
-    text-shadow:
-        2px 2px 0 #000,
-       -2px 2px 0 #000,
-        2px -2px 0 #000,
-       -2px -2px 0 #000;
-    z-index: 10;
-}
-
-@keyframes splash-bounce {
-    0% {
-        transform: rotate(-4deg) scale(0.95) !important;
-    }
-    50% {
-        transform: rotate(4deg) scale(1.10) !important;
-    }
-    100% {
-        transform: rotate(-4deg) scale(0.95) !important;
-    }
-}
-/* END POSSIBLE TRASH CODE */
-
 .logo-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;    /* Perfect horizontal centering */
+    align-items: center;
     justify-content: center;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    pointer-events: none;   /* So it doesn't block clicks */
+    pointer-events: none;
 }
 
 .no-wiki-nav .wiki-nav { display: none !important; }
 
 .wiki-nav ul { justify-content: center; }
 
-/* Allow images to shrink gracefully */
-.media-layout .media-images img {
-  max-width: min(320px, 40vw);
-}
-/* When the image stack is tall, let text flow below */
-.media-layout {
-  align-items: flex-start;
-}
-/* img-grid natural — better fill */
+/* IMAGE GRID (MORE NATURAL :3c) */
 .img-grid--natural {
   display: flex;
   flex-wrap: wrap;
@@ -650,16 +581,31 @@ main section, main article { margin-bottom: 2rem; }
   box-shadow: 0 4px 16px rgba(0,0,0,.5);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .news-year-grid { grid-template-columns: 1fr; }
   .overview-layout { flex-direction: column-reverse; }
   .overview-layout .overview-img-col { width: 100%; align-items: center; }
   .overview-layout .overview-img-col img { width: 100%; max-width: 320px; max-height: none; }
-  .cr-row { flex-direction: column; }
-  .cr-row .cr-img { width: 100%; }
+  .cr-row .cr-img { width: min(140px, 38vw); margin: 0 1rem 1rem 0; }
   .img-grid--2col { grid-template-columns: 1fr; }
   .img-grid--natural { justify-content: center; }
   #music-player { top: .5rem; left: .5rem; }
-  .media-layout .media-images img { max-width: min(280px, 80vw); }
+
+  .dj-inner { flex-direction: column; align-items: center; }
+  .dj-inner-text { width: 100%; }
+  .dj-inner-img-wrap { width: min(220px, 60vw); }
+  .dj-inner-img-wrap img { width: min(220px, 60vw); margin: 0 auto; }
+  .dj-entity-caption { width: min(220px, 60vw); }
+
+  .img-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    gap: .5rem;
+  }
+  .img-grid > article { width: 100%; padding: .4rem; }
+  .img-grid img { width: 100%; height: auto; aspect-ratio: 1/1; }
+  .img-grid h3 { font-size: .68rem; }
+  .img-grid p { font-size: .56rem; line-height: 1.25; }
 }
 

@@ -1,15 +1,14 @@
 
 window.SecretEvents = (function () {
   var KEY = 'secretEventsEnabled';
-  var MOBILE_MQ = '(max-width: 640px)';
+  var MOBILE_MQ = '(max-width: 900px)';
 
   function isMobile() {
     return typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_MQ).matches;
   }
 
   function isEnabled() {
-    /* Probability-based secret events are always off on mobile, no matter
-       what was stored, since the toggle button is hidden there. */
+    /* THE CHANCES EASTER EGGES ARE ALWAYS DISABLED IN PHONES DUE TO THE BUTTON NOT BEING IN THERE! */
     if (isMobile()) return false;
     var v;
     try { v = localStorage.getItem(KEY); } catch (e) { return true; }
@@ -125,7 +124,7 @@ document.addEventListener('dragstart', function (e) {
 document.addEventListener('DOMContentLoaded', function () {
   var nameEl = document.getElementById('footer-credit-name');
   if (!nameEl || nameEl.tagName === 'A') return;
-  if (/\babout\.html$/.test(location.pathname)) return; /* don't link About to itself */
+  if (/\babout\.html$/.test(location.pathname)) return; /* ABOUT IN FOOTER */
 
   var thisScript = document.currentScript ||
     Array.prototype.find.call(document.scripts, function (s) { return /js\/global\.js$/.test(s.src); });

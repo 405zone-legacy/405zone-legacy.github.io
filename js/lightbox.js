@@ -100,7 +100,7 @@
         im.addEventListener('click', function () { open(imgs, i); });
       });
     });
-    /* Natural gallery grids — all images zoomable together */
+    /* NATURAL GALLERY GRIDS - CAN BE ZOOMED */
     document.querySelectorAll('.img-grid--natural').forEach(function (grid) {
       var imgs = grid.querySelectorAll('img');
       imgs.forEach(function (im, i) {
@@ -112,12 +112,12 @@
     document.querySelectorAll('img.zoomable-solo').forEach(function (im) {
       im.addEventListener('click', function () { open([im], 0); });
     });
-    /* Overview image zoomable */
+    /* OVERVIEW IMG ZOOMABLE */
     document.querySelectorAll('.overview-img-col img').forEach(function (im) {
       im.style.cursor = 'zoom-in';
       im.addEventListener('click', function () { open([im], 0); });
     });
-    /* Skin previews */
+    /* SKIN PREVIEWS (ALSO VERSIONES IN CASE POF PL-EOC) */
     document.querySelectorAll('.skin-preview-img').forEach(function (im) {
       im.addEventListener('click', function () { open([im], 0); });
     });

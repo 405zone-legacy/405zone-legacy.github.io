@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>missingno</title>
+  <title>MISSINGNO</title>
   <link rel="icon" type="image/x-icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/samside-base.css">
   <script src="../js/samside-base.js"></script>
@@ -32,7 +32,7 @@
       transition: bottom 1.1s cubic-bezier(.2, .8, .2, 1);
     }
     .flappy-usucc.rise {
-      bottom: -8vh;                /* stops halfway, peeking out */
+      bottom: -8vh;                /* PEDRO U_SUCC MANAGER */
     }
 
     .flappy-mute {
@@ -101,12 +101,12 @@
       var state = { img: img, loaded: false };
       function settle() { if (onSettle) onSettle(); }
       img.onload = function () { state.loaded = true; settle(); };
-      img.onerror = function () { settle(); }; /* doesn't exist: doesn't block preloading */
+      img.onerror = function () { settle(); };
       img.src = src;
       return state;
     }
 
-    var assetsPending = 3; // rodolfo + bg texture + pipe texture
+    var assetsPending = 3;
     function assetSettled() {
       assetsPending--;
       if (assetsPending <= 0) {
@@ -139,12 +139,12 @@
     }
     muteBtn.addEventListener('click', toggleMusic);
 
-    var GRAVITY = 1400;      // px/s^2
-    var FLAP_VELOCITY = -430; // px/s
+    var GRAVITY = 1400;
+    var FLAP_VELOCITY = -430;
     var PIPE_GAP = 190;
     var PIPE_WIDTH = 70;
-    var PIPE_SPEED = 220;    // px/s
-    var PIPE_INTERVAL = 1500; // ms
+    var PIPE_SPEED = 220;
+    var PIPE_INTERVAL = 1500;
 
     var state, rodolfo, pipes, lastPipeTime, score, lastTime, usuccTimer;
     var deathJingle = null;
@@ -162,10 +162,10 @@
       score = 0;
       scoreEl.textContent = '0';
       lastTime = null;
-      // so it doesn't stay "stuck" mid-rise if it restarts
+      // FIXED PEDRO PAQUETE SOFTLOCK! :3c
       clearTimeout(usuccTimer);
       if (usuccEl) usuccEl.classList.remove('rise');
-      // stop the "you lost" jingle once you leave game over
+      // STOP THE "U_SUCC.MP3" SFX XD
       if (deathJingle) {
         deathJingle.pause();
         deathJingle.currentTime = 0;
@@ -233,12 +233,12 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // that the canvas's own stylesheet already sets.
+      // BG
       if (bgTexture.loaded) {
         ctx.drawImage(bgTexture.img, 0, 0, canvas.width, canvas.height);
       }
 
-      // Pipes: repeated texture if loaded, otherwise solid green
+      // Pipes
       var pipeFill = null;
       if (pipeTexture.loaded) {
         pipeFill = ctx.createPattern(pipeTexture.img, 'repeat');
