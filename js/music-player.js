@@ -50,7 +50,7 @@
         { re: /^wiki$/,                                                     tracks: ['tapped_tragedy'] },
         { re: /wiki\/porkys-legacy-og/,                                     tracks: ['sinner_retake'] },
         { re: /wiki\/porkys-legacy-era-of-corruption(?!\/)/,                tracks: ['ur_ma_bst_fren'] },
-        { re: /wiki\/porkys-legacy-era-of-corruption\/knoweldge-research/,  tracks: ['ur_ma_bst_fren'] },
+        { re: /wiki\/porkys-legacy-era-of-corruption\/knowledge-research/,  tracks: ['ur_ma_bst_fren'] },
         { re: /corruption-research(?!\/)/,                                  tracks: ['the_wind_is_blowing_and_the_roses_are_growing', 'an_empty_lotus_is_all_I_am'], mode: 'hour8to18' },
         { re: /corruption-research\/global.impact/,                         tracks: ['tape_jingle'] },
         { re: /corruption-research\/ominous.valley/,                        tracks: ['calmed1', 'decayed1', 'passed_out1'], mode: 'rand' },

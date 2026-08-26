@@ -98,7 +98,7 @@
     'music':                                                                        'Music',
     'wiki/porkys-legacy-og':                                                        "Pork's Legacy",
     'wiki/porkys-legacy-era-of-corruption':                                         "Pork's Legacy: Era of Corruption",
-    'wiki/porkys-legacy-era-of-corruption/knoweldge-research':                      'Knowledge Research',
+    'wiki/porkys-legacy-era-of-corruption/knowledge-research':                      'Knowledge Research',
     'wiki/porkys-legacy-era-of-corruption/corruption-research':                     'Corruption Research',
     'wiki/porkys-legacy-era-of-corruption/corruption-research/global-impact':       'Global Impact',
     'wiki/porkys-legacy-era-of-corruption/corruption-research/ominous-valley':      'Ominous Valley',
