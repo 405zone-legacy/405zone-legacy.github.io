@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>MONOPOLY POOL!!</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    html, body, .samside-stage { touch-action: none; user-select: none; background: url('../../media/casino_bg.png') center/cover no-repeat; margin: 0; height: 100%; overflow: hidden; }
+
+    .samside-stage {
+      display: flex;
+      flex-direction: row;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* --- Pedro Zone  --- */
+    .jg-pedro-zone {
+      position: relative;
+      width: 35%;
+      height: 100%;
+      background: #1a1028;
+      background: url('../../media/casino_bg.png') center/cover no-repeat;
+      border-right: 4px solid #333;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .jg-pedro {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    /* --- Cards Zone --- */
+    .jg-cards-zone {
+      position: relative;
+      flex: 1;
+      height: 100%;
+      overflow: hidden;
+    }
+    .jg-table {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* --- HUD --- */
+    .jg-hud {
+      position: absolute;
+      z-index: 5;
+      top: 2%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: #fff;
+      text-shadow: 0 0 8px #000;
+      pointer-events: none;
+      padding: 10px 0;
+    }
+    .jg-title { font-size: clamp(1rem, 3vw, 1.6rem); letter-spacing: 3px; }
+    .jg-tries { font-size: clamp(.8rem, 2.2vw, 1.05rem); margin-top: .3em; }
+
+    /* --- Board --- */
+    .jg-board {
+      position: absolute;
+      z-index: 4;
+      top: 12%;
+      left: 4%;
+      right: 4%;
+      bottom: 4%;
+      display: grid;
+      justify-content: center;
+      align-content: start;
+    }
+    .jg-card {
+      position: relative;
+      cursor: pointer;
+      perspective: 600px;
+    }
+    .jg-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform .35s;
+      transform-style: preserve-3d;
+    }
+    .jg-card.flipped .jg-card-inner,
+    .jg-card.matched .jg-card-inner { transform: rotateY(180deg); }
+    .jg-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+    .jg-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .jg-back { background: #221; }
+    .jg-front { transform: rotateY(180deg); background: #000; }
+    .jg-card.matched { opacity: 0; pointer-events: none; transition: opacity .4s .3s; }
+
+    /* --- Overlays --- */
+    #jgMsg {
+      position: fixed;
+      z-index: 50;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.88);
+      color: #fff;
+      font-size: clamp(1.2rem, 5vw, 2.4rem);
+      text-align: center;
+      flex-direction: column;
+      gap: .6em;
+    }
+    #jgBonus {
+      position: fixed;
+      z-index: 6;
+      color: #6f6;
+      font-size: clamp(1rem, 3vw, 1.6rem);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s, transform .8s;
+      text-shadow: 0 0 10px #000;
+    }
+
+    /* === PORTRAIT === */
+    @media (orientation: portrait) {
+      .samside-stage { flex-direction: column; }
+      .jg-pedro-zone {
+        width: 100%;
+        height: 30%;
+        border-right: none;
+        border-bottom: 4px solid #333;
+      }
+      .jg-pedro {
+        object-position: top center;
+      }
+      .jg-cards-zone {
+        width: 100%;
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" id="stg">
+
+    <div class="jg-pedro-zone">
+      <img class="jg-pedro no-drag" id="jgPedro" alt="" draggable="false" src="../../media/pedro_jenga_default.png">
+    </div>
+
+    <div class="jg-cards-zone">
+      <img class="jg-table no-drag" src="../../media/cards/table.png" alt="" draggable="false">
+      <div class="jg-hud">
+        <div class="jg-title">JENGA &mdash; ROUND <span id="jgRound">1</span></div>
+        <div class="jg-tries">TRIES LEFT: <span id="jgTries">5</span></div>
+      </div>
+      <div class="jg-board" id="jgBoard"></div>
+    </div>
+
+    <div id="jgBonus">+1 TRY</div>
+    <div id="jgMsg"><div id="jgMsgText"></div><div style="font-size:.5em;opacity:.8;">You loose!</div></div>
+  </div>
+
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/THINK_PEDRO_THINK.mp3'), { loop: true, volume: .15 });
+    function sfx(name, vol) { try { var a = new Audio(SAMSIDE.url('sfx/' + name)); a.volume = vol || .7; a.play().catch(function () {}); } catch (e) {} }
+
+    var MAX_FRONTS = 15, MAX_PAIRS = 15, TRIES_PER_ROUND = 5;
+    var BACK = SAMSIDE.url('media/cards/back.png');
+    function frontSrc(n) { return SAMSIDE.url('media/cards/front' + n + '.png'); }
+
+    var pedro = document.getElementById('jgPedro');
+    pedro.onerror = function () { pedro.style.display = 'none'; };
+    function setPedro(state) { pedro.src = SAMSIDE.url('media/pedro_jenga_' + state + '.png'); }
+
+    var round = 1, tries = TRIES_PER_ROUND, board = document.getElementById('jgBoard'), locked = false, flipped = [], matchedCount = 0, pairs = 0, bonusTries = 0;
+
+    function pairsForRound(r) { return Math.min(MAX_PAIRS, 3 + (r - 1) * 2); }
+
+    function gridDims(n) {
+  var zone = board.parentElement;
+  var zoneW = zone.clientWidth * 0.92;
+  var zoneH = zone.clientHeight * 0.82;
+  var gap = Math.max(3, Math.min(8, zoneW * 0.008));
+
+  var best = null, bestCardH = 0;
+  for (var cols = 1; cols <= n; cols++) {
+    var rows = Math.ceil(n / cols);
+    if (cols * rows > n + 8) continue;
+
+    var byW = (zoneW - (cols - 1) * gap) / (cols * CARD_RATIO);
+    var byH = (zoneH - (rows - 1) * gap) / rows;
+    var cardH = Math.min(byW, byH);
+
+    if (cardH > bestCardH) {
+      bestCardH = cardH;
+      best = { cols: cols, rows: rows };
+    }
+  }
+  return best;
+}   
+
+    function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+    function updateTries(v) { tries = v; document.getElementById('jgTries').textContent = tries; }
+    var CARD_RATIO = 183 / 260;
+    function calcCardSize(dims) {
+      var zone = board.parentElement;
+      var zoneW = zone.clientWidth * 0.92;
+      var zoneH = zone.clientHeight * 0.82;
+      var gap = Math.max(3, Math.min(8, zoneW * 0.008));
+
+      var byW = (zoneW - (dims.cols - 1) * gap) / (dims.cols * CARD_RATIO);
+      var byH = (zoneH - (dims.rows - 1) * gap) / dims.rows;
+      var cardH = Math.floor(Math.min(byW, byH));
+
+      var maxH = Math.floor(zoneW * 0.28);
+      if (cardH > maxH) cardH = maxH;
+
+      var cardW = Math.floor(cardH * CARD_RATIO);
+      return { cardW: cardW, cardH: cardH, gap: gap };
+    }
+    function startRound() {
+      locked = false; flipped = []; matchedCount = 0; updateTries(TRIES_PER_ROUND + bonusTries); bonusTries = 0;
+      pairs = pairsForRound(round);
+      document.getElementById('jgRound').textContent = round;
+      setPedro('default');
+
+      var frontIds = [];
+      for (var i = 0; i < pairs; i++) frontIds.push(1 + (i % MAX_FRONTS));
+      var deck = shuffle(frontIds.concat(frontIds).map(function (id, i) { return { id: id, key: i }; }));
+
+            var dims = gridDims(deck.length);
+      var sizes = calcCardSize(dims);
+      var totalCells = dims.cols * dims.rows;
+
+      board.innerHTML = '';
+      board.style.gap = sizes.gap + 'px';
+      board.style.gridTemplateColumns = 'repeat(' + dims.cols + ', ' + sizes.cardW + 'px)';
+      board.style.gridTemplateRows = 'repeat(' + dims.rows + ', ' + sizes.cardH + 'px)';
+
+      for (var i = 0; i < totalCells; i++) {
+  if (i < deck.length) {
+    (function() {
+      var card = document.createElement('div'); card.className = 'jg-card'; card.dataset.id = deck[i].id;
+      var inner = document.createElement('div'); inner.className = 'jg-card-inner';
+
+      var backFace = document.createElement('div'); backFace.className = 'jg-face jg-back';
+      var backImg = document.createElement('img'); backImg.className = 'no-drag'; backImg.alt = ''; backImg.draggable = false;
+      backImg.onerror = function () { backFace.style.background = '#332'; backImg.remove(); }; backImg.src = BACK;
+      backFace.appendChild(backImg);
+
+      var frontFace = document.createElement('div'); frontFace.className = 'jg-face jg-front';
+      var frontImg = document.createElement('img'); frontImg.className = 'no-drag'; frontImg.alt = ''; frontImg.draggable = false;
+      frontImg.onerror = function () { frontFace.style.background = '#555'; frontImg.remove(); }; frontImg.src = frontSrc(deck[i].id);
+      frontFace.appendChild(frontImg);
+
+      inner.appendChild(backFace); inner.appendChild(frontFace); card.appendChild(inner);
+      card.addEventListener('click', function () { onCardClick(card); });
+      board.appendChild(card);
+    })();
+  } else {
+    var empty = document.createElement('div');
+    empty.style.visibility = 'hidden';
+    board.appendChild(empty);
+  }
+}   
+    }
+
+    var resizeTimer;
+  window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function () {
+    var dims = gridDims(pairs * 2);
+    var sizes = calcCardSize(dims);
+    board.style.gap = sizes.gap + 'px';
+    board.style.gridTemplateColumns = 'repeat(' + dims.cols + ', ' + sizes.cardW + 'px)';
+    board.style.gridTemplateRows = 'repeat(' + dims.rows + ', ' + sizes.cardH + 'px)';
+  }, 150);
+});   
+
+    function bonusPopup(x, y) {
+      var b = document.getElementById('jgBonus');
+      b.style.left = x + 'px'; b.style.top = y + 'px'; b.style.transform = 'translate(-50%,0)'; b.style.opacity = 1;
+      requestAnimationFrame(function () { b.style.transform = 'translate(-50%,-30px)'; b.style.opacity = 0; });
+    }
+
+    function onCardClick(card) {
+      if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      card.classList.add('flipped'); flipped.push(card);
+      if (flipped.length < 2) return;
+      locked = true;
+      var a = flipped[0], b = flipped[1];
+      sfx('flap.mp3', .35);
+      setTimeout(function () {
+        if (a.dataset.id === b.dataset.id) {
+          a.classList.add('matched'); b.classList.add('matched');
+          matchedCount++; 
+          updateTries(tries + 1);
+          var r = b.getBoundingClientRect(); bonusPopup(r.left + r.width / 2, r.top);
+          flipped = []; locked = false;
+          if (matchedCount >= pairs) { roundWin(); }
+          else{setPedro('lose'); sfx('hit.mp3', .8); setTimeout(function () {setPedro('default');}, 500);}
+        } else {
+          a.classList.remove('flipped'); b.classList.remove('flipped');
+          flipped = []; updateTries(tries - 1);
+          locked = false;
+          if (tries <= 0) roundLose();
+        }
+      }, 700);
+    }
+
+    function roundWin() {
+      locked = true; setPedro('win'); sfx('airhorn.mp3', .25);
+      bonusTries = Math.floor(tries * 0.5);
+      setTimeout(function () { round++; startRound(); }, 1600);
+    }
+
+    function roundLose() {
+      locked = true; setPedro('lose'); sfx('sinber_laugh.mp3', .35);
+      document.getElementById('jgMsgText').textContent = "PEDRO WON!";
+      document.getElementById('jgMsg').style.display = 'flex';
+      setTimeout(function () {
+        document.getElementById('jgMsg').style.display = 'none';
+        round = 1; startRound();
+      }, 1800);
+    }
+
+    startRound();
+  </script>
+</body>
+</html>   

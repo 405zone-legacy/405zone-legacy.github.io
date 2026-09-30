@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAIN/ORIGIN</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    html, body { background: #000; }
+    .og-bg { opacity: .12; }
+    .og-app {
+      position: fixed; inset: 0; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: clamp(.6rem, 2.5vmin, 2rem);
+    }
+    .og-panel {
+      position: relative;
+      width: min(96vw, 1180px); height: min(94vh, 860px);
+      background: rgba(0,8,0,.92);
+      border: 2px solid #0f0; box-shadow: 0 0 22px rgba(0,255,0,.35), inset 0 0 40px rgba(0,255,0,.06);
+      color: #0f0; font-family: inherit;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .og-titlebar {
+      flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1em;
+      padding: .5em .8em; border-bottom: 1px solid #0f0; font-size: clamp(.7rem, 1.6vw, .95rem);
+      letter-spacing: 2px;
+    }
+    #ogPath { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #ogClock { flex: 0 0 auto; }
+    .og-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: clamp(.8rem, 3vw, 2rem); }
+    /* CMD-styled scrollbar, since scrolling in here is unavoidable */
+    .og-body { scrollbar-width: thin; scrollbar-color: #0f0 #001500; }
+    .og-body::-webkit-scrollbar { width: 10px; }
+    .og-body::-webkit-scrollbar-track { background: #001500; }
+    .og-body::-webkit-scrollbar-thumb { background: #0f0; box-shadow: inset 0 0 0 1px #000; }
+    .og-body::-webkit-scrollbar-thumb:hover { background: #4f4; }
+
+    .og-back {
+      background: none; border: 1px solid #0f0; color: #0f0; font: inherit; font-size: .85em;
+      padding: .3em .8em; cursor: pointer; margin-bottom: 1.2em;
+    }
+    .og-back:hover, .og-back:focus-visible { background: #0f0; color: #000; }
+
+    /* ---------- MENU ---------- */
+    .og-menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.4rem; }
+    .og-menu-item { background: none; border: 1px solid #0f0; color: #0f0; font: inherit; cursor: pointer; padding: 1.1em .6em; text-align: center; }
+    .og-menu-item:hover, .og-menu-item:focus-visible { background: rgba(0,255,0,.12); }
+    .og-menu-item .og-mi-tag { display: block; font-size: 1.05em; letter-spacing: 2px; margin-bottom: .3em; }
+    .og-menu-sub { min-height: 1.6em; text-align: center; margin-top: 1.6rem; font-size: .8em; opacity: .8; letter-spacing: 1px; }
+
+    /* ---------- UNIVERSE VIEW ---------- */
+    .og-u-row { display: flex; gap: clamp(1rem, 3vw, 2.4rem); align-items: flex-start; margin-bottom: 1.6em; }
+    .og-u-text { flex: 1 1 0; min-width: 0; }
+    .og-u-title { font-size: clamp(1.1rem, 3vw, 1.7rem); letter-spacing: 2px; margin-bottom: .5em; }
+    .og-u-line { margin-bottom: .4em; font-size: .95em; }
+    .og-u-frame {
+      flex: 0 0 auto; width: clamp(120px, 22vw, 260px); aspect-ratio: 1;
+      border: 1px solid #0f0; display: flex; align-items: center; justify-content: center; background: #000;
+    }
+    .og-u-frame img { max-width: 100%; max-height: 100%; object-fit: contain; filter: url(#ogImgFx); }
+    @media (max-width: 620px) {
+      .og-u-row { flex-direction: column; }
+      .og-u-frame { align-self: center; width: min(50vw, 200px); }
+    }
+
+    .og-accordion { border-top: 1px dashed rgba(0,255,0,.4); margin-top: 1em; }
+    .og-acc-head {
+      width: 100%; background: none; border: 0; color: #0f0; font: inherit; text-align: left; cursor: pointer;
+      padding: .7em 0; font-size: .95em; letter-spacing: 1px; display: flex; align-items: center; gap: .5em;
+    }
+    .og-acc-head::before { content: '▶'; font-size: .7em; transition: transform .15s; }
+    .og-acc-head.open::before { transform: rotate(90deg); }
+    .og-acc-body { display: none; padding: 0 0 1em .2em; }
+    .og-acc-body.open { display: block; }
+
+    .og-victims { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 2em; font-size: .85em; opacity: .85; }
+    .og-victims li { margin-bottom: .4em; break-inside: avoid; }
+
+    .og-ev-row { display: flex; align-items: baseline; gap: .5em; padding: .35em 0; font-size: .85em; }
+    .og-ev-row.clickable { cursor: pointer; }
+    .og-ev-row.clickable:hover .og-ev-tag { text-decoration: underline; }
+    .og-ev-row:not(.clickable) { opacity: .62; }
+    .og-ev-dots { flex: 1 1 auto; border-bottom: 2px dotted currentColor; height: 0; align-self: center; min-width: 1em; }
+    .og-ev-date { flex: 0 0 auto; white-space: nowrap; }
+
+    /* ---------- EVENT VIEW ---------- */
+    .og-ev-title { text-align: center; font-size: clamp(1.1rem, 3.2vw, 1.8rem); letter-spacing: 2px; margin-bottom: 1.2em; }
+    .og-ev-body-row { display: flex; gap: clamp(1rem, 3vw, 2.4rem); align-items: flex-start; }
+    .og-ev-bullets { flex: 1 1 0; min-width: 0; list-style: none; padding: 0; margin: 0; }
+    .og-ev-bullets li { margin-bottom: 1em; font-size: .92em; line-height: 1.6; }
+    .og-ev-bullets li::before { content: '– '; opacity: .7; }
+    .og-ev-frame {
+      flex: 0 0 auto; width: clamp(130px, 24vw, 280px); aspect-ratio: 1;
+      border: 1px solid #0f0; display: flex; align-items: center; justify-content: center; background: #000;
+    }
+    .og-ev-frame img { max-width: 100%; max-height: 100%; object-fit: contain; filter: url(#ogImgFx); }
+    @media (max-width: 620px) {
+      .og-ev-body-row { flex-direction: column; }
+      .og-ev-frame { align-self: center; width: min(50vw, 220px); }
+    }
+
+    /* glitch text: base character occasionally swapped for garbage */
+    .og-glitch { color: #f22; }
+
+    /* password dialog (for BREACHES > [THE_PLAN]) */
+    .og-pw-wrap { position: fixed; inset: 0; z-index: 20; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.8); }
+    .og-pw-wrap.on { display: flex; }
+    .og-pw { background: #000; border: 2px solid #0f0; padding: 1.2rem 1.4rem; color: #0f0; text-align: center; max-width: 90vw; }
+    .og-pw input { background: #000; color: #0f0; border: 1px solid #0f0; font: inherit; padding: .3rem; width: 11ch; margin: 0 .4rem; }
+    .og-pw button { background: #000; color: #0f0; border: 1px solid #0f0; font: inherit; padding: .3rem .7rem; cursor: pointer; }
+    .og-pw p { margin: .6rem 0 0; color: #f33; min-height: 1.2em; }
+    .og-shake { animation: og-shake .3s; }
+    @keyframes og-shake { 25% { margin-left: -8px } 75% { margin-left: 8px } }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" style="position:fixed;">
+    <img class="samside-bg no-drag og-bg" src="../../media/origin.png" alt="" draggable="false">
+  </div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="ogImgFx" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="
+        0.2 0.2 0.2 0 0
+        0.3 0.9 0.3 0 0
+        0.1 0.1 0.1 0 0
+        0   0   0   1 0" result="tinted"/>
+      <feTurbulence id="ogNoise" type="fractalNoise" baseFrequency="0.02 0.03" numOctaves="1" seed="9" result="n"/>
+      <feDisplacementMap id="ogDisp" in="tinted" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+  <div class="og-app">
+    <div class="og-panel">
+      <div class="og-titlebar"><span id="ogPath">C:\ORIGIN&gt;</span><span id="ogClock"></span></div>
+      <div class="og-body" id="ogBody"></div>
+    </div>
+  </div>
+
+  <div class="og-pw-wrap" id="ogPwWrap">
+    <form class="og-pw" id="ogPwForm" autocomplete="off">
+      <label for="ogPw">PASSWORD:</label>
+      <input id="ogPw" type="password" maxlength="24" autocapitalize="off" spellcheck="false">
+      <button type="submit">&gt;</button>
+      <p id="ogPwMsg"></p>
+    </form>
+  </div>
+
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/N0ST4LG1C_C0R3.mp3'), { loop: true, volume: .2 });
+    // function sfx(name, vol) { try { var a = new Audio(SAMSIDE.url('sfx/' + name)); a.volume = vol || .1; a.play().catch(function () {}); } catch (e) {} }
+    var KEY_SFX = SAMSIDE.site('sfx/gui_key.mp3');
+    var REJECT_SFX = SAMSIDE.site('sfx/gui_reject.mp3');
+    var SUCCESS_SFX = SAMSIDE.site('sfx/gui_success.mp3');
+
+    /* ============ DATA ============ */
+    var UNIVERSES = [
+  {
+    id: 'u_o', tag: 'U_O',
+    created: `CREATED IN 2015 by ElProHD405;`,
+    status: `STATUS: FINISHED;`,
+    desc: `The original universe was where most of the beings came from; many slop copies made them sink into the abyss where this universe belongs from the first breath. Never let your inner child write the script, even less if it is autistic... =_=`,
+    victims: [
+      `*Osit`, `Delfit`, `Conejit`, `Ambrosio`, `Ambrosia`,
+      `Porky Jones`, `El {Calabazero}`, `Mark Drew`, `[{REDACTED}] Drew`, `*Oveji Jones`, `{Porky/Porkrome}`,
+      `Samuel (Molten Nightmares)`, `Tortura`, `Infernal`, `Pumpkin Man`, `Felipe`,
+      `COMMING SOON! (ITS NOT COMING SOON! THATS HER {########} NAME!)`, `Gabriel`, 
+      `*Phamnolo`, `{Tipexaidir}`, `{Manueh}`, `Dave`
+    ],
+    events: [
+      { id: 'mass_murder', tag: `[MASS_MURDER]`, date: `1960`, bullets: [
+        `Manueh & Dave murdered and {######} a total of {##} employees.`
+      ]},
+      { id: 'pjd', tag: `[PJD]`, date: `1970`, bullets: [
+        `Mark Drew funds an animation studio under the name of "Mark Drew Studios"; his favorite employee, Anthony Miller, was the one who designed the characters Porky Jones & Oveji Jones.`
+      ]},
+      { id: 'osit_friends', tag: `[OSIT_&_FRIENDS]`, date: `1975`, bullets: [
+        `NO INFO AVAILABLE!`
+      ]},
+      { id: 'redacted_1983', tag: `[REDACTED]`, date: `1983`, bullets: [] },
+      { id: 'anthony_death', tag: `[ANTHONY_DEATH]`, date: `1993`, bullets: [
+        `Anthony Miller was run over by a car driven by a drunk person; his hospitalization was rushed, but they were late... [AS ALWAYS]!`
+      ]},
+      { id: 'samside_pjd', tag: `[SAMSIDE_PJD] {[PJRLL]}`, date: `1993-2050`, bullets: [
+        `Anthony Miller was sent to some type of "post-death pocket dimension" that place was acting like some type of hell where he was able to see a distorted version of the factory he worked.`,
+        `Funny thing, even if he was brainwashed and his story was looped over and over again, he was somehow able to break its own cycle via trial and error! As a consequence, he had to fight against Toni's Wrats to free himself from that dungeon of despair.`,
+        `Wrats demonstrates a surreal capability to travel through other dimensions and even their sub-levels, such as the SAMSIDE!`
+      ]},
+      { id: 'frankfurt', tag: `[FRANKFURT]`, date: `2000`, bullets: [
+        `Manueh built up a robot nicknamed "Frankfurt" (Yeah, no joke!). And that darn robot was able to kill his manager... This feels like a bad comedy at this point! XD`
+      ]},
+      { id: 'md_last_report', tag: `[MD_LAST_REPORT]`, date: `2005`, bullets: [
+        `Mark Drew was able to create the "Panini of Illusion" thanks to the help from Toni's Wrats, who took a bunch of them with him before disappearing into the shadows. Curious how Wrats doesn't just murder and consume consciousness but also take profit from other beings to fulfill itself.`,
+        `The card that Mark Drew owned was used inside the factory; he was able to turn a simple pile of metal into Porky Jones! Even if it was fake, he seemed very real and also live!`
+      ]},
+      { id: 'in_da_school_massacre', tag: `[IN_DA_SCHOOL_MASSACRE]`, date: `2005`, bullets: [
+        `THIS ENTRY HAS BEEN BLOCKED IN YOUR COUNTRY DUE TO LAZY REASONS!`
+      ]},
+      { id: 'tonicon_vive_news', tag: `[TONICON_VIVE_NEWS]`, date: `2032`, bullets: [
+        `{NOTHING IS WORTH THE RISK}`
+      ]},
+      { id: 'anthony_revival', tag: `[ANTHONY_REVIVAL]`, date: `2050`, bullets: [
+        `Somehow he managed to escape; it's SAMSIDE. However, he had something left to do. He returned to the ruins of the factory where he worked and was able to dismantle everything, fighting against his own fears. Then he died and somehow breached through and accessed the "Supreme Capsule."`
+      ]},
+      { id: 'dust', tag: `[DUST]`, date: `2051`, bullets: [
+        `A simple cameo for "M4N0L0"... YEAH! IT WOULD AT LEAST LAST IF ANTHONY MILLER DIDN'T DESTROY IT THE MOMENT THIS DARN MACHINE RISED! Why they give power to control the fate of this universe to someone like him and also convince me, as he has a "spirit of justice"?`
+      ]},
+      { id: 'jonatan', tag: `[JONATAN]`, date: `2051`, bullets: [
+        `A person obsessed with Porky Jones that has some type of schizophrenia or something; however, he murdered like 10 people (I don't count the animals, but this mtf also slaughtered some poor dogs! Like WTF!)`,
+        `It was noticed by Anthony Miller (late! How convenient! You could also done that with the {#######} robot! RIGHT?!) Anyway, Anthony locked Jonathan into a personal SAMSIDE he created, like the death loop he was forced to live.`
+      ]},
+      { id: 'porky_origin', tag: `[{PORKY}_ORIGIN]`, date: `2051`, bullets: [
+        `Anthony Miller created the Trojan "Porky." Its only purpose was to torture Jonatan; however, they end up merging each other, and CONGRATS! NOW YOU HAVE A {#######} TROJAN WITH THE CONCIOUSNESS OF A PSYCHOPATH! HOW CONVENIENT!`
+      ]},
+      { id: 'anthony_miller', tag: `[ANTHONY_{MILLER}]`, date: `2051`, bullets: [
+        `Funny enough, Anthony was presented to Jonatan as the son he had to save, but when Jonatan became conscious and broke the simulation, his behavior became cryptic; he even confronted him as a black pile of mass, with several eyes, exposed innards, and a skeleton hand.`
+      ]}
+    ]
+  },
+
+  {
+    id: 'u_mds', tag: 'U_MDS',
+    created: `CREATED IN 2020 by ElProHD405 & {Mono_Pixels};`,
+    status: `STATUS: BROKEN;`,
+    desc: `A fully cinematic universe where most of its products were [REDACTED]. Expect cringe since the first glance, because the copies were the scaffoldings that let us build this massacre. Glad that somehow I was able to split the cronology into 2 universes inside of it, because it was already a mess, but at least that autistic vein was able to produce something more edible after all!`,
+    victims: [
+      `Toni{274648}`, `{IBAI} el Ayuwoki`, `Odei Wazouski`, `Yayo Pere`, `*Manel`, `Lupe`,
+       `[REDACTED]`, `{[REDACTED]}`, `[REDACTED]`, `[REDACTED]`, `[REDACTED]`, `[REDACTED]`, `[REDACTED]`, `{*Pedro Paquete}`,
+    ],
+    events: [
+      { id: 'redacted_1955', tag: `[REDACTED]`, date: `1955`, bullets: [] },
+      { id: 'ayuwoki_specie', tag: `[THE_AYUWOKI_SPECIE]`, date: `1987-1988`, bullets: [
+        `Ikea was trying to create a new "gender" and ended up creating a new species known as "AYUWOKI." This species is somehow very resistant and also purple.`,
+        `Most people think that IBAI was the first one, but actually it was ODEI Wazouski; it was discarded due to an unknown reason, and because of this, it hates IBAI with its heart.`
+      ]},
+      { id: '274648', tag: `[274648]`, date: `1994`, bullets: [
+        `IBAI found Toni, and both of them became friends! :D`
+      ]},
+      { id: 'rvsb', tag: `[RvsB]`, date: `2001`, bullets: [
+        `The "RvsB" was a war where IBAI and Toni participated! Sadly Toni passed after falling from a building; IBAI was unable to save him, developing a trauma`
+      ]},
+      { id: 'rupture', tag: `[{RUPTURE}] [WTH?! STOP!! DON'T CO{RR}UP{T}!!!]`, date: `2001 {UNIVERSAL_RUIN}`, bullets: [
+        `[UNABLE] [TO] [COMPREHEND]!`,
+        `[WHY] [YOU DO] [THIS] [TO US]?!`,
+        `[THIS] [UNIVERSE] [IS] [A] [MISTAKE]!`,
+        `[YOUR] [MISTAKE]!`,
+        `{WRATS MADE IBAI SLAIN HIS BEST FRIEND...}`
+      ]},
+      { id: 'ibai_redemption', tag: `[IBAI_REDEMPTION]`, date: `2002 {UNIVERSAL_RUIN}`, bullets: [
+        `[NO] [FAULT]! [JUST] [PAIN]!`,
+        `[YOU] [DESERVE] [DEATH]!`,
+        `[BUT] [INSTEAD] [I] [MAKE] [YOU] [SUFFER]!`,
+        `{ODEI MUST KILL IBAI DUE TO THE MASSACRE [I] FORCED HIM TO DO! :)}`,
+        `{HOWEVER, ANYONE DESERVES TO BE PUT IN IT'S PLACE. ODEI WASN'T A TRUE OPPONENT TO IBAI. IBAI WON, AND ODEI WAS LEFT ALIVE INSIDE A GARBAGE CAN. WHAT A WASTE, HE COULD BECOME MORE DUST FOR MY VASE! :)}`
+      ]},
+      { id: 'redacted_2005', tag: `[REDACTED]`, date: `2005-2007`, bullets: [] },
+      { id: 'manel_vs_pere', tag: `[MANEL_VS_PERE]`, date: `2008`, bullets: [
+        `These 2 old men fought against each other; Pere won, and Manel left the earth for a long time.`
+      ]},
+      { id: 'manel_vs_pere_ruin', tag: `[MANEL_VS_PERE] [OMG! NO{T} {A}GAIN!! ST{O}P!!!]`, date: `2008 {UNIVERSAL_RUIN}`, bullets: [
+        `[MISTAKES] [FROM] [SAME] [WORLD]`,
+        `[TWO] [FACES] [FROM THE] [SAME] [MOON]`,
+        `[DIRTY] [TRAITOR]`,
+        `[BROKEN] [CREATOR]`,
+        `{MANEL WON THE FIGHT, PERE FALLEN INTO A DEEP DEPRESSION}`
+      ]},
+      { id: 'pere_met_ibai', tag: `[PERE_MET_IBAI]`, date: `2010`, bullets: [] },
+      { id: 'pereiras_eleven', tag: `[PEREIRAS_ELEVEN]`, date: `2012`, bullets: [
+        `Pere, IBAI, and their friends took revenge over Ikea and robbed many things.`
+      ]},
+      { id: 'ibailestellar', tag: `[IBAILESTELLAR]`, date: `2015`, bullets: [
+        `IBAI has a dream where it dies in space, so it builds up a rocket with all the money and goes to space and then {DISAPPEARS}.`,
+        `[{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}]`
+      ]},
+      { id: 'pere_slaughter', tag: `[{PERE}_{SLAUGHTER}] [S{TOOO}OOOOOOO{OOOO}P!!!]`, date: `2018 {UNIVERSAL_RUIN}`, bullets: [
+        `[FAULTY] [ONE]`,
+        `[WASTE] [OF] [DUST]`,
+        `[WHY] [YOU KEEP] [TRYING]?`,
+        `[THE] [FATE] [IS] [{WRITTEN}]!`,
+        `[ALL] [WRITING] [HAS A] [PURPOSE]!`,
+        `{PERE MASSACRED MANY PEOPLE AND EXPERIMENTED WITH THEM AS TO BRING BACK HER IRREMEDIABLE WIFE, ROSSINA.}`,
+        `{IBAI WAS THERE TO HELP BUT WAS TOO INNOCENT TO COMPREHEND WHAT WAS GOING ON IN THERE.}`
+      ]},
+      { id: 'manel_ragnarok', tag: `[MANEL_RAGNAROK]`, date: `2020`, bullets: [
+        `He was able to defeat the lava giant.`,
+        `Then forget about everything and go eat a donut...`,
+        `And another one...`,
+        `And another one...`,
+        `And another one...`,
+        `And another one...`,
+        `AND ANOTHER ONE?!`,
+        `And another one...`,
+        `And another one...`,
+        `FOR {GOD} SAKE!! CAN YOU PLEASE STOP EATING DARN DONUTS?!`
+      ] },
+      { id: 'darkness_above', tag: `[DARKNESS_ABOVE]`, date: `2020`, bullets: [
+        `[{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}]`
+      ]},
+      { id: 'hated_joy', tag: `[HATED_JOY] [{NOT REAL! NOT CANON!}]`, date: `2020 {UNIVERSAL_RUIN}`, bullets: [
+        `[WHAT] [IS IT] [THIS] [TIME]?`,
+        `[REDEMPTION] [MAYBE]?`,
+        `[CONSEQUENCES]?`,
+        `[OR] [LIERS]?!`,
+        `{IBAI FOUND EVERYTHING AND CONFRONTED PERE! IBAI WON AND DISSAPPEARED THROUGH A PORTAL IN 2021}`
+      ]},
+      { id: 'manel_rings', tag: `[MANEL_RINGS]`, date: `2021`, bullets: [
+        `NO ONE WAS {WORTHY}!! HE EVEN {BROKE} REALITY ITSE{LF!!}!`,
+        `[{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}]`,
+        `[{IS}] [{BREACH}] [{THIS}] [{BREACH}] [{YOUR}] [{BREACH}] [{SAVIOUR}] [{BREACH}] [{?!}]`,
+        `[{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}]`
+      ] },
+      { id: 'crazy_one', tag: `[CRAZY_ONE]`, date: `2021`, bullets: [
+        `[{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}] [{BREACH}]`
+      ]},
+      { id: 'redemption_ruin', tag: `[REDEMPTION] [{NOOOOOOO MOREEEEEEEEE!}]`, date: `2020 {UNIVERSAL_RUIN}`, bullets: [
+        `[EVERY] [STORY] [HAS AN] [ENDING]!`,
+        `[BROKEN] [AS] [ITS] [WRITER]!`,
+        `[DO] [NOT] [LOOK ANYWHERE]!`,
+        `[JUST] [WAIT] [AND] [BEHOLD] [THE TOMB]! [THE PLACE] [YOU] [BELONG]...`,
+        `{DEMENTIA KILLED PERE SLOWLY, A PAIN THAT MADE ME FEEL SATISFIED! SUCH AN ANNOYING BEING, RIGHT? DEATH WAS LIKE SOMETHING HE HAD TO PAY! AND THERE WE HAVE IT. DEATH!}`,
+        `{AT LEAST HE WAS ABLE TO MEET WITH HER WIFE ONCE AGAIN BEFORE LEAVING THIS DAMN WORLD, RIGHT? WELP, SIMPLE MINDS FOR STUPID PARASITES! :)}`
+      ]},
+      { id: 'manel_fake_multiverse_travel', tag: `[MANEL_{FAKE}_MULTIVERSE_TRAVEL]`, date: `2022-2023`, bullets: [
+        `Sadly his wife passed away...`,
+        `NEVERMIND! {WTF}?! DID HE MARRIED TO {HIS WIFE} FROM ANOTHER UNIVERSE?!`,
+        `WAIT! WAIT! WAIT! NO NO NO NO!! WAIT WAIT!!`,
+        `WHAT ARE YOU DOING TO THAT {CROCODILE}?!?!?!?!`,
+        `{YOU SICK ####!!!!!!!}`
+      ] },
+      { id: 'last_stand', tag: `[{LAST_STAND}]`, date: `2023`, bullets: [
+        `He appeared in the shadows, the one who calls "Wrats" ... Its eyes are dark... dark like the abyss itself...`,
+        `IBAI was not able to hurt him... Something wasn't right...`,
+        `Wrats took with him Pere's consciousness and disappeared into the shadows.`
+      ]}
+    ]
+  },
+
+  {
+    id: 'u_dl3008', tag: 'U_DL-3008',
+    created: `CREATED IN 2015 by ElProHD405 (But {''accidentally''} added by Jaretin{1020});`,
+    status: `STATUS: UNKNOWN;`,
+    desc: `This was only made by HIM, but he added the other {[VASE]} as to somehow fulfill the script! This universe has literally no sense at all! I can assure you that I hate smoking, especially how it smells, but it seems like this whole part of the lore was written by someone who was really high.`,
+    victims: [`Daniel Lopez`, `JYMY`, `Manolo/MANOLOCREATION (???)`, `Narrador`],
+    events: [
+      { id: 'everything_has_ended', tag: `[EVERYTHIN_HAS_ENDED]`, date: '', bullets: [
+        `It's a simple phrase that somehow has the ability to revive everyone inside this world; the reason is unknown.`
+      ]},
+      { id: 'elprohd404', tag: `[{ELPROHD404}]`, date: '', bullets: [
+        `"Why is the creator inside his own project?" You may ask, and then I'll respond that it was Mono_Pixels' fault!`
+      ]},
+      { id: 'narrators', tag: `[NARRATORS]`, date: '', bullets: [
+        `There are 2 narrators, the insider and the outsider; for some reason the insider hates the outsider, and the outsider likes to mock the insider.`
+      ]}
+    ]
+  },
+
+  {
+    id: 'u_tw', tag: 'U_TW',
+    created: `CREATED IN 2021 by Toni's Wrats;`,
+    status: `STATUS: {TERMINATED};`,
+    desc: `This universe was not planned at all! It was not even finished! Thank you, {ByJony45}! Now I have to somehow canonize this! YOU KNOW WHAT?! LET'S MAKE THAT WRATS DID IT, AND THEN IT DESTROYS IT JUST BECAUSE OF PURE FUN!! AND SOMEHOW ADD LORE RELATED TO HOW HE ABSORBS CONCIOUSNESS AND MAKES HIM REALLY EVIL AND THOSE TYPES OF LAZY THINGS!! >:3`,
+    victims: [`Toni's Wrats (???)`, `M4N0L0`, `{pjrll}`],
+    events: [
+      { id: 'conformation', tag: `[{CONFORMATION}]`, date: '', bullets: [
+        `Toni's Wrats is spyware; its origin is mostly unknown but is mostly related to the death of the Toni that IBAI slained in the "Universe MDS." Since that moment, he feels the urge of forcing that event constantly, surely due to the fear of disappearing because of its event of creation stopping becoming canon.`
+      ]},
+      { id: 'golden_guinea_pig', tag: `[{GOLDEN}_GUINEA_PIG]`, date: '', bullets: [
+        `It's a suit... And it was used by ... Toni? I guess...? And Toni got hit in the nuts while wearing the suit... And hates orbeez due to a pool full of them or something like that... Yeez, thankfully this is just canon to comprehend why Wrats is such a waste of character... ._.`
+      ]},
+      { id: 'm4n0l0', tag: `[M4N0L0]`, date: '', bullets: [
+        `FINALLY! IT HAS DEVELOPMENT! YESSS!!! TAKE THAT, ANTHONY!!!`
+      ]},
+      { id: 'nerf', tag: `[NERF]`, date: '', bullets: [
+        `A weapon I would use against the one that thought that this universe was a great idea! >:(`
+      ]},
+      { id: 'incredible', tag: `[INCREDIBLE]`, date: '', bullets: [
+        `Yeah! Because no one is going to believe you when you say that you found a strange man with a coat and eyes dark like an abyss!`
+      ]},
+      { id: 'room_3008', tag: `[ROOM_{3008}]`, date: '', bullets: [
+        `Why is it a room labelled "3008" inside a hospital? And why THIS room especially is able to mess with the time and space during an unreal minute that lasts as an hour? ... IDK, I'm just typing {####}! Don't expect me to answer all your stupid pleas!`
+      ]},
+      { id: 'the_lava_rebirther', tag: `[{THE_LAVA_REBIRTHER}]`, date: '', bullets: [
+        `This darn book was able to make this stupid character canon! Darn! EVEN IN PJRLL HE WAS A TRUE WASTE! Glad that HE had a massive upgrade for "PL:EOC."`
+      ]},
+      { id: 'nuts', tag: `[NUTS]`, date: '', bullets: [
+        `The thing that Toni doesn't have in this universe! XD`
+      ]},
+      { id: 'wrats_revelation', tag: `[WRATS_{REVELATION}]`, date: '', bullets: [
+        `He had enough with the consciousness inside himself, so he eradicated the universe he himself made, then traveled to Universe MDS, but that story we know it already.`
+      ]}
+    ]
+  },
+
+  {
+    id: 'u_sam', tag: 'U_SAM',
+    created: `CREATED IN 2022 due to a {breach};`,
+    status: `{STATUS: CORRUPTED};`,
+    desc: `Why did I make this? ... THIS DARN THING IS ONLY CANON ONLY BECAUSE OF THE SAMSIDE!!! DARN!! {I HATE THAT PLACE!!!!} ... Ok, OK! {YOU WANT A DESCRIPTION SO BADLY?!} HERE!! HAVE IT!! {WOW!! SUPER EPIC STUPID THING THAT WAS MEANT AS A JOKE, BUT I MADE IT CANON JUST BECAUSE I'M AN IDIOT!!! WOW!!!!}`,
+    victims: [`*VictoSpain`, `Encounter`, `Pretend`, `Surprise`, `Lure`, `*[REDACTED].exe`, `*SAMDERSTRAK`],
+    events: [
+      { id: 'ibai_el_inconsciente', tag: `[IBAI_EL_INCONSCIENTE]`, date: '', bullets: [
+        `It's like a narrator inside this story. He is tired of dealing with the characters inside this universe, but he can't do anything because he is like, well, not real, yk?`
+      ]},
+      { id: 'mentality', tag: `[MENTALITY]`, date: '', bullets: [
+        `This term is mostly associated with beings such as "IBAI el Inconsciente" and "SAMDERSTRAK." This means they aren't real; they only live in your mind and mostly disappear when you stop looking at them. For this reason, you can just close your eyes, and they are most likely going to leave.`
+      ]},
+      { id: 'samside', tag: `{[SAMSIDE]}`, date: '', bullets: [
+        `The SAMSIDE became canon due to this {####}; IT IS JUST A POCKET DIMENSION THAT SAMDERSTRAK RENAMES AS "SAMSIDE"!! PLEASE! STOP ASKING ABOUT ITS ORIGIN!!!`
+      ]}
+    ]
+  }
+];
+
+var BREACHES = {
+  id: 'breaches', tag: 'BREACHES',
+  created: `CREATED IN {####} by {ElProHD405};`,
+  status: `STATUS: N/A;`,
+  desc: `Those are like the [MISC], stray characters/universes that were able to merge or adapt to other ones, most of them only for short cameos or even just for a meme character... Hellbai is a peculiar case after all... He was able to escape, but he didn't even know how! Most likely the one who died was another Hellbai! After all, there are many universes, and that could explain why there are 2 Hellbais, right? ... Yeah, let me break the {[4TH WALL]}. {You may think that I'm doing like Scott Cawthon, adding 1000 things and then somehow building the story. I've done that in the past, but since 2022/2023 I started to write scripts before developing any project, so I don't overwrite or contradict something already said in each lore; so yeah, even if it feels like I don't know my own story, the reality is that I like cliffhanging many things, not only for theories but also for possible details and inner stories that let users arrive at their own conclusions!} ;P `,
+  victims: [
+    `{Anthony Miller}`, `Souless`, `*Lloron`, `*NIGHTMARE IBAI (NIBAI)`, `John Bic`, `{Joshua}`, `Hellbai {???}`,
+    `Manueh (Pig Form)`, `*Chiwua (Land)`, `{_ADlOS_}`
+  ],
+  events: [
+    { id: 'the_plan', tag: `[THE_PLAN]`, date: '27/12/2023', special: 'password', bullets: [] },
+    { id: 'the_legacy', tag: `[THE_LEGACY]`, date: '13/01/2024', bullets: []},
+    { id: 'faulty_j', tag: `[{FAULTY_J}]`, date: '14/01/2024', bullets: []},
+    { id: 'virsouls', tag: `[{VIRSOULS}]`, date: '17/01/2024', bullets: []},
+    { id: 'testing_zone', tag: `[TESTING_ZONE]`, date: '22/01/2024', bullets: []},
+    { id: 'era_of_corruption', tag: `[ERA_OF_CORRUPTION]`, date: '23/01/2024', bullets: []},
+    { id: 'ivan', tag: `[IVAN]`, date: '24/01/2024', bullets: []},
+    { id: 'hb', tag: `[HB]`, date: '29/01/2024', special: 'hb', bullets: [] },
+    { id: 'broken_heaven', tag: `[BROKEN_HEAVEN]`, date: '02/02/2024', bullets: []},
+    { id: 'residual_beings', tag: `{[RESIDUAL_BEINGS]}`, date: '10/02/2024', bullets: []},
+    { id: 'the_consequence_of_sin', tag: `[THE_CONSEQUENCE_OF_{SIN}]`, date: '14/02/2024-26/02/2024', bullets: []},
+    { id: 'glitch', tag: `[GLITCH]`, date: '27/02/2024', bullets: []},
+    { id: 'fallen_writer_rip', tag: `[FALLEN_WRITER_{RIP}]`, date: '28/02/2024', bullets: []},
+    { id: 'faulty_wheelform', tag: `[{FAULTY}_WHEELFORM]`, date: '01/03/2024', bullets: []},
+    { id: 'fire_wall', tag: `{[FIRE_WALL]}`, date: '{[REDACTED]}', bullets: []},
+    { id: 'virtuality_into_reality', tag: `[VIRTUALITY_INTO_REALITY]`, date: '04/03/2024', bullets: []},
+    { id: 'the_supremes_locked', tag: `[THE_SUPREMES] {[LOCKED]}`, date: '04/03/2024-10/03/2024', bullets: []},
+    { id: 'malform', tag: `[MALFORM]`, date: '05/03/2024', bullets: [
+        `WE HAD FINALLY APPLIED THE [UPGRADE] THAT PG#1020 REQUESTED!`,
+        `WE BROKE HE TO HER LIMIT! SHE IS [UNABLE] TO [BETRAY]!`,
+        `RISE UP, [FAULTY]! WE HAVE SOME WORK TO DO NOW!`
+    ]},
+    { id: 'mimics', tag: `[MIMICS]`, date: '07/03/2024', bullets: [
+        `MALFORM LEARNED HOW TO {[MIMICRY]}!`,
+        `TO TEST HER CAPABILITIES WE'VE MARKED WITH [*] EVERY BEING SHE IS CAPABLE TO IMITATE!`
+    ]},
+    { id: 'the_vase', tag: `[THE_{VASE}]`, date: '08/03/2024', bullets: []},
+    { id: 'betrayal', tag: `[{BETRAYAL}]`, date: '09/03/2024', bullets: []},
+    { id: 'security_backup', tag: `[SECURITY_BACKUP] [{FAULTY}]`, date: '11/03/2024', bullets: []},
+    { id: 'remembrance', tag: `[REMEMBRANCE]`, date: '{???}', bullets: []},
+    { id: 'ransom', tag: `{[R4NS0M]}`, date: '{...---...}', bullets: []},
+    { id: 'script_broken', tag: `[{SCRIPT_BROKEN}]`, date: '18/10/2025', bullets: []},
+    { id: 'redemption', tag: `[REDEMPTION]`, date: '19/10/2025', bullets: []},
+    { id: 'wip', tag: `{[W.I.P]}`, date: '{REDACTED}', bullets: []},
+    { id: 'placeholder', tag: `[I_WAS_NOT_THERE]`, date: 'I_WAS_NOT_THERE', bullets: [
+        `SAMPLE TEXT`,
+        `/* THIS IS A PLACEHOLDER */`
+    ]},
+
+
+  ]
+};
+
+    /* ============ GLITCH TEXT ENGINE ============ */
+    var GLYPHS = '#%$&@?¿!*x01_-~^░▒▓■';
+    function appendGlitchText(parent, str) {
+      var re = /\{([^}]*)\}/g, last = 0, m;
+      while ((m = re.exec(str))) {
+        if (m.index > last) parent.appendChild(document.createTextNode(str.slice(last, m.index)));
+        var span = document.createElement('span'); span.className = 'og-glitch'; span.dataset.base = m[1]; span.textContent = m[1];
+        parent.appendChild(span);
+        last = re.lastIndex;
+      }
+      if (last < str.length) parent.appendChild(document.createTextNode(str.slice(last)));
+    }
+    setInterval(function () {
+      document.querySelectorAll('.og-glitch').forEach(function (el) {
+        if (!SAMSIDE.chance(.35)) { el.textContent = el.dataset.base; return; }
+        var a = el.dataset.base.split('');
+        for (var i = 0; i < Math.max(1, Math.floor(a.length * .25)); i++) { var p = Math.floor(Math.random() * a.length); if (a[p] !== ' ') a[p] = GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; }
+        el.textContent = a.join('');
+      });
+    }, 160);
+
+    /* ============ IMAGE WITH FALLBACK CHAIN ============ */
+    function ogImg(parent, id) {
+      var img = document.createElement('img'); img.draggable = false; img.alt = '';
+      img.onerror = function () {
+        if (img.dataset.stage !== 'placeholder') { img.dataset.stage = 'placeholder'; img.src = SAMSIDE.url('media/origin/placeholder.png'); }
+        else img.remove();
+      };
+      img.src = SAMSIDE.url('media/origin/' + id + '.png');
+      parent.appendChild(img);
+    }
+
+    /* ============ NAVIGATION ============ */
+    var body = document.getElementById('ogBody');
+    function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+    function setPath(text) { document.getElementById('ogPath').textContent = text; }
+
+    var actx;
+    function playClick() {try { var a = new Audio(KEY_SFX); a.volume = 0.25; a.play().catch(function () {}); } catch (e) {}}
+    function onClick(el, fn) { el.addEventListener('click', function (e) { playClick(); fn(e); }); }
+
+    function backBtn(onClick_) {
+      var b = document.createElement('button'); b.className = 'og-back'; b.type = 'button'; b.textContent = '< BACK';
+      onClick(b, onClick_); return b;
+    }
+    function allSections() { return UNIVERSES.concat([BREACHES]); }
+    function findSection(id) { return allSections().filter(function (u) { return u.id === id; })[0]; }
+
+    // remembers which accordions were left open per universe, so BACK doesn't collapse them
+    var accState = {};   // { [universeId]: { victims: bool, events: bool } }
+    function stateFor(uid) { return accState[uid] || (accState[uid] = { victims: false, events: false }); }
+
+    
+    var currentView = { type: 'menu' };
+    var ghostEl = null, ghostTimer = null;
+    function removeGhost() { if (ghostTimer) { clearTimeout(ghostTimer); ghostTimer = null; } if (ghostEl) { ghostEl.remove(); ghostEl = null; } }
+
+    function renderMenu() {
+      removeGhost(); currentView = { type: 'menu' };
+      setPath('C:\\ORIGIN>');
+      clear(body);
+      var grid = document.createElement('div'); grid.className = 'og-menu-grid';
+      var sub = document.createElement('p'); sub.className = 'og-menu-sub';
+      allSections().forEach(function (u) {
+        var btn = document.createElement('button'); btn.className = 'og-menu-item'; btn.type = 'button';
+        var t = document.createElement('span'); t.className = 'og-mi-tag'; t.textContent = u.tag; btn.appendChild(t);
+        appendGlitchText(btn, u.status.replace(/;$/, ''));
+        btn.addEventListener('mouseenter', function () { clear(sub); appendGlitchText(sub, u.desc); });
+        btn.addEventListener('focus', function () { clear(sub); appendGlitchText(sub, u.desc); });
+        btn.addEventListener('mouseleave', function () { clear(sub); });
+        onClick(btn, function () { renderUniverse(u.id); });
+        grid.appendChild(btn);
+      });
+      body.appendChild(grid); body.appendChild(sub);
+      body.scrollTop = 0;
+    }
+
+    function toggleAcc(head, panel, persistFlagSetter) {
+      var open = panel.classList.toggle('open'); head.classList.toggle('open', open);
+      if (persistFlagSetter) persistFlagSetter(open);
+    }
+
+    function renderUniverse(uid) {
+      var u = findSection(uid); if (!u) return renderMenu();
+      removeGhost(); currentView = { type: 'universe', uid: uid };
+      setPath('C:\\ORIGIN\\' + u.tag + '>');
+      var st = stateFor(uid);
+      clear(body);
+      body.appendChild(backBtn(renderMenu));
+
+      var row = document.createElement('div'); row.className = 'og-u-row';
+      var text = document.createElement('div'); text.className = 'og-u-text';
+      var title = document.createElement('div'); title.className = 'og-u-title'; title.textContent = u.tag; text.appendChild(title);
+      var created = document.createElement('div'); created.className = 'og-u-line'; appendGlitchText(created, u.created); text.appendChild(created);
+      var status = document.createElement('div'); status.className = 'og-u-line'; appendGlitchText(status, u.status); text.appendChild(status);
+      row.appendChild(text);
+      var frame = document.createElement('div'); frame.className = 'og-u-frame'; ogImg(frame, u.id); row.appendChild(frame);
+      body.appendChild(row);
+
+      // VICTIMS accordion
+      var accV = document.createElement('div'); accV.className = 'og-accordion';
+      var headV = document.createElement('button'); headV.className = 'og-acc-head'; headV.type = 'button'; headV.textContent = "VICTIMS RELATED TO 'MLN'";
+      var panelV = document.createElement('div'); panelV.className = 'og-acc-body';
+      var ul = document.createElement('ul'); ul.className = 'og-victims';
+      u.victims.forEach(function (v) { var li = document.createElement('li'); appendGlitchText(li, v); ul.appendChild(li); });
+      panelV.appendChild(ul);
+      onClick(headV, function () { toggleAcc(headV, panelV, function (open) { st.victims = open; }); });
+      if (st.victims) { panelV.classList.add('open'); headV.classList.add('open'); }
+      accV.appendChild(headV); accV.appendChild(panelV); body.appendChild(accV);
+
+      // EVENTS accordion
+      var accE = document.createElement('div'); accE.className = 'og-accordion';
+      var headE = document.createElement('button'); headE.className = 'og-acc-head'; headE.type = 'button'; headE.textContent = 'EVENTS';
+      var panelE = document.createElement('div'); panelE.className = 'og-acc-body';
+      u.events.forEach(function (ev) {
+        var clickable = !!(ev.bullets && ev.bullets.length) || !!ev.special;
+        var r = document.createElement('div'); r.className = 'og-ev-row' + (clickable ? ' clickable' : '');
+        var tag = document.createElement('span'); tag.className = 'og-ev-tag'; appendGlitchText(tag, ev.tag); r.appendChild(tag);
+        if (ev.date) {
+          var dots = document.createElement('span'); dots.className = 'og-ev-dots'; r.appendChild(dots);
+          var date = document.createElement('span'); date.className = 'og-ev-date'; date.appendChild(document.createTextNode('(')); appendGlitchText(date, ev.date); date.appendChild(document.createTextNode(')')); r.appendChild(date);
+        }
+        if (clickable) onClick(r, function () { openEvent(u, ev); });
+        panelE.appendChild(r);
+      });
+      onClick(headE, function () { toggleAcc(headE, panelE, function (open) { st.events = open; }); });
+      if (st.events) { panelE.classList.add('open'); headE.classList.add('open'); }
+      accE.appendChild(headE); accE.appendChild(panelE); body.appendChild(accE);
+
+      body.scrollTop = 0;
+    }
+
+    function openEvent(u, ev) {
+      if (ev.special === 'password') return openPassword();
+      if (ev.special === 'hb') return void (window.location.href = SAMSIDE.url('main/hb/'));
+      renderEvent(u, ev);
+    }
+
+    function renderEvent(u, ev) {
+      removeGhost(); currentView = { type: 'event', uid: u.id, ev: ev };
+      setPath('C:\\ORIGIN\\' + u.tag + '\\' + ev.tag + '>');
+      clear(body);
+      body.appendChild(backBtn(function () { renderUniverse(u.id); }));
+      var title = document.createElement('div'); title.className = 'og-ev-title'; appendGlitchText(title, ev.tag); body.appendChild(title);
+      var row = document.createElement('div'); row.className = 'og-ev-body-row';
+      var ul = document.createElement('ul'); ul.className = 'og-ev-bullets';
+      ev.bullets.forEach(function (b) { var li = document.createElement('li'); appendGlitchText(li, b); ul.appendChild(li); });
+      row.appendChild(ul);
+      var frame = document.createElement('div'); frame.className = 'og-ev-frame'; ogImg(frame, ev.id); row.appendChild(frame);
+      body.appendChild(row);
+      body.scrollTop = 0;
+
+      if (ev.id === 'tonicon_vive_news' && Math.random() < .1) spawnGhost();
+    }
+
+    function spawnGhost() {
+      var g = document.createElement('img'); g.id = 'ogGhost'; g.draggable = false; g.alt = '';
+      g.style.cssText = 'position:fixed;z-index:80;width:clamp(64px,10vmin,120px);height:clamp(64px,10vmin,120px);' +
+        'opacity:.32;transition:left 3.2s ease-in-out, top 3.2s ease-in-out, opacity .4s;cursor:pointer;object-fit:contain;pointer-events:auto;';
+      g.onerror = function () { g.style.background = 'none'; g.style.border = '2px dashed #0f0'; g.style.borderRadius = '50%'; };
+      g.src = SAMSIDE.url('media/gt.png');
+      g.addEventListener('mouseenter', function () { g.style.opacity = .7; });
+      g.addEventListener('mouseleave', function () { g.style.opacity = .32; });
+      g.addEventListener('click', function () { playClick(); window.location.href = SAMSIDE.url('main/origin/golden/'); });
+      document.body.appendChild(g); ghostEl = g;
+      function wander() { SAMSIDE.randomPosition(g, 70); ghostTimer = setTimeout(wander, SAMSIDE.rand(2600, 4600)); }
+      wander();
+    }
+
+    /* ============ THE_PLAN password ============ */
+    function openPassword() {
+      document.getElementById('ogPwWrap').classList.add('on');
+      document.getElementById('ogPw').value = ''; document.getElementById('ogPwMsg').textContent = '';
+      document.getElementById('ogPw').focus();
+    }
+    (function () {
+      var PASSWORD = '_ADlOS_';
+      var wrap = document.getElementById('ogPwWrap'), f = document.getElementById('ogPwForm'), i = document.getElementById('ogPw'), m = document.getElementById('ogPwMsg');
+      f.addEventListener('submit', function (e) {
+        e.preventDefault(); playClick();
+        if (i.value === PASSWORD) { m.textContent = '[ACCESS GRANTED]'; setTimeout(function () { window.location.href = 'mln/'; }, 600); try { var a = new Audio(SUCCESS_SFX); a.volume = 0.25; a.play().catch(function () {}); } catch (e) {}}
+        else { m.textContent = '[ACCESS DENIED]'; i.value = ''; f.classList.remove('og-shake'); void f.offsetWidth; f.classList.add('og-shake'); try { var a = new Audio(REJECT_SFX); a.volume = 0.15; a.play().catch(function () {}); } catch (e) {}}
+      });
+      wrap.addEventListener('click', function (e) { if (e.target === wrap) wrap.classList.remove('on'); });
+    })();
+
+    /* clock in the title bar */
+    (function tick() {
+      document.getElementById('ogClock').textContent = new Date().toTimeString().slice(0, 8);
+      setTimeout(tick, 1000);
+    })();
+
+    // gentle wave on every image (universe + event frames), via #ogImgFx above
+    (function wave() {
+      var noise = document.getElementById('ogNoise'), disp = document.getElementById('ogDisp'), t = performance.now();
+      (function loop(now) {
+        noise.setAttribute('baseFrequency', (0.018 + 0.006 * Math.sin(now / 1400)).toFixed(4) + ' ' + (0.026 + 0.008 * Math.cos(now / 1100)).toFixed(4));
+        disp.setAttribute('scale', (4 + 2.5 * Math.sin(now / 1000)).toFixed(1));
+        requestAnimationFrame(loop);
+      })(t);
+    })();
+
+    // ESC
+    addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var pwWrap = document.getElementById('ogPwWrap');
+      if (pwWrap.classList.contains('on')) { pwWrap.classList.remove('on'); return; }
+      if(currentView.type!=='menu'){playClick();}
+      if (currentView.type === 'event') renderUniverse(currentView.uid);
+      else if (currentView.type === 'universe') renderMenu();
+    });
+
+    renderMenu();
+  </script>
+</body>
+</html>

@@ -120,10 +120,22 @@ var SPLASHES = [
 
 /* SPECIAL DATES */
 var ANNIVERSARY_SPLASHES = {
-    '22/04': { project: "Porky's Legacy",                       year: 2024 },
-    '07/11': { project: "Porky's Legacy: Era of Corruption",    year: 2024 },
-    '18/04': { project: "Rewinded Nights",                      year: 2025 },
-    '06/06': { project: "Rewinded Misery",                      year: 2026 }
+    '22/04': { project: "Porky's Legacy V1",                         year: 2024 },
+    '29/04': { project: "Porky's Legacy V1.1",                       year: 2024 },
+    '04/08': { project: "Porky's Legacy V2",                         year: 2024 },
+    '07/11': { project: "Porky's Legacy: Era of Corruption",         year: 2024 },
+    '02/12': { project: "Porky's Legacy: Era of Corruption V1.1",    year: 2024 },
+    '18/04': { project: "Rewinded Nights",                           year: 2025 },
+    '30/05': { project: "Corrupted Slaughter",                       year: 2025 },
+    '30/10': { project: "Mist of Turmoil",                           year: 2025 },
+    '30/01': { project: "Gazed Despair",                             year: 2026 },
+    '31/05': { project: "Voided Legacy",                             year: 2026 },
+    '06/05': { project: "ⓕＡ𝕦ㄥt𝐘 ᵒή𝔼",                             year: 2026 },
+    '06/06': { project: "Rewinded Misery",                           year: 2026 },
+    '13/06': { project: "See ya later ;)",                           year: 2026 },
+    '12/07': { project: "Agitated Dreams",                           year: 2026 },
+    '26/08': { project: "Porky's Legacy: Era of Corruption V5.1",    year: 2026 },
+    '01/10': { project: "I_WAS_NOT_THERE",                           year: 2026 }
 };
 
 function getAnniversarySplash() {
@@ -134,7 +146,14 @@ function getAnniversarySplash() {
     if (!ANNIVERSARY_SPLASHES[key]) return null;
     var data = ANNIVERSARY_SPLASHES[key];
     var age  = now.getFullYear() - data.year;
-    return {
+    
+    if(age<=0){
+        return{
+            text:  data.project + ' HAS RELEASED TODAY!!!',
+            color: '#ff00ff'
+        }
+    }
+    return{
         text:  data.project + ' WAS RELEASED ' + age + ' YEAR' + (age !== 1 ? 'S' : '') + ' AGO!!!',
         color: '#ff9fff'
     };

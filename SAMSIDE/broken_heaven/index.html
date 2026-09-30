@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" class="gb-green">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BROKEN_HEAVEN (SIMULATED.WIP.SYS! PLEASE! HANDLE WITH CARE!)</title>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <link rel="stylesheet" href="../css/samside-gb.css">
+  <script src="../js/samside-base.js"></script>
+  <script src="../js/samside-gb.js"></script>
+  <style>
+    .gb-icon--ghost { opacity: .22; }
+    .gb-icon--ghost:hover, .gb-icon--ghost:focus-visible { opacity: .55; }
+  </style>
+</head>
+<body>
+  <div class="gb-stage" id="gbStage">
+    <div class="gb-wall"></div>
+    <header class="gb-top"><span>BROKEN_HEAVEN</span><span data-gb-clock>--:--</span></header>
+    <main class="gb-main">
+      <nav class="gb-grid">
+        <a class="gb-icon" href="admin/" draggable="false"><span class="gb-ico"></span><span class="gb-label">admin</span></a>
+        <a class="gb-icon" href="sysber/" draggable="false"><span class="gb-ico"></span><span class="gb-label">sysber</span></a>
+        <a class="gb-icon" href="wheelform/" draggable="false"><span class="gb-ico"></span><span class="gb-label">wheelform</span></a>
+        <a class="gb-icon" href="../script/" draggable="false"><span class="gb-ico"></span><span class="gb-label">script</span></a>
+        <a class="gb-icon gb-icon--ghost" href="system/" id="bhSystem" draggable="false"><span class="gb-ico"></span><span class="gb-label">system</span></a>
+      </nav>
+    </main>
+    <footer class="gb-task"><span class="gb-caret">C:\BROKEN_HEAVEN\&gt;</span></footer>
+    <div class="gb-overlay"></div>
+    <div class="gb-dialog-wrap" id="bhDeniedWrap" hidden>
+      <div class="gb-dialog"><p class="gb-dialog-msg" id="bhDeniedMsg">[ACCESS DENIED]</p></div>
+    </div>
+  </div>
+  <script>
+    SAMSIDE_GB.init('green');
+    SAMSIDE.bgm(SAMSIDE.url('sfx/BR0K3N_1NPU7.mp3'), { loop: true, volume: .15 });
+    var wrap = document.getElementById('bhDeniedWrap');
+    document.getElementById('bhSystem').addEventListener('click', function (e) {
+      e.preventDefault(); wrap.hidden = false;
+      setTimeout(function () { wrap.hidden = true; }, 1400);
+    });
+  </script>
+</body>
+</html>

@@ -71,3 +71,99 @@ img, video, .no-drag {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+
+/* ================================================================
+   SHARED HELPERS (used by the newer pages)
+   ================================================================ */
+
+[hidden] { display: none !important; }
+
+@supports (height: 100dvh) {           /* MOBILE BROWSERS: 100vh IS TALLER THAN THE VISIBLE AREA */
+  .samside-stage { height: 100dvh; }
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+a, button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px dashed currentColor;
+  outline-offset: 3px;
+}
+
+@keyframes samside-blink { 50% { opacity: 0; } }
+
+.samside-caret {
+  display: inline-block;
+  width: .6em; height: 1em;
+  vertical-align: -.12em;
+  background: currentColor;
+  animation: samside-blink 1s steps(1) infinite;
+}
+
+/* RED 3D TEXT (same look as absentia / i_was_not_there) */
+.samside-red3d {
+  font-weight: bold;
+  letter-spacing: 4px;
+  color: #ff1414;
+  text-align: center;
+  text-shadow:
+    1px 1px 0 #7a0000, 2px 2px 0 #7a0000, 3px 3px 0 #7a0000,
+    4px 4px 8px rgba(0,0,0,.8);
+}
+
+/* PURPLE TEXT (same look as nosvemosluego) */
+.samside-purple {
+  color: #b070ff;
+  text-shadow: 0 0 10px rgba(160, 60, 255, .7);
+}
+
+/* GREEN TERMINAL (same look as ransomaly/porky) */
+.samside-term {
+  color: #0f0;
+  text-shadow: 0 0 6px rgba(0,255,0,.5);
+  letter-spacing: 1px;
+  line-height: 1.6;
+  font-size: clamp(.8rem, 1.2vw + .5rem, 1.2rem);
+}
+.samside-term.italic { font-style: italic; }
+.samside-term a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  padding: .15em .6em;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.samside-term a:hover,
+.samside-term a:focus-visible { background: #0f0; color: #000; text-shadow: none; }
+
+/* SCROLLABLE PANEL (the page itself NEVER scrolls, long texts scroll INSIDE a panel) */
+.samside-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  pointer-events: auto;
+  -webkit-user-select: text;
+  user-select: text;
+  scrollbar-width: thin;
+}
+
+.samside-panel {
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 920px);
+  max-height: 92vh;
+  padding: clamp(.8rem, 3vmin, 2rem);
+}
+@supports (height: 100dvh) {
+  .samside-panel { max-height: 92dvh; }
+}

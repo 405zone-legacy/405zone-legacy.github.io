@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" class="gb-green">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADMIN (SESSION:PG#405)</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <link rel="stylesheet" href="../../css/samside-gb.css">
+  <script src="../../js/samside-base.js"></script>
+  <script src="../../js/samside-gb.js"></script>
+</head>
+<body>
+  <div class="gb-stage" id="gbStage">
+    <div class="gb-wall"></div>
+    <header class="gb-top"><span>BROKEN_HEAVEN/ADMIN</span><span data-gb-clock>--:--</span></header>
+    <main class="gb-main">
+      <nav class="gb-grid">
+        <a class="gb-icon" href="firewall/" draggable="false"><span class="gb-ico gb-ico--own" style="background-image: url('../../media/SINNER_WALL.png');"></span><span class="gb-label">SINNER_WALL</span></a>
+      </nav>
+    </main>
+    <footer class="gb-task"><span class="gb-caret">C:\BROKEN_HEAVEN\ADMIN\&gt;</span></footer>
+    <div class="gb-overlay"></div>
+    <a href="ghostware/" id="adGhost" class="no-drag" draggable="false"></a>
+  </div>
+  <style>
+    #adGhost {
+      position: absolute; z-index: 45; width: clamp(64px, 10vmin, 120px); height: clamp(64px, 10vmin, 120px);
+      background: url('../../media/ghostware.png') center/contain no-repeat; opacity: .32;
+      transition: left 3.2s ease-in-out, top 3.2s ease-in-out, opacity .4s; pointer-events: auto;
+    }
+    #adGhost:hover, #adGhost:focus-visible { opacity: .7; }
+    #adGhost.gb-ico--fallback { background: none; border-radius: 50%; border: 2px dashed var(--gb3); opacity: .22; }
+  </style>
+  <script>
+    SAMSIDE_GB.init('green');
+    SAMSIDE.bgm(SAMSIDE.url('sfx/BR0K3N_1NPU7.mp3'), { loop: true, volume: .15 });
+    (function () {
+      var g = document.getElementById('adGhost'), probe = new Image();
+      probe.onerror = function () { g.classList.add('gb-ico--fallback'); };
+      probe.src = SAMSIDE.url('media/ghostware.png');
+      function wander() { SAMSIDE.randomPosition(g, 70); setTimeout(wander, SAMSIDE.rand(2600, 4600)); }
+      wander();
+    })();
+  </script>
+</body>
+</html>

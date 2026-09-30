@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WF_INFO</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    .wf-wrap {
+      width: min(94vw, 1000px); max-height: 100vh;
+      padding: clamp(.8rem, 3vmin, 2rem);
+      display: flex; flex-direction: column; gap: clamp(1rem, 3.5vmin, 2.2rem);
+    }
+    .wf-wrap, .wf-wrap * { -webkit-user-select: none; user-select: none; }
+    @supports (height: 100dvh) { .wf-wrap { max-height: 100dvh; } }
+    .wf-row { display: flex; align-items: center; justify-content: space-between; gap: clamp(1rem, 4vw, 3rem); }
+    .wf-text { flex: 1 1 0; min-width: 0; font-size: clamp(.85rem, 1vw + .55rem, 1.35rem); }
+    .wf-frame {
+      flex: 0 0 auto; width: clamp(150px, 26vmin, 320px); aspect-ratio: 1 / 1;
+      border: .22rem solid #0f0; box-shadow: 0 0 14px rgba(0,255,0,.45);
+      background: #000; padding: .35rem; box-sizing: border-box;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wf-icon { width: 100%; height: 100%; object-fit: contain; filter: url(#wfGreenFilter); }
+    .wf-entries { display: flex; flex-wrap: wrap; gap: 1rem 1.6rem; }
+    .wf-entries button {
+      background: none; font: inherit; color: inherit; cursor: pointer;
+      border: 1px solid currentColor; padding: .3em 1em;
+    }
+    .wf-entries button:hover, .wf-entries button:focus-visible { background: #0f0; color: #000; text-shadow: none; }
+    @media (max-width: 700px) {
+      .wf-row { flex-direction: column; align-items: stretch; }
+      .wf-frame { align-self: center; width: min(58vw, 240px); }
+    }
+    .wf-modal-wrap { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.75); padding: 4vw; }
+    .wf-modal-wrap, .wf-modal-wrap * { -webkit-user-select: none; user-select: none; }
+    .wf-modal-wrap.on { display: flex; }
+    .wf-modal { width: min(94vw, 640px); max-height: 82vh; overflow: auto; background: #000; border: .18rem solid #0f0; box-shadow: 0 0 18px rgba(0,255,0,.4); padding: clamp(1rem, 3vw, 1.8rem); position: relative; }
+    .wf-modal-close { position: absolute; top: .5rem; right: .7rem; background: none; border: 0; color: #0f0; font: inherit; font-size: 1.3rem; cursor: pointer; line-height: 1; }
+    .wf-status { font: inherit; font-size: clamp(.95rem, 2.6vw, 1.6rem); line-height: 1.8; }
+    .wf-use { font: inherit; font-size: clamp(.8rem, 1.2vw + .5rem, 1.2rem); line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+    .samside-term a.wf-faulty { display: inline; padding: 0; border: 0; text-decoration: underline dotted; text-underline-offset: .2em; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <filter id="wfGreenFilter" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#22ff33" result="flood"/>
+        <feComposite in="flood" in2="SourceAlpha" operator="in"/>
+      </filter>
+    </svg>
+    <div class="wf-wrap samside-scroll">
+      <div class="wf-row">
+        <p class="wf-text samside-term italic">This is currently just a prototype for the moment; the entity is mainly composed of 2 codes: “The Mutation” &amp; “Souless.” Also, its gender has been swapped; it was once a male, but we made her a female.</p>
+        <div class="wf-frame"><img class="wf-icon no-drag" src="../../media/wf.png" alt="" draggable="false"></div>
+      </div>
+      <nav class="wf-entries samside-term italic">
+        <button type="button" data-open="status">&gt; status</button>
+        <button type="button" data-open="use">&gt; use</button>
+      </nav>
+    </div>
+
+    <div class="wf-modal-wrap" id="wfModalWrap">
+      <div class="wf-modal samside-term">
+        <button class="wf-modal-close" id="wfClose" aria-label="close">&times;</button>
+        <pre class="wf-status italic" id="wfStatus" hidden>LOYALTY=<a class="wf-faulty" href="../../faulty_one/" draggable="false">FAULTY</a>;
+GUILTY=TRUE;</pre>
+        <pre class="wf-use italic" id="wfUse" hidden>CURRENT USE: VASE | CODE AMALGAMATE;
+CURRENT CODES INSIDE:
+-   Souless → 22%
+-   The Mutation → 20%
+-   Manueh → 16%
+-   Oveji Jones → 13%
+-   Pumpkin Man → 9%
+-   Toni’s Wrats → 7%
+-   Mark Drew → 5%
+-   Porky → 5%
+-   IBAI the Ayuwoki → 2%
+-   PJRLL → 1%</pre>
+      </div>
+    </div>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/wf_emotions_none.mp3'), { loop: true, volume: .35 });
+    var wrap = document.getElementById('wfModalWrap'), panels = { status: document.getElementById('wfStatus'), use: document.getElementById('wfUse') };
+    document.querySelectorAll('[data-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        Object.keys(panels).forEach(function (k) { panels[k].hidden = k !== btn.dataset.open; });
+        wrap.classList.add('on');
+      });
+    });
+    document.getElementById('wfClose').addEventListener('click', function () { wrap.classList.remove('on'); });
+    wrap.addEventListener('click', function (e) { if (e.target === wrap) wrap.classList.remove('on'); });
+  </script>
+</body>
+</html>

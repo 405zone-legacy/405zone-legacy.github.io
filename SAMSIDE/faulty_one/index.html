@@ -764,8 +764,12 @@
     if (entitySound) entitySound.pause();
   }
 
+  var futileRoll = false;   /* 50/50 roll made when the player wins */
+
   function win() {
     running = false;
+    /* 50%: the button does what it always did (new maze) | 50%: it sends the player to faulty_one/futile */
+    futileRoll = Math.random() < 0.5;
     document.getElementById('foWin').classList.add('is-shown');
     stopAudio();
     try { document.exitPointerLock(); } catch (e) {}
@@ -804,6 +808,7 @@
   });
   document.getElementById('foAgain').addEventListener('click', function (e) {
     e.currentTarget.blur();
+    if (futileRoll) { window.location.href = 'futile/'; return; }
     document.getElementById('foWin').classList.remove('is-shown');
     mazeData = generateMaze(MAZE_W, MAZE_H);
     MAP = mazeData.grid; MAP_W = MAP[0].length; MAP_H = MAP.length;

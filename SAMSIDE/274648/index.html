@@ -13,7 +13,7 @@
     <img class="samside-bg no-drag" src="../media/void_stare.png" alt="" draggable="false">
   </div>
   <script>
-    var music = SAMSIDE.playSafe('../sfx/im_still_here.mp3', { loop: true, volume: .8 });
+    var music = SAMSIDE.playSafe('../sfx/im_still_here.mp3', { loop: true, volume: 1.0 });
     function tryPlayOnce() {
       if (music) music.play().catch(function(){});
       document.removeEventListener('click', tryPlayOnce);

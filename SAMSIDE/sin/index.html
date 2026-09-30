@@ -25,7 +25,7 @@
   </div>
   <script>
 
-    var laughAudio = SAMSIDE.playSafe('../sfx/sinber_laugh.mp3', { volume: 1 });
+    var laughAudio = SAMSIDE.playSafe('../sfx/sinber_laugh.mp3', { volume: 0.5 });
 
     function retryLaugh() {
       if (laughAudio) laughAudio.play().catch(function () {});

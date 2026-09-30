@@ -1,0 +1,150 @@
+/* GAMEBOY DESKTOP KIT: broken_heaven, admin, sysber, ransomaly, testing_zone...
+   Palette = 4 shades (--gb0 darkest ... --gb3 lightest), chosen with a class on <html>.
+   Sprites: media/BROKEN_HEAVEN/*.png (optional, see js/samside-gb.js). */
+
+:root {
+  --gb0: #0f380f; --gb1: #306230; --gb2: #8bac0f; --gb3: #9bbc0f;
+}
+html.gb-purple { --gb0: #1a0533; --gb1: #4b1d7a; --gb2: #9a5fd6; --gb3: #e2c6ff; }
+html.gb-red    { --gb0: #1a0000; --gb1: #7a0000; --gb2: #ff1414; --gb3: #ff9a9a; }
+
+.gb-stage {
+  position: relative;
+  width: 100vw; height: 100vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  background: var(--gb0);
+  color: var(--gb3);
+  image-rendering: pixelated;
+}
+@supports (height: 100dvh) { .gb-stage { height: 100dvh; } }
+
+.gb-wall {
+  position: absolute; inset: 0; z-index: 0;
+  background-color: var(--gb0);
+  background-image: var(--sp-bg, url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%208%208%27%20shape-rendering%3D%27crispEdges%27%3E%3Crect%20width%3D%278%27%20height%3D%278%27%20fill%3D%27%232a2a2a%27/%3E%3Crect%20x%3D%270%27%20y%3D%270%27%20width%3D%271%27%20height%3D%271%27%20fill%3D%27%234a4a4a%27/%3E%3Crect%20x%3D%274%27%20y%3D%274%27%20width%3D%271%27%20height%3D%271%27%20fill%3D%27%234a4a4a%27/%3E%3Crect%20x%3D%272%27%20y%3D%276%27%20width%3D%271%27%20height%3D%271%27%20fill%3D%27%233a3a3a%27/%3E%3Crect%20x%3D%276%27%20y%3D%272%27%20width%3D%271%27%20height%3D%271%27%20fill%3D%27%233a3a3a%27/%3E%3C/svg%3E"));
+  background-size: var(--bg-size, 32px 32px);
+  background-position: center;
+  image-rendering: pixelated;
+  filter: url(#gbTint);
+}
+
+.gb-top, .gb-task {
+  position: relative; z-index: 2; flex: 0 0 auto;
+  display: flex; align-items: center;
+  padding: 0 clamp(.6rem, 2vw, 1.2rem);
+  background: var(--gb1);
+  color: var(--gb3);
+  letter-spacing: 2px;
+}
+.gb-top {
+  justify-content: space-between;
+  min-height: clamp(1.9rem, 5.5vmin, 2.7rem);
+  border-bottom: .22rem solid var(--gb3);
+  font-size: clamp(.7rem, 2vmin, 1rem);
+}
+.gb-task {
+  min-height: clamp(1.7rem, 5vmin, 2.4rem);
+  border-top: .22rem solid var(--gb3);
+  font-size: clamp(.65rem, 1.8vmin, .9rem);
+  letter-spacing: 1px;
+  overflow: hidden; white-space: nowrap;
+}
+.gb-caret::after { content: '_'; animation: samside-blink 1s steps(1) infinite; }
+
+.gb-main {
+  position: relative; z-index: 2; flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(1rem, 4vmin, 2.2rem);
+  padding: clamp(.6rem, 2vmin, 1.4rem);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+
+.gb-banner {
+  max-width: 46ch;
+  text-align: center;
+  font-size: clamp(.85rem, 2.6vmin, 1.5rem);
+  line-height: 1.5; letter-spacing: 2px;
+  color: var(--gb3);
+  text-shadow: .15rem .15rem 0 var(--gb0);
+}
+
+.gb-grid {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: clamp(.6rem, 3vmin, 1.8rem) clamp(.8rem, 4vmin, 2.8rem);
+}
+
+.gb-icon {
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  width: clamp(84px, 19vmin, 156px);
+  padding: .6rem .3rem;
+  border: .15rem solid transparent;
+  background: none;
+  color: var(--gb3);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.gb-ico {
+  display: block;
+  width: clamp(56px, 13vmin, 104px); aspect-ratio: 1;
+  background-image: var(--sp-folder, url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2016%2016%27%20shape-rendering%3D%27crispEdges%27%3E%3Crect%20x%3D%271%27%20y%3D%273%27%20width%3D%276%27%20height%3D%272%27%20fill%3D%27%23000%27/%3E%3Crect%20x%3D%271%27%20y%3D%274%27%20width%3D%2714%27%20height%3D%2710%27%20fill%3D%27%23000%27/%3E%3Crect%20x%3D%272%27%20y%3D%274%27%20width%3D%274%27%20height%3D%271%27%20fill%3D%27%23aaa%27/%3E%3Crect%20x%3D%272%27%20y%3D%275%27%20width%3D%2712%27%20height%3D%278%27%20fill%3D%27%23ccc%27/%3E%3Crect%20x%3D%272%27%20y%3D%275%27%20width%3D%2712%27%20height%3D%271%27%20fill%3D%27%23fff%27/%3E%3Crect%20x%3D%272%27%20y%3D%2712%27%20width%3D%2712%27%20height%3D%271%27%20fill%3D%27%23777%27/%3E%3C/svg%3E"));
+  background-size: contain; background-repeat: no-repeat; background-position: center;
+  image-rendering: pixelated;
+  filter: url(#gbTint);
+}
+.gb-ico--own { background-image: none; filter: none; }   /* icons that use their OWN sprite (sinner_wall.png...) */
+.gb-label {
+  font-size: clamp(.65rem, 1.8vmin, .95rem);
+  letter-spacing: 1px; text-align: center; word-break: break-word;
+  text-shadow: .12rem .12rem 0 var(--gb0);
+}
+.gb-icon:hover, .gb-icon:focus-visible { background: var(--gb1); border-color: var(--gb3); outline: none; }
+.gb-icon:hover .gb-ico:not(.gb-ico--own),
+.gb-icon:focus-visible .gb-ico:not(.gb-ico--own) {
+  background-image: var(--sp-folder_hover, var(--sp-folder, url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2016%2016%27%20shape-rendering%3D%27crispEdges%27%3E%3Crect%20x%3D%271%27%20y%3D%273%27%20width%3D%276%27%20height%3D%272%27%20fill%3D%27%23000%27/%3E%3Crect%20x%3D%271%27%20y%3D%274%27%20width%3D%2714%27%20height%3D%2710%27%20fill%3D%27%23000%27/%3E%3Crect%20x%3D%272%27%20y%3D%274%27%20width%3D%274%27%20height%3D%271%27%20fill%3D%27%23aaa%27/%3E%3Crect%20x%3D%272%27%20y%3D%275%27%20width%3D%2712%27%20height%3D%278%27%20fill%3D%27%23ccc%27/%3E%3Crect%20x%3D%272%27%20y%3D%275%27%20width%3D%2712%27%20height%3D%271%27%20fill%3D%27%23fff%27/%3E%3Crect%20x%3D%272%27%20y%3D%2712%27%20width%3D%2712%27%20height%3D%271%27%20fill%3D%27%23777%27/%3E%3C/svg%3E")));
+  filter: url(#gbTint) brightness(1.2);
+}
+
+.gb-overlay {                                            /* LCD GRID / SCANLINES */
+  position: absolute; inset: 0; z-index: 60; pointer-events: none;
+  background-image: var(--sp-overlay,
+    linear-gradient(rgba(0,0,0,.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.12) 1px, transparent 1px));
+  background-size: var(--ov-size, 3px 3px);
+  image-rendering: pixelated;
+}
+
+/* DIALOG (sysber password) */
+.gb-dialog-wrap {
+  position: absolute; inset: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem; background: rgba(0,0,0,.65);
+}
+.gb-dialog {
+  width: min(92vw, 380px);
+  padding: 1.1rem;
+  display: flex; flex-direction: column; gap: .8rem;
+  background: var(--gb0);
+  border: .22rem solid var(--gb3);
+  box-shadow: .35rem .35rem 0 var(--gb1);
+  color: var(--gb3);
+  letter-spacing: 2px;
+}
+.gb-dialog input {
+  width: 100%;
+  padding: .5em .7em;
+  font-family: inherit; font-size: max(16px, 1rem); letter-spacing: 4px;
+  background: var(--gb0); color: var(--gb3);
+  border: .18rem solid var(--gb3); border-radius: 0; outline: none;
+}
+.gb-dialog input:focus { background: var(--gb1); }
+.gb-dialog-msg { min-height: 1.3em; font-size: .85rem; color: var(--gb2); }
+.gb-dialog-btns { display: flex; gap: .7rem; }
+.gb-dialog-btns button {
+  flex: 1; padding: .55em .4em;
+  font-family: inherit; font-size: .85rem; letter-spacing: 2px;
+  background: var(--gb1); color: var(--gb3);
+  border: .18rem solid var(--gb3); border-radius: 0; cursor: pointer;
+}
+.gb-dialog-btns button:hover, .gb-dialog-btns button:focus-visible { background: var(--gb3); color: var(--gb0); }

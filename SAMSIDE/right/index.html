@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WE'LL BE RIGHT BACK!</title>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .rt-text {
+      position: absolute; z-index: 2; left: 5vw; top: 50%; transform: translateY(-50%);
+      max-width: min(42vw, 36ch);
+      font-size: clamp(.85rem, 1.5vw + .3rem, 1.6rem); line-height: 1.7; letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0,0,0,.9);
+    }
+    .rt-sprite {
+      position: absolute; z-index: 1; right: 2vw; bottom: 0;
+      width: clamp(150px, 32vw, 460px); height: auto;
+    }
+    @media (max-aspect-ratio: 1/1), (max-width: 700px) {
+      .rt-text { top: 6vh; transform: none; max-width: 88vw; left: 6vw; }
+      .rt-sprite { width: min(66vw, 40vh); right: 0; }
+    }
+    /* VAPORWAVE / CHILL VIBE */
+    .rt-vapor { background: linear-gradient(180deg,#1b0638 0%,#7b2cbf 35%,#ff4fa3 70%,#ffb36b 100%); background-size: 100% 240%; animation: rt-sky 16s ease-in-out infinite alternate; overflow: hidden; }
+    .rt-vapor::before { content: ""; position: absolute; left: -60%; right: -60%; bottom: 0; height: 40%; z-index: 0; opacity: .55;
+      background: repeating-linear-gradient(90deg,#00f0ff 0 2px,transparent 2px 64px), repeating-linear-gradient(0deg,#00f0ff 0 2px,transparent 2px 40px);
+      transform: perspective(260px) rotateX(58deg); transform-origin: bottom; animation: rt-grid 1.4s linear infinite; }
+    .rt-vapor::after { content: ""; position: absolute; z-index: 0; left: 50%; top: 12vh; width: 26vmin; height: 26vmin; margin-left: -13vmin; border-radius: 50%;
+      background: linear-gradient(#ffe36b,#ff4fa3); opacity: .55; filter: blur(1px); animation: rt-float 5s ease-in-out infinite; }
+    .rt-text { color: #fff; text-shadow: 2px 0 #00f0ff, -2px 0 #ff2bd6, 0 0 18px #ff9bf0; animation: rt-hue 8s linear infinite; }
+    .rt-sprite { width: clamp(220px, 46vw, 660px); animation: rt-bob 3.2s ease-in-out infinite, rt-hue 8s linear infinite; filter: drop-shadow(0 0 22px #ff2bd6); }
+    @media (max-aspect-ratio: 1/1), (max-width: 700px) { .rt-sprite { width: min(86vw, 50vh); } }
+    @keyframes rt-sky { to { background-position: 0 100%; } }
+    @keyframes rt-grid { to { background-position: 0 0, 0 40px; } }
+    @keyframes rt-bob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-3vh) rotate(2deg); } }
+    @keyframes rt-float { 50% { transform: translateY(-2vh); } }
+    @keyframes rt-hue { to { filter: hue-rotate(360deg) drop-shadow(0 0 22px #ff2bd6); } }
+  </style>
+</head>
+<body>
+  <div class="samside-stage rt-vapor">
+    <p class="rt-text">PLEASE WAIT! WE'LL REDIRECT YOU IN A SEC! HERE'S SOME BG MUSIC FOR THE WAITING! SORRY FOR THE INCONVENIENT! :D</p>
+    <img class="rt-sprite no-drag" src="../media/pedro_paquete_piano.png" alt="" draggable="false">
+  </div>
+  <script>
+    var WAIT_MS = (2 * 60 + 23) * 1000;   // HORRIBLE_PIANO.mp3 = 2:23
+
+    var DESTINATIONS = [
+      '404.html',
+      '1020/',
+      '274648/',
+      'broken_heaven/',
+      'consequences/',
+      'consequent/',
+      'consequent/placeholder/ipsum_dolor/',
+      'missingno/',
+      'main/origin/mln/',
+      'main/pj/',
+      'redemption/',
+      'the_end/',
+      'virsoul/'
+    ];
+
+    var gone = false;
+    function leave() {
+      if (gone) return;
+      gone = true;
+      var dest = SAMSIDE.pick(DESTINATIONS);
+      window.location.href = (dest === '404.html') ? SAMSIDE.site(dest) : SAMSIDE.url(dest);
+    }
+
+    var music = SAMSIDE.bgm(SAMSIDE.url('sfx/HORRIBLE_PIANO.mp3'), { loop: false, volume: .35 });
+    if (music) music.addEventListener('ended', leave);
+    setTimeout(leave, WAIT_MS);
+  </script>
+</body>
+</html>

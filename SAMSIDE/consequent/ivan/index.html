@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOST_CASE</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    .iv-report { font: inherit; white-space: pre-wrap; word-break: break-word; }
+    .iv-title { font-weight: bold; letter-spacing: 2px; }
+    .iv-glitch { display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <div class="samside-panel samside-scroll samside-term">
+      <pre class="iv-report" id="ivReport"><span class="iv-title">MISSING CHILD</span>
+
+Name: Ivan
+
+<span class="iv-glitch" data-g="1">%$#Ig̷n̸_qu4nt--- error --- no s1gn4l --- rec0rd corrupt#</span>
+<span class="iv-glitch" data-g="1">--- da†a l0st --- ¿¿¿ --- ###_unreadable_### --- ---</span>
+<span class="iv-glitch" data-g="1">0x00 0xFF NULL NULL --- fragment miss1ng --- reboot??</span>
+<span class="iv-glitch" data-g="1">--- ###### --- [REDACTED] --- th3 f1le w0nt l0ad --- $$</span>
+
+<span class="iv-glitch" data-g="1">--- ~~~ static ~~~ --- c4nn0t verify --- ¿¿???¿¿ ---</span>
+<span class="iv-glitch" data-g="1">retry... retry... retry... --- ###ERR0R### --- g1ve up</span>
+
+The last time it was seen was nearby an Ominous Valley</pre>
+      <span class="samside-caret"></span>
+    </div>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/B4D_G4T3W4Y.mp3'), { loop: true, volume: .35 });
+    var GLYPHS = '#%$&@?¿!*x01_-~^░▒▓■';
+    document.querySelectorAll('.iv-glitch').forEach(function (el) {
+      var base = el.textContent;
+      setInterval(function () {
+        var a = base.split('');
+        for (var i = 0; i < 3; i++) { var p = Math.floor(Math.random() * a.length); a[p] = GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; }
+        el.textContent = a.join('');
+      }, 140);
+    });
+    var report = document.getElementById('ivReport');
+    (function purpleFlash() {
+      if (SAMSIDE.chance(.12)) { report.style.color = '#b45cff'; setTimeout(function () { report.style.color = ''; }, 90 + Math.random() * 120); }
+      setTimeout(purpleFlash, SAMSIDE.rand(1500, 4000));
+    })();
+  </script>
+</body>
+</html>
