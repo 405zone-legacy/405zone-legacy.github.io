@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NULL</title>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .nl-msg { display: flex; flex-wrap: wrap; justify-content: center; gap: .6em 1em; color: #f22; font-size: clamp(1.1rem, 5vw, 3rem); letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,0,0,.6); }
+    .nl-word span { display: inline-block; animation: nl-shake .12s infinite; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <p class="nl-msg" id="nlMsg"></p>
+  </div>
+  <script>
+    var TEXT = '[YOU] [ARE] [USELESS]';
+    var GLYPHS = '#%$&@?¿!*x01_-~^░▒▓■';
+    var msg = document.getElementById('nlMsg');
+    TEXT.split(' ').forEach(function (word) {
+      var w = document.createElement('span'); w.className = 'nl-word';
+      word.split('').forEach(function (ch) {
+        var s = document.createElement('span'); s.textContent = ch; s.dataset.base = ch;
+        s.style.animationDelay = (Math.random() * -0.3) + 's';
+        w.appendChild(s);
+      });
+      msg.appendChild(w);
+    });
+    var st = document.createElement('style');
+    st.textContent = '@keyframes nl-shake { 0%,100% { transform: translate(0,0); } 25% { transform: translate(-2px,1px); } 50% { transform: translate(2px,-2px); } 75% { transform: translate(-1px,-1px); } }';
+    document.head.appendChild(st);
+    setInterval(function () {
+      var spans = msg.querySelectorAll('.nl-word span');
+      for (var i = 0; i < 2; i++) {
+        var el = spans[Math.floor(Math.random() * spans.length)];
+        el.textContent = (Math.random() < .5) ? GLYPHS[Math.floor(Math.random() * GLYPHS.length)] : el.dataset.base;
+      }
+    }, 110);
+
+    SAMSIDE.redirectAfter(1000, SAMSIDE.site('index.html'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PG_ORIGIN</title>
+  <link rel="icon" type="image/x-icon" href="../../../favicon.ico">
+  <link rel="stylesheet" href="../../../css/samside-base.css">
+  <script src="../../../js/samside-base.js"></script>
+  <style>
+    .pk-word {
+      position: absolute; z-index: 2; left: 0; top: 0;
+      padding: .6em 1em;
+      color: #fff; text-decoration: none; letter-spacing: 3px;
+      font-size: clamp(1rem, 3.4vmin, 2rem);
+      text-shadow: 0 0 10px rgba(0,0,0,.9);
+      animation: samside-fade-in .4s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="samside-bg no-drag" src="../../../media/monochrome.png" alt="" draggable="false">
+    <a class="pk-word" id="pkWord" href="../../../main/pj/pjrll/" draggable="false" hidden>pjrll</a>
+  </div>
+  <script>
+    var track = SAMSIDE.bgm(SAMSIDE.url('sfx/sound_of_the_void.mp3'), { loop: true, volume: .8 });
+    var ctx, ready = false;
+    function initDistortion() {
+      if (ready || !track) return; ready = true;
+      try {
+        var Ctx = window.AudioContext || window.webkitAudioContext; if (!Ctx) return;
+        ctx = new Ctx();
+        var src = ctx.createMediaElementSource(track);
+        var shaper = ctx.createWaveShaper(), n = 44100, curve = new Float32Array(n), amt = 45;
+        for (var i = 0; i < n; i++) { var x = (i * 2) / n - 1; curve[i] = (3 + amt) * x * (Math.PI / (Math.PI + amt * Math.abs(x))); }
+        shaper.curve = curve; shaper.oversample = '4x';
+        var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+        var gain = ctx.createGain(); gain.gain.value = .9;
+        src.connect(shaper); shaper.connect(lp); lp.connect(gain); gain.connect(ctx.destination);
+        ctx.resume(); track.play().catch(function () {});
+      } catch (e) {}
+    }
+    if (location.protocol !== 'file:') {
+      ['click', 'keydown', 'touchend', 'pointerup'].forEach(function (ev) { document.addEventListener(ev, initDistortion); });
+      initDistortion();
+    }
+
+    var CHECK_MS = 4000;
+    var CHANCE = .35;
+    var LIFE_MS = 2600;
+
+    var word = document.getElementById('pkWord');
+    setInterval(function () {
+      if (!word.hidden || !SAMSIDE.chance(CHANCE)) return;
+      word.hidden = false;
+      word.style.left = SAMSIDE.rand(8, Math.max(8, window.innerWidth - word.offsetWidth - 8)) + 'px';
+      word.style.top = SAMSIDE.rand(8, Math.max(8, window.innerHeight - word.offsetHeight - 8)) + 'px';
+      setTimeout(function () { word.hidden = true; }, LIFE_MS);
+    }, CHECK_MS);
+  </script>
+</body>
+</html>

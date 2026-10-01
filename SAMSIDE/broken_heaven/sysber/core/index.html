@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORE</title>
+  <link rel="icon" type="image/x-icon" href="../../../favicon.ico">
+  <link rel="stylesheet" href="../../../css/samside-base.css">
+  <script src="../../../js/samside-base.js"></script>
+  <style>
+    .core-stage { flex-direction: column; gap: clamp(.8rem, 3vmin, 1.8rem); padding: 3vh 4vw; }
+    .core-altar { max-width: 90vw; max-height: 66vh; object-fit: contain; }
+    .core-wave {
+      text-align: center; max-width: 96vw; white-space: nowrap;
+      font-size: min(1.4rem, 3.1vw); letter-spacing: 2px; line-height: 1.5;
+    }
+    .core-wave .w { display: inline-block; white-space: nowrap; }
+    .core-wave .c { display: inline-block; animation: core-wave 2.2s ease-in-out infinite; animation-delay: calc(var(--i) * .09s); }
+    @keyframes core-wave {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-.55em); }
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage core-stage">
+    <img class="core-altar no-drag" src="../../../media/empty_altar.png" alt="" draggable="false">
+    <p class="core-wave samside-purple" id="coreWave" aria-label="SOME THINGS MAY BE FORGOTTEN... :)">SOME THINGS MAY BE FORGOTTEN... :)</p>
+  </div>
+  <script>
+    var el = document.getElementById('coreWave');
+    var text = el.textContent;
+    el.textContent = '';
+    var i = 0;
+    text.split(' ').forEach(function (word, wi, arr) {
+      var w = document.createElement('span');
+      w.className = 'w';
+      word.split('').forEach(function (ch) {
+        var c = document.createElement('span');
+        c.className = 'c';
+        c.style.setProperty('--i', i++);
+        c.textContent = ch;
+        w.appendChild(c);
+      });
+      el.appendChild(w);
+      if (wi < arr.length - 1) { el.appendChild(document.createTextNode(' ')); i++; }
+    });
+  </script>
+</body>
+</html>

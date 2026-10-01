@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" class="gb-purple">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSBER</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <link rel="stylesheet" href="../../css/samside-gb.css">
+  <script src="../../js/samside-base.js"></script>
+  <script src="../../js/samside-gb.js"></script>
+</head>
+<body>
+  <div class="gb-stage" id="gbStage">
+    <div class="gb-wall"></div>
+    <header class="gb-top"><span>BROKEN_HEAVEN/SYSBER</span><span data-gb-clock>--:--</span></header>
+    <main class="gb-main">
+      <nav class="gb-grid">
+        <button type="button" class="gb-icon" id="coreBtn"><span class="gb-ico"></span><span class="gb-label">core</span></button>
+      </nav>
+    </main>
+    <footer class="gb-task"><span class="gb-caret">C:\BROKEN_HEAVEN\SYSBER\&gt;</span></footer>
+    <div class="gb-dialog-wrap" id="pwWrap" hidden>
+      <form class="gb-dialog" id="pwForm" autocomplete="off">
+        <label for="pw">PASSWORD:</label>
+        <input id="pw" type="password" maxlength="24" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="gb-dialog-msg" id="pwMsg" aria-live="polite"></div>
+        <div class="gb-dialog-btns">
+          <button type="submit">OK</button>
+          <button type="button" id="pwCancel">CANCEL</button>
+        </div>
+      </form>
+    </div>
+    <div class="gb-overlay"></div>
+  </div>
+  <script>
+    SAMSIDE_GB.init('purple');
+    SAMSIDE.bgm(SAMSIDE.url('sfx/B4D_G4T3W4Y.mp3'), { loop: true, volume: .35 });
+    var KEY_SFX = SAMSIDE.site('sfx/gui_key.mp3');
+    var REJECT_SFX = SAMSIDE.site('sfx/gui_reject.mp3');
+    var SUCCESS_SFX = SAMSIDE.site('sfx/gui_success.mp3');
+
+    var PASSWORD = 'J';
+    var CASE_SENSITIVE = true;
+
+    var wrap = document.getElementById('pwWrap');
+    var form = document.getElementById('pwForm');
+    var input = document.getElementById('pw');
+    var msg = document.getElementById('pwMsg');
+
+    document.getElementById('coreBtn').addEventListener('click', function () {
+      wrap.hidden = false;
+      input.value = '';
+      msg.textContent = '';
+      input.focus();
+    });
+    document.getElementById('pwCancel').addEventListener('click', function () { wrap.hidden = true; });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') wrap.hidden = true; });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = input.value.trim();
+      var ok = CASE_SENSITIVE ? (v === PASSWORD) : (v.toUpperCase() === PASSWORD.toUpperCase());
+      input.disabled = true;
+      if (ok) {
+        msg.textContent = 'ACCESS GRANTED';
+        setTimeout(function () { window.location.href = 'core/'; }, 600);
+        try { var a = new Audio(SUCCESS_SFX); a.volume = 0.25; a.play().catch(function () {}); } catch (e) {}
+      } else {
+        msg.textContent = 'ACCESS DENIED';
+        setTimeout(function () { window.location.href = SAMSIDE.site('index.html'); }, 900);
+        try { var a = new Audio(REJECT_SFX); a.volume = 0.15; a.play().catch(function () {}); } catch (e) {}
+      }
+    });
+  </script>
+</body>
+</html>

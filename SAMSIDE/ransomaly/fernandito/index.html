@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>THE &lt;HEADER&gt; ITSELF</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    html, body, .samside-stage { touch-action: none; user-select: none; }
+    #cv { position: absolute; inset: 0; z-index: 1; }
+    .fe-hud { position: absolute; z-index: 2; top: 0; left: 0; right: 0; padding: 1.2vh 3vw; display: flex; justify-content: space-between; align-items: center; font-size: clamp(.8rem, 2.6vw, 1.3rem); text-shadow: 0 0 6px #000; color: #fff; }
+    .fe-bar { width: clamp(90px, 30vw, 240px); height: 1.1em; background: #200; border: 2px solid #fff; }
+    .fe-bar i { display: block; height: 100%; width: 0%; background: #b06fff; transition: width .15s; }
+    #feMsg { position: absolute; z-index: 4; inset: 0; display: none; background: #000 center/contain no-repeat; }
+    #feMsg.on { display: block; animation: fe-shake .1s infinite; }
+    @keyframes fe-shake { 25% { transform: translate(-8px,6px); } 75% { transform: translate(8px,-6px); } }
+    #feFlash { position: absolute; z-index: 3; inset: 0; background: #f00; opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" id="stg">
+    <canvas id="cv"></canvas>
+    <div class="fe-hud">
+      <div>SCORE <span id="feScore">0</span></div>
+      <div>CORRUPTION<div class="fe-bar"><i id="feBar"></i></div></div>
+      <div id="feBest">BEST 0</div>
+    </div>
+    <div id="feFlash"></div>
+    <div id="feMsg"></div>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/F3RN4ND170.mp3'), { loop: true, volume: .25 });
+    function sfx(name, vol) { try { var a = new Audio(SAMSIDE.url('sfx/' + name)); a.volume = vol || .7; a.play().catch(function () {}); } catch (e) {} }
+
+    function img(name) { var i = new Image(); i.ok = false; i.onload = function () { i.ok = true; }; i.src = SAMSIDE.url('media/fernandito/' + name); return i; }
+    var MOUTH_CLOSED = img('fernandito_closed.png'), MOUTH_OPEN = img('fernandito_open.png');
+    var GOOD = [
+      { im: img('food_good1.png'), glyph: '\uD83E\uDD50', col: '#e8c060' },
+      { im: img('food_good2.png'), glyph: '\uD83C\uDF4E', col: '#e04040' },
+      { im: img('food_good3.png'), glyph: '\uD83E\uDDC0', col: '#f0e090' }
+    ];
+    var BAD = [
+      { im: img('food_bad1.png'), glyph: '\u2620', col: '#7a4fff' },
+      { im: img('food_bad2.png'), glyph: '\u2699', col: '#888' }
+    ];
+
+    var BG = img('bg.png');
+    var cv = document.getElementById('cv'), cx = cv.getContext('2d'), W, H;
+    function rs() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
+    addEventListener('resize', rs); rs();
+
+    var fx = W / 2, fw = 0, fh = 0, targetX = fx, mouthOpenUntil = 0;
+    var items = [], score = 0, best = 0, corruption = 0, dead = false, last = performance.now(), t0 = last, nextSpawn = last + 700;
+
+    function fSize() { fh = Math.min(H * .32, 340); fw = fh * .92; }
+    fSize();
+    function mouthBox() { return { x: fx - fw * .17, y: (H - fh * .12) - fh * .16, w: fw * .34, h: fh * .16 }; }
+
+    addEventListener('pointermove', function (e) { targetX = e.clientX; });
+    addEventListener('pointerdown', function (e) { targetX = e.clientX; });
+
+    function spawnItem() {
+      var isGood = SAMSIDE.chance(.62), pool = isGood ? GOOD : BAD, pick = SAMSIDE.pick(pool);
+      items.push({ good: isGood, im: pick.im, glyph: pick.glyph, col: pick.col, x: SAMSIDE.rand(40, W - 40), y: -30, r: 22, vy: SAMSIDE.rand(160, 260) });
+    }
+
+    function eat(good) {
+      mouthOpenUntil = performance.now() + 160;
+      if (good) { score++; sfx('mc-eat.mp3', .8); corruption = Math.max(0, corruption - 4); }
+      else { sfx('hit.mp3', .7); corruption += 16; flash(); }
+    }
+    function flash() { var f = document.getElementById('feFlash'); f.style.transition = 'none'; f.style.opacity = .35; requestAnimationFrame(function () { f.style.transition = 'opacity .3s'; f.style.opacity = 0; }); }
+    function miss() { corruption += 3; }
+
+    function die() {
+      dead = true; best = Math.max(best, score);
+      document.getElementById('feBest').textContent = 'BEST ' + best;
+      sfx('FT_JS.mp3', 0.35);
+      var m = document.getElementById('feMsg'); m.style.backgroundImage = "url('" + SAMSIDE.url('media/fernandito/fernandito_js.png') + "')"; m.classList.add('on');
+      setTimeout(function () {
+        m.classList.remove('on');
+        items = []; score = 0; corruption = 0; dead = false; t0 = performance.now(); nextSpawn = t0 + 500;
+      }, 1600);
+    }
+
+    function step(now) {
+      var dt = Math.min(.05, (now - last) / 1000); last = now;
+      cx.fillStyle = '#0a0a12'; cx.fillRect(0, 0, W, H);
+      if (BG.ok) cx.drawImage(BG, 0, 0, W, H);
+
+      if (!dead) {
+        fx += (targetX - fx) * Math.min(1, dt * 8);
+        fx = Math.max(fw * .5, Math.min(W - fw * .5, fx));
+      }
+
+      var sprite = (performance.now() < mouthOpenUntil) ? MOUTH_OPEN : MOUTH_CLOSED;
+      var fy = H - fh * .1;
+      if (sprite.ok) cx.drawImage(sprite, fx - fw / 2, fy - fh, fw, fh);
+      else {
+        cx.fillStyle = '#c9a24b'; cx.beginPath(); cx.ellipse(fx, fy - fh * .45, fw * .42, fh * .45, 0, 0, 7); cx.fill();
+        cx.fillStyle = (sprite === MOUTH_OPEN) ? '#000' : '#3a2410';
+        var mb2 = mouthBox(); cx.fillRect(mb2.x, mb2.y, mb2.w, sprite === MOUTH_OPEN ? mb2.h : mb2.h * .3);
+      }
+
+      if (!dead) {
+        var el = now - t0;
+        if (now > nextSpawn) { spawnItem(); if (SAMSIDE.chance(.4)) spawnItem(); nextSpawn = now + Math.max(160, 560 - el / 70); }
+
+        var mb = mouthBox();
+        items = items.filter(function (it) {
+          it.y += it.vy * dt;
+          var eaten = false;
+          if (it.y > mb.y && it.y < mb.y + mb.h && it.x > mb.x && it.x < mb.x + mb.w) { eaten = true; eat(it.good); }
+          if (!eaten && it.y - it.r > H) { if (it.good) miss(); eaten = true; }
+          if (!eaten) {
+            if (it.im.ok) cx.drawImage(it.im, it.x - it.r, it.y - it.r, it.r * 2, it.r * 2);
+            else { cx.fillStyle = it.col; cx.beginPath(); cx.arc(it.x, it.y, it.r, 0, 7); cx.fill(); cx.font = (it.r * 1.6) + 'px sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(it.glyph, it.x, it.y - it.r - 4); }
+          }
+          return !eaten;
+        });
+
+        if (corruption >= 100) die();
+      }
+
+      document.getElementById('feScore').textContent = score;
+      document.getElementById('feBar').style.width = Math.min(100, corruption) + '%';
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  </script>
+</body>
+</html>

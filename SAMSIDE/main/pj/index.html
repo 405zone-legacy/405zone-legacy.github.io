@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAULTY_VASE</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    .pj-text { position: relative; z-index: 1; font-size: clamp(1.6rem, 6.5vw, 4rem); padding: 0 4vw; }
+    .pj-cross {
+      position: absolute; z-index: 3; left: -300px; top: 0;
+      width: clamp(90px, 15vmin, 190px);
+    }
+    .pj-cross img { display: block; width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <p class="samside-red3d pj-text">[PARASITE]</p>
+    <a class="pj-cross" id="pjCross" href="pjrll/" draggable="false" hidden><img class="no-drag" src="../../media/pjrll.png" alt="" draggable="false"></a>
+  </div>
+  <script>
+    var CHECK_MS = 5000;
+    var CHANCE = .3;
+    var CROSS_MS = 6500;
+
+    var cross = document.getElementById('pjCross');
+    var busy = false;
+
+    function tryCross() {
+      if (busy || !SAMSIDE.chance(CHANCE)) return;
+      busy = true;
+      var w = window.innerWidth, h = window.innerHeight;
+      var dir = SAMSIDE.chance(.5) ? 1 : -1;
+      cross.hidden = false;
+      var size = cross.offsetWidth;
+      cross.style.transition = 'none';
+      cross.style.top = SAMSIDE.rand(h * .08, Math.max(h * .08, h * .85 - size)) + 'px';
+      cross.style.left = (dir > 0 ? -size : w) + 'px';
+      cross.offsetWidth;
+      cross.style.transition = 'left ' + CROSS_MS + 'ms linear';
+      cross.style.left = (dir > 0 ? w : -size) + 'px';
+      setTimeout(function () { cross.hidden = true; busy = false; }, CROSS_MS + 150);
+    }
+    setInterval(tryCross, CHECK_MS);
+  </script>
+</body>
+</html>

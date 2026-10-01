@@ -29,16 +29,35 @@
         'broken_heaven':                                    'broken_heaven',
         'void_ambiance':                                    'Void Ambiance',
         'mist_void_of_decayed_hopes':                       'Mist void of decayed hopes',
-        'familiar_smile':                                   'Familiar Smile'
+        'familiar_smile':                                   'Familiar Smile',
+        'stalking_damage':                                  'Stalking Damage',
+        'ominous_fog':                                      'Ominous Fog',
+        'faulty_one':                                       'ⓕＡ𝕦ㄥt𝐘 ᵒή𝔼',
+        'an_ending_it_is_so_let_me_speak':                  'An ending it is, so let me speak!',
+        'flying_backwards':                                 'Flying Backwards',
+        'corrupted_roots':                                  'Corrupted Roots',
+        'placeholder':                                      '[PLACEHOLDER]'
     };
 
     var FALLBACK = 'familiar_smile';
 
     var SPECIAL_DATES = {
-        '22/04': { tracks: ['sinner', 'lonely'], mode: 'rand' },
-        '07/11': { tracks: ['written_fate'] },
+        '22/04': { tracks: ['sinner'] },
+        '29/04': { tracks: ['stalking_damage'] },
+        '04/08': { tracks: ['lonely'] },
+        '07/11': { tracks: ['calmed1', 'decayed1', 'passed_out1'], mode: 'rand' },
+        '02/12': { tracks: ['i_was_something_now_im_nothing', 'void_ambiance'], mode: 'rand' },
         '18/04': { tracks: ['deepest_hole_of_remembrance'] },
-        '06/06': { tracks: ['ransomaly'] }
+        '30/05': { tracks: ['ominous_fog'] },
+        '30/10': { tracks: ['happy_i_was','slave_to_trust','mouths_do_lie'], mode: 'rand' },
+        '30/01': { tracks: ['that_place_youve_called_paradise'] },
+        '31/05': { tracks: ['broken_heaven','written_fate'], mode: 'rand' },
+        '06/05': { tracks: ['faulty_one'] },
+        '06/06': { tracks: ['ransomaly'] },
+        '13/06': { tracks: ['an_ending_it_is_so_let_me_speak'] },
+        '12/07': { tracks: ['flying_backwards'] },
+        '26/08': { tracks: ['corrupted_roots'] },
+        '01/10': { tracks: ['placeholder'] }
     };
 
     var MAP = [

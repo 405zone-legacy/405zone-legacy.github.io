@@ -47,7 +47,7 @@
     var stage = document.getElementById('iwntStage');
     var charEl = document.getElementById('iwntChar');
 
-    var music = SAMSIDE.playSafe('../sfx/I_WAS_NOT_THERE-1.mp3', { loop: true, volume: .8 });
+    var music = SAMSIDE.playSafe('../sfx/I_WAS_NOT_THERE-1.mp3', { loop: true, volume: 1.0 });
     function tryPlayOnce() {
       if (music) music.play().catch(function(){});
       document.removeEventListener('click', tryPlayOnce);

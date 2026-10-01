@@ -30,7 +30,7 @@
 
     sprite.addEventListener('click', function () {
 
-      SAMSIDE.playSafe('../sfx/mc-eat.mp3', { volume: 1 });
+      SAMSIDE.playSafe('../sfx/mc-eat.mp3', { volume: 0.95 });
       sprite.src = EAT_SRC;
       clearTimeout(revertTimer);
       revertTimer = setTimeout(function () { sprite.src = NON_EAT_SRC; }, 260);

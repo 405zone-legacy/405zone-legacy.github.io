@@ -339,7 +339,7 @@
   }
   requestAnimationFrame(tick);
 
-  var GIFS=[17,27], TOTAL=40;
+  var GIFS=[17,27], TOTAL=50;
   var lA=document.getElementById('bg-layer-a'), lB=document.getElementById('bg-layer-b');
   if (lA && lB) {
     var active=lA, hidden=lB, cur=-1;

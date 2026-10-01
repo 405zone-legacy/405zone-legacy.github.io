@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHAT_BACKUP_28_02_2024</title>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+  <link rel="stylesheet" href="../../../../css/samside-base.css">
+  <script src="../../../../js/samside-base.js"></script>
+  <style>
+    .cc-panel {
+      width: min(94vw, 960px); max-height: 100vh;
+      padding: clamp(1rem, 3vmin, 2.2rem);
+      font-size: clamp(.8rem, 1vw + .5rem, 1.25rem);
+    }
+    @supports (height: 100dvh) { .cc-panel { max-height: 100dvh; } }
+    .cc-log { margin-bottom: 1.2em; white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <div class="cc-panel samside-scroll samside-term italic" id="ccPanel">
+      <p class="cc-log">[LOG(PG#1020)]: New report! The entity was found during the malware scanning… It was categorized as "ghostware."</p>
+      <p class="cc-log">[LOG(PG#1241)]: New report! The entity “EXPERIMENT-9999_J” file has been finally written! We’ll call it [I_WAS_NOT_THERE], and it is meant to be like a placeholder or something like that.</p>
+      <p class="cc-log">[LOG(PG#405)]: I DON’T CARE ANYTHING ABOUT THAT! JUST MAKE ME A FAVOR AND ERRADICATE IT!!</p>
+      <p class="cc-log">[LOG(PG#1241)]: We were unable to remove it! Whoever created this file was able to merge it with the [CORE] itself!!</p>
+      <p class="cc-log">[LOG(PG#405)]: HOW?! NO ONE IS ABLE TO DO THAT!!!</p>
+      <p class="cc-log">[LOG(PG#520)]: IDIOT!! THE WRITER IS ABLE TO MODIFY PART OF THE CODE!! ALSO, THERE'S AN ERROR INSIDE WHEELFORM’S CODE THAT MAKES HER ABLE TO MODIFY THE [TESTING_ZONE] WITH HER MOODS!</p>
+      <p class="cc-log">[LOG(PG#405)]: THAT DARN WRITER! BRINGING THAT STUPID BEAR HERE! WHEELFORM BECAME [FAULTY] SINCE THAT STUPID BEAR REACHED HERE!!!</p>
+      <p class="cc-log">[LOG(PG#520)]: IT’S YOUR DAMN ROBOT! TAKE CARE OF HER! YOU STUPID USELESSNESS!</p>
+      <p class="cc-log">[LOG(PG#1241)]: EXACTLY! I’M TIRED OF HER CONSTANT BEGS EVERY SESSION! SHE’S IMPOSSIBLE TO LEAD! REMAKE HER OR SOMETHING! OR MAYBE APPLY THE UPGRADE THAT PG#1020 REQUESTED!</p>
+      <p class="cc-log">[LOG(PG#1020)]: Did someone notify me?</p>
+      <p class="cc-log">[LOG(PG#405)]: NO! SHUT!</p>
+      <p class="cc-log">[LOG(PG#1020)]: Chill dude! You’re acting like a [DESPAIR]!</p>
+      <p class="cc-log">[LOG(PG#405)]: I’M [CHILL]! OK?! AND FOR ALL OF YOU! IF YOU WANT ME TO REBOOT HER SO BADLY, THEN I WILL DO IT! [IDC] AT ALL! I WON’T CONTAIN MYSELF THIS TIME! I’LL BE EXTREMELY ROUGH UNTIL SHE WILL TURN [LOYAL] AGAIN! NO MATTER THE COST!</p>
+      <p class="cc-log">[LOG(PG#520)]: Yeah… I think he lost it… He’s not that [CHILL] after all…</p>
+      <p class="cc-log">[LOG(PG#405)]: SHUT! // LOG-OFF;</p>
+      <p class="cc-log">[LOG(TESTING_ZONE)]: PG#405 Has left the prompt_chat;</p>
+      <p class="cc-caret" id="ccCaret" hidden><span class="samside-caret"></span></p>
+    </div>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/C0R3_L4ND.mp3'), { loop: true, volume: .18 });
+
+    var panel = document.getElementById('ccPanel');
+    SAMSIDE.typeBlocks(panel.querySelectorAll('.cc-log'), {
+      speed: 8, gap: 260, scroller: panel,
+      onDone: function () { document.getElementById('ccCaret').hidden = false; }
+    });
+  </script>
+</body>
+</html>

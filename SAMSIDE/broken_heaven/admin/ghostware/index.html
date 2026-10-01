@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IM_STILL_HERE</title>
+  <link rel="icon" type="image/x-icon" href="../../../favicon.ico">
+  <link rel="stylesheet" href="../../../css/samside-base.css">
+  <script src="../../../js/samside-base.js"></script>
+  <style>
+    .gw-wrap { width: min(92vw, 620px); }
+    .gw-head { display: flex; justify-content: space-between; font-size: clamp(.8rem, 2.4vw, 1.1rem); margin-bottom: .5rem; }
+    .gw-bar { height: .9rem; border: .14rem solid #0f0; background: #000; margin-bottom: 1.1rem; }
+    .gw-bar i { display: block; height: 100%; width: 0%; background: #0f0; transition: width .3s linear; }
+    .gw-list { list-style: none; padding: 0; margin: 0; font-size: clamp(.75rem, 2vw, 1.05rem); line-height: 2; min-height: 22em; }
+    .gw-list li { opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s; display: flex; justify-content: space-between; gap: 1em; }
+    .gw-list li.on { opacity: 1; transform: translateY(0); }
+    .gw-name { text-decoration: line-through; text-decoration-color: #a00; }
+    .gw-tag { color: #a00; font-size: .85em; }
+    .gw-done { margin-top: 1rem; font-size: clamp(.8rem, 2.2vw, 1.1rem); opacity: 0; transition: opacity .5s; }
+    .gw-done.on { opacity: 1; }
+    .gw-popup-wrap { position: fixed; inset: 0; z-index: 30; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.8); }
+    .gw-popup-wrap.on { display: flex; }
+    .gw-popup { background: #000; border: 2px solid #0f0; color: #0f0; padding: 1.4rem 2rem; font-size: clamp(1rem, 3vw, 1.6rem); letter-spacing: 2px; }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <div class="gw-wrap samside-term">
+      <div class="gw-head"><span>GHOSTWARE SCANNER v0.3</span><span id="gwPct">0%</span></div>
+      <div class="gw-bar"><i id="gwFill"></i></div>
+      <ul class="gw-list" id="gwList"></ul>
+      <p class="gw-done italic" id="gwDone"></p>
+    </div>
+  </div>
+  <div class="gw-popup-wrap" id="gwPopupWrap"><div class="gw-popup">ALL DONE!</div></div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/B4D_G4T3W4Y.mp3'), { loop: true, volume: .35 });
+
+    var ENTRIES = [
+      ['PJRLL', 'CORRUPTED'], ['IVAN', 'MISSING'], ['MANUEH', 'DECEASED'], ['PORKY', 'DECEASED'],
+      ['TONI274648', 'LOST'], ['WHEELFORM', 'UNSTABLE'], ['HELLBAI', 'HOSTILE'], ['???????', 'UNKNOWN'],
+      ['WRATS', 'DECEASED(???)'], ['DEADTIME JONES', 'FLAGGED'], ['[REDACTED]', 'UNKNOWN'], ['CALABAZERO', 'FAULTY']
+    ];
+    var GLYPHS = '#%$&@?¿!*x01_-~^░▒▓■';
+    function glitch(text, n) {
+      var a = text.split(''); for (var i = 0; i < n; i++) { var p = Math.floor(Math.random() * a.length); if (a[p] !== ' ') a[p] = GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; }
+      return a.join('');
+    }
+
+    var list = document.getElementById('gwList'), fill = document.getElementById('gwFill'), pct = document.getElementById('gwPct'), done = document.getElementById('gwDone');
+    function runScan() {
+      list.innerHTML = ''; fill.style.width = '0%'; pct.textContent = '0%'; done.classList.remove('on'); done.textContent = '';
+      ENTRIES.forEach(function (e, idx) {
+        setTimeout(function () {
+          var li = document.createElement('li'); var nameSpan = document.createElement('span'), tagSpan = document.createElement('span');
+          nameSpan.className = 'gw-name'; tagSpan.className = 'gw-tag'; tagSpan.textContent = e[1];
+          nameSpan.textContent = e[0]; li.appendChild(nameSpan); li.appendChild(tagSpan); list.appendChild(li);
+          requestAnimationFrame(function () { li.classList.add('on'); });
+          var p = Math.round(((idx + 1) / ENTRIES.length) * 100); fill.style.width = p + '%'; pct.textContent = p + '%';
+          var base = e[0];
+          setInterval(function () { nameSpan.textContent = SAMSIDE.chance(.3) ? glitch(base, 2) : base; }, 450);
+          if (idx === ENTRIES.length - 1) setTimeout(function () {
+            done.textContent = 'SCAN COMPLETE — ' + ENTRIES.length + ' ENTITIES FOUND, 0 RECOVERABLE'; done.classList.add('on');
+            setTimeout(function () {
+              document.getElementById('gwPopupWrap').classList.add('on');
+              setTimeout(function () { window.location.href = SAMSIDE.url('broken_heaven/'); }, 1400);
+            }, 1600);
+          }, 500);
+        }, idx * SAMSIDE.rand(550, 950));
+      });
+    }
+    runScan();
+  </script>
+</body>
+</html>

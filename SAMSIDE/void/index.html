@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/samside-base.css">
+  <script src="../js/samside-base.js"></script>
+  <style>
+    .void-msg {
+      position: relative; z-index: 2; max-width: 90vw; text-align: center;
+      font-size: clamp(1rem, 3vw, 2rem); letter-spacing: 3px; line-height: 1.5;
+      animation: samside-fade-in 3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <p class="void-msg" id="voidMsg" hidden>Why do you keep wasting your time here?</p>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/sound_of_the_void.mp3'), { loop: true, volume: .8 });
+    setTimeout(function () { document.getElementById('voidMsg').hidden = false; }, 10 * 60 * 1000);
+  </script>
+</body>
+</html>

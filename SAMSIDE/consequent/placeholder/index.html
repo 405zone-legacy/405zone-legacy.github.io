@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>J</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    html, body { background: #000; }
+    .dg-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 0; }
+    .dg-wrap { position: relative; z-index: 1; width: min(92vw, 820px); text-align: center; }
+    .dg-p {
+      color: #fff; font-size: clamp(.95rem, 2.6vw, 1.5rem); line-height: 1.8; margin-bottom: 1.3em;
+      text-shadow: 1px 0 #f0f, -1px 0 #0ff, 0 0 10px rgba(255,255,255,.25);
+      animation: dg-shake .13s infinite;
+      white-space: pre-wrap;
+    }
+    .dg-p b { font-weight: 700; }
+    @keyframes dg-shake {
+      0%, 100% { transform: translate(0,0); }
+      25% { transform: translate(-2px, 1.2px); }
+      50% { transform: translate(2px, -1.2px); }
+      75% { transform: translate(-1.3px, -2px); }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="samside-bg no-drag" src="../../media/tw.png" alt="" draggable="false">
+    <div class="dg-overlay"></div>
+    <div class="dg-wrap" id="dgWrap"></div>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/sound_of_the_void.mp3'), { loop: true, volume: .8 });
+
+    var PARAGRAPHS = [`This should be the third time we met… but, however, your rules! I’m unable to predict such a mess of nerves and veins hugged by fatty flesh! You keep following the path that sinks into the abyss, the same path I followed when I broke that fool! THAT DARN PURPLE ILLNESS! … Maybe I was too rough, right? I mean, … ####! I HATE BEING WEAK! I FEEL HYPOCRITE! … WHY DO YOU KEEP READING WITH {JOY}?!?! YOU ENJOY WATCHING ME HAVING A CRISIS?! YOU ARE THE MONSTER!! JUST… I {hope} you… YOU! … JUST LEAVE ME ALONE!!!`];
+    var wrap = document.getElementById('dgWrap');
+    var els = PARAGRAPHS.map(function () { var p = document.createElement('p'); p.className = 'dg-p'; p.hidden = true; wrap.appendChild(p); return p; });
+
+    function parseSegments(raw) {
+      var re = /\{([^}]*)\}/g, last = 0, m, segs = [];
+      while ((m = re.exec(raw))) {
+        if (m.index > last) segs.push({ text: raw.slice(last, m.index), bold: false });
+        segs.push({ text: m[1], bold: true });
+        last = re.lastIndex;
+      }
+      if (last < raw.length) segs.push({ text: raw.slice(last), bold: false });
+      return segs;
+    }
+
+    function typeDialogue(els, texts, opts) {
+      var speed = opts.speed, gap = opts.gap, onDone = opts.onDone;
+      var segsList = texts.map(parseSegments), bi = 0;
+      function typeOne(cb) {
+        var el = els[bi], segs = segsList[bi];
+        var chars = []; segs.forEach(function (s) { for (var i = 0; i < s.text.length; i++) chars.push({ ch: s.text[i], bold: s.bold }); });
+        if (!chars.length) { setTimeout(cb, gap); return; }
+        el.hidden = false; var idx = 0;
+        function render() {
+          var frag = document.createDocumentFragment(), curBold = null, buf = '';
+          function flush() { if (buf) { if (curBold) { var b = document.createElement('b'); b.textContent = buf; frag.appendChild(b); } else frag.appendChild(document.createTextNode(buf)); buf = ''; } }
+          for (var i = 0; i < idx; i++) { if (chars[i].bold !== curBold) { flush(); curBold = chars[i].bold; } buf += chars[i].ch; }
+          flush();
+          el.textContent = ''; el.appendChild(frag);
+        }
+        function step() {
+          idx++; render();
+          if (idx < chars.length) setTimeout(step, speed);
+          else setTimeout(cb, gap);
+        }
+        step();
+      }
+      (function next() { if (bi >= els.length) { if (onDone) onDone(); return; } typeOne(function () { bi++; next(); }); })();
+    }
+
+    function startDialogue() {
+      typeDialogue(els, PARAGRAPHS, {
+        speed: 50, gap: 450,
+        onDone: function () { SAMSIDE.redirectAfter(5000, SAMSIDE.site('index.html')); }
+      });
+    }
+    startDialogue();
+
+  </script>
+</body>
+</html>

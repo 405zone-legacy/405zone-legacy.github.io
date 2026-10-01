@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FUTILE</title>
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico">
+  <link rel="stylesheet" href="../../css/samside-base.css">
+  <script src="../../js/samside-base.js"></script>
+  <style>
+    html, body { background: #000; }
+    .dg-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 0; }
+    .dg-wrap { position: relative; z-index: 1; width: min(92vw, 820px); text-align: center; }
+    .dg-p {
+      color: #fff; font-size: clamp(.95rem, 2.6vw, 1.5rem); line-height: 1.8; margin-bottom: 1.3em;
+      text-shadow: 1px 0 #f0f, -1px 0 #0ff, 0 0 10px rgba(255,255,255,.25);
+      animation: dg-shake .16s infinite;
+      white-space: pre-wrap;
+    }
+    .dg-p b { font-weight: 700; }
+    @keyframes dg-shake {
+      0%, 100% { transform: translate(0,0); }
+      25% { transform: translate(-1px, 0.6px); }
+      50% { transform: translate(1px, -0.6px); }
+      75% { transform: translate(-0.6px, -1px); }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <img class="samside-bg no-drag" src="../../media/tw.png" alt="" draggable="false">
+    <div class="dg-overlay"></div>
+    <div class="dg-wrap" id="dgWrap"></div>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/sound_of_the_void.mp3'), { loop: true, volume: .8 });
+
+    var introDone = false;
+    (function progressIntro() {
+      var wrap = document.getElementById('dgWrap');
+      wrap.parentNode.style.flexDirection = 'column'; wrap.parentNode.style.gap = '0';
+      var box = document.createElement('div'); box.id = 'fuIntro';
+      box.style.cssText = 'position:relative;z-index:1;margin-bottom:2rem;';
+      box.innerHTML = '<div style="font-size:clamp(1.6rem,6vw,3rem);color:#fff;margin-bottom:.4rem;" id="fuPct">0%</div>' +
+        '<div style="height:1rem;border:2px solid #fff;width:min(80vw,420px);margin:0 auto;"><i id="fuFill" style="display:block;height:100%;width:0%;background:#fff;"></i></div>';
+      wrap.parentNode.insertBefore(box, wrap);
+      var pctEl = document.getElementById('fuPct'), fill = document.getElementById('fuFill');
+      var pct = 0, target = SAMSIDE.rand(94, 99), attempts = 0, MAX_ATTEMPTS = 3;
+      function run() {
+        pct += (target - pct) * .05 + .02;
+        pctEl.textContent = Math.floor(pct) + '%'; fill.style.width = Math.min(pct, 100) + '%';
+        if (pct >= target) {
+          attempts++;
+          if (attempts >= MAX_ATTEMPTS) {
+            box.style.transition = 'opacity .3s'; box.style.opacity = 0;
+            setTimeout(function () { box.remove(); startDialogue(); }, 350);
+            return;
+          }
+          setTimeout(function () { pct = 0; target = SAMSIDE.rand(94, 99); requestAnimationFrame(run); }, 700);
+          return;
+        }
+        requestAnimationFrame(run);
+      }
+      requestAnimationFrame(run);
+    })();
+
+    var PARAGRAPHS = [`You’re maybe a lucky bastard or a cheater that broke in here without a reason. It’s impossible for me to guess what your intentions are. I could try to guess them, but we both know that your ego will make you reject any evidence at all…`,
+      `{Consequent} of my choice about keeping my lips shutted. You’re unable to comprehend what it feels to be replaced… Whoever created that {placeholder} doesn’t even deserve the debrish of my voice.`,
+      `I’m aware that you’re most likely not going to stop until you find the truth! Reach the end… Because that’s what everyone wants, right? See the ending of the story and not caring at all about how it develops!`,
+      `I beg you to stop following me, please…`];
+    var wrap = document.getElementById('dgWrap');
+    var els = PARAGRAPHS.map(function () { var p = document.createElement('p'); p.className = 'dg-p'; p.hidden = true; wrap.appendChild(p); return p; });
+
+    function parseSegments(raw) {
+      var re = /\{([^}]*)\}/g, last = 0, m, segs = [];
+      while ((m = re.exec(raw))) {
+        if (m.index > last) segs.push({ text: raw.slice(last, m.index), bold: false });
+        segs.push({ text: m[1], bold: true });
+        last = re.lastIndex;
+      }
+      if (last < raw.length) segs.push({ text: raw.slice(last), bold: false });
+      return segs;
+    }
+
+    function typeDialogue(els, texts, opts) {
+      var speed = opts.speed, gap = opts.gap, onDone = opts.onDone;
+      var segsList = texts.map(parseSegments), bi = 0;
+      function typeOne(cb) {
+        var el = els[bi], segs = segsList[bi];
+        var chars = []; segs.forEach(function (s) { for (var i = 0; i < s.text.length; i++) chars.push({ ch: s.text[i], bold: s.bold }); });
+        if (!chars.length) { setTimeout(cb, gap); return; }
+        el.hidden = false; var idx = 0;
+        function render() {
+          var frag = document.createDocumentFragment(), curBold = null, buf = '';
+          function flush() { if (buf) { if (curBold) { var b = document.createElement('b'); b.textContent = buf; frag.appendChild(b); } else frag.appendChild(document.createTextNode(buf)); buf = ''; } }
+          for (var i = 0; i < idx; i++) { if (chars[i].bold !== curBold) { flush(); curBold = chars[i].bold; } buf += chars[i].ch; }
+          flush();
+          el.textContent = ''; el.appendChild(frag);
+        }
+        function step() {
+          idx++; render();
+          if (idx < chars.length) setTimeout(step, speed);
+          else setTimeout(cb, gap);
+        }
+        step();
+      }
+      (function next() { if (bi >= els.length) { if (onDone) onDone(); return; } typeOne(function () { bi++; next(); }); })();
+    }
+
+    function startDialogue() {
+      typeDialogue(els, PARAGRAPHS, {
+        speed: 50, gap: 500,
+        onDone: function () { SAMSIDE.redirectAfter(5000, SAMSIDE.site('index.html')); }
+      });
+    }
+  </script>
+</body>
+</html>

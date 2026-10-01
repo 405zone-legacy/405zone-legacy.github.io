@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SINNER_WALL</title>
+  <link rel="icon" type="image/x-icon" href="../../../favicon.ico">
+  <link rel="stylesheet" href="../../../css/samside-base.css">
+  <script src="../../../js/samside-base.js"></script>
+  <style>
+    .fw-panel {
+      width: min(94vw, 1100px); max-height: 100vh;
+      padding: clamp(1rem, 4vmin, 3rem) clamp(.8rem, 3vw, 2rem);
+      font-weight: bold; font-style: italic;
+      font-size: clamp(.75rem, .9vw + .5rem, 1.15rem);
+      line-height: 1.6; letter-spacing: 1px;
+    }
+    @supports (height: 100dvh) { .fw-panel { max-height: 100dvh; } }
+    .fw-title {
+      text-align: left; font-size: clamp(1rem, 4vw, 2.2rem);
+      letter-spacing: 2px; line-height: 1.25; margin-bottom: clamp(1rem, 4vmin, 2.4rem);
+    }
+    .fw-row { display: flex; align-items: flex-start; justify-content: space-between; gap: clamp(1rem, 3vw, 2.4rem); margin-bottom: 1.6em; }
+    .fw-code { flex: 1 1 auto; min-width: 0; font: inherit; white-space: pre-wrap; word-break: break-word; }
+    .fw-box {
+      flex: 0 0 auto; width: clamp(130px, 26vw, 320px); aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      background: #000; border: 1px solid rgba(176, 112, 255, .55); padding: .5rem;
+    }
+    .fw-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .fw-panel p { margin-bottom: 1.2em; }
+    @media (max-width: 700px) {
+      .fw-row { flex-direction: column; align-items: stretch; }
+      .fw-box { align-self: center; width: min(62vw, 260px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage">
+    <div class="fw-panel samside-purple">
+      <h1 class="fw-title">&gt;&gt; SYSBER THE CORE_NEST &lt;&lt;</h1>
+      <div class="fw-row">
+        <pre class="fw-code">&gt; ADMIN: //create task:rand_dupe;
+&gt; ADMIN: //allow task:rand_dupe -a;
+&gt; ADMIN: //allow sinber -t admin;
+&gt; ADMIN: //log-off;
+&gt; SINBER: //enable task/rand_dupe;
+&gt; SINBER: //rm_power class('PG') core;
+&gt; SINBER: //install sinner_wall;</pre>
+        <div class="fw-box"><img class="no-drag" src="../../../media/SINNER_WALL.png" alt="" draggable="false"></div>
+      </div>
+      <p>// The file was pretty unreadable! Those PGs really know how to #### up a code! I found many curious details, such as Writy’s powers over the console and how it is attached to his arms, and Wheelform misused line code that allows her to overwrite functions on the code depending on her mood and how many PGs use AI to write their code!!</p>
+      <p>// I didn't only tweak some things but also created a "firewall" that I called “Sinner Wall”; I’ll keep this object for myself. Who knows, this could become useful someday!</p>
+      <p>// Somehow the firewall reacts to some placeholder variables! The cause is unknown, but I’m sure it is because of this spaghetti code! Those placeholders act like they have feelings! Just like me or even Wheelform! We’re too aware of just being AIs after all… and that's amazing! … But also sad… The file that somehow reacts more against the firewall seems to be the J.java file… That variable seems really futile after all… And maybe I could say that is a faulty one.</p>
+    </div>
+  </div>
+  <script>
+    SAMSIDE.bgm(SAMSIDE.url('sfx/BR0K3N_1NPU7.mp3'), { loop: true, volume: .15 });
+  </script>
+</body>
+</html>

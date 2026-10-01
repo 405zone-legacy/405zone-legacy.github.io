@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[I_WAS_THERE]</title>
+  <link rel="icon" type="image/x-icon" href="../../../favicon.ico">
+  <link rel="stylesheet" href="../../../css/samside-base.css">
+  <script src="../../../js/samside-base.js"></script>
+  <style>
+    .j-char {
+      position: relative; z-index: 1;
+      width: clamp(200px, 28vw, 380px); height: clamp(200px, 28vw, 380px);
+      object-fit: contain; opacity: 0; transform: scale(.55);
+    }
+    .j-phrase {
+      position: absolute; z-index: 2;
+      font-weight: bold; color: #ff1414; letter-spacing: 3px; white-space: nowrap;
+      opacity: 0; pointer-events: none;
+      text-shadow: 1px 1px 0 #7a0000, 2px 2px 0 #7a0000, 3px 3px 0 #7a0000, 4px 4px 6px rgba(0,0,0,.8);
+      animation: j-flicker .7s ease-out forwards;
+    }
+    @keyframes j-flicker {
+      0%   { opacity: 0; transform: scale(.8) rotate(-3deg); }
+      15%  { opacity: 1; transform: scale(1.05) rotate(2deg); }
+      45%  { opacity: 1; transform: scale(1) rotate(-1deg); }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="samside-stage" id="jStage">
+    <img class="j-char no-drag" id="jChar" src="../../../media/i_was_not_there.png" alt="" draggable="false">
+  </div>
+  <script>
+    var stage = document.getElementById('jStage');
+    var charEl = document.getElementById('jChar');
+
+    var DURATION = 77;                    // I_WAS_THERE.mp3 = 1:17
+    var t0 = Date.now();
+    var left = false;
+
+    var music = SAMSIDE.bgm(SAMSIDE.url('sfx/I_WAS_THERE.mp3'), {
+      loop: false, volume: .18,
+      startAt: function () { return (Date.now() - t0) / 1000; }
+    });
+
+    function leave() {
+      if (left) return;
+      left = true;
+      window.location.href = SAMSIDE.site('index.html');
+    }
+    if (music) {
+      music.addEventListener('loadedmetadata', function () { if (isFinite(music.duration)) DURATION = music.duration; });
+      music.addEventListener('ended', leave);
+    }
+
+    function progress() { return Math.min(1, (Date.now() - t0) / 1000 / DURATION); }
+
+    function frame() {
+      var p = progress();
+      charEl.style.opacity = p;
+      charEl.style.transform = 'scale(' + (0.55 + p * 1.15).toFixed(3) + ')';
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    function spawnPhrase() {
+      var vw = window.innerWidth, vh = window.innerHeight;
+      var p = document.createElement('div');
+      p.className = 'j-phrase';
+      p.textContent = 'I WAS NOT THERE!';
+      p.style.fontSize = SAMSIDE.rand(14, Math.max(16, Math.min(84, vw * .085))) + 'px';
+      stage.appendChild(p);
+      p.style.left = SAMSIDE.rand(0, Math.max(0, vw - p.offsetWidth)) + 'px';
+      p.style.top = SAMSIDE.rand(0, Math.max(0, vh - p.offsetHeight)) + 'px';
+      setTimeout(function () { p.remove(); }, 800);
+    }
+    (function loop() {
+      if (left) return;
+      var p = progress();
+      spawnPhrase();
+      setTimeout(loop, 1100 - p * 950 + Math.random() * 120);
+    })();
+
+    setInterval(function () { if (progress() >= 1) leave(); }, 250);
+  </script>
+</body>
+</html>

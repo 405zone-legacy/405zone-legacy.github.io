@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>H.I.M</title>
+  <link rel="icon" type="image/x-icon" href="../../../favicon.ico">
+  <link rel="stylesheet" href="../../../css/samside-base.css">
+  <link rel="stylesheet" href="../../../css/samside-gb.css">
+  <script src="../../../js/samside-base.js"></script>
+  <script src="../../../js/samside-gb.js"></script>
+  <style>
+    html, body { touch-action: none; user-select: none; }
+    .gb-stage { justify-content: flex-start; }
+    .gb-main { overflow: hidden; }
+    #bgFX { position: fixed; inset: -6%; z-index: 1; pointer-events: none; }
+    #bgWash { position: absolute; inset: 0; filter: url(#pjSpiral); transition: background-color 1.2s ease; }
+    #bgChromaR, #bgChromaB { position: absolute; inset: 0; mix-blend-mode: screen; opacity: 0; }
+    #bgChromaR { background: #f00; } #bgChromaB { background: #08f; }
+    #him-wrap { position: relative; }
+    .gb-main { gap: clamp(.4rem, 1.6vmin, .9rem); padding: clamp(.3rem, 1vmin, .7rem); }
+    #him { height: 23vh; max-width: 78vw; object-fit: contain; transform-origin: 50% 100%; animation: pj-sway 2.4s ease-in-out infinite; image-rendering: pixelated; }
+    @keyframes pj-sway { 0%,100% { transform: rotate(-5deg) translateX(-2vw); } 50% { transform: rotate(5deg) translateX(2vw); } }
+    #hp-wrap { display: flex; align-items: center; gap: .6rem; font-size: clamp(.7rem, 2.2vw, 1rem); letter-spacing: 1px; }
+    #hp-bar { width: min(50vw, 280px); height: .9rem; border: .16rem solid var(--gb3); background: var(--gb0); }
+    #hp-bar i { display: block; height: 100%; width: 100%; background: var(--gb2); transition: width .2s; }
+    #hud2 { font-size: clamp(.6rem, 1.8vw, .85rem); color: var(--gb2); letter-spacing: 1px; text-align: center; }
+    #row { --b: var(--b-px, min(44vh, calc(100vw - 70px), 600px)); display: flex; gap: 10px; align-items: stretch; }
+    #board {
+      position: relative; width: var(--b); height: var(--b); background: var(--gb0);
+      background-image:
+        repeating-linear-gradient(90deg, var(--gb2) 0 2px, transparent 2px calc(var(--b) / 10)),
+        repeating-linear-gradient(0deg, var(--gb2) 0 2px, transparent 2px calc(var(--b) / 10));
+      background-size: var(--b) var(--b); border: .18rem solid var(--gb3); box-shadow: .3rem .3rem 0 var(--gb1);
+    }
+    .e { position: absolute; width: 10%; height: 10%; display: flex; align-items: center; justify-content: center; font-size: calc(var(--b) / 14); transition: left .16s, top .16s; image-rendering: pixelated; }
+    .e img { width: 88%; height: 88%; object-fit: contain; }
+    .me { color: var(--gb3); z-index: 3; } .sinn { color: var(--gb2); z-index: 2; } .frag { color: #3f8; animation: pj-pulse 1s infinite; }
+    @keyframes pj-pulse { 50% { transform: scale(.8); } }
+    .gm { color: #f80; z-index: 2; animation: pj-gmpulse .5s infinite; }
+    @keyframes pj-gmpulse { 50% { transform: scale(1.18); } }
+    .me.gm-active { filter: hue-rotate(255deg) saturate(4.5) brightness(1.15); }
+    .me.gm-warn { animation: pj-gmwarn .22s steps(1) infinite; }
+    @keyframes pj-gmwarn { 50% { opacity: .2; } }
+    .line { position: absolute; z-index: 4; background: rgba(255,20,20,.28); pointer-events: none; }
+    .line.fire { background: var(--gb2); box-shadow: 0 0 14px var(--gb2); }
+    #meter-wrap { display: flex; flex-direction: column; align-items: center; gap: .35rem; }
+    #meter { position: relative; width: 34px; height: 100%; border: .16rem solid #fff; background: #000; overflow: hidden; display: flex; align-items: flex-end; }
+    #meter i { display: block; width: 100%; height: 0; background: #f22; transition: height .1s linear; }
+    #meterLbl { font-size: clamp(.55rem, 1.6vw, .8rem); color: #fff; letter-spacing: 1px; text-transform: uppercase; writing-mode: vertical-rl; }
+    #scare { position: fixed; inset: 0; z-index: 99; background: #000 center/contain no-repeat; display: none; }
+    #scare.on { display: block; animation: pj-shake .1s infinite; }
+    @keyframes pj-shake { 25% { transform: translate(-8px,6px); } 75% { transform: translate(8px,-6px); } }
+    /* DANGER VIGNETTE: red/black blur, bottom to top, gets more visible as HIM loses HP */
+    #danger { position: fixed; inset: 0; z-index: 6; pointer-events: none; opacity: 0; transition: opacity .5s ease;
+      background: linear-gradient(to top, rgba(255,10,10,.85) 0%, rgba(120,0,0,.55) 30%, transparent 78%); filter: blur(6px); }
+    /* PG "vision blocker" */
+    .pg-blocker { position: fixed; z-index: 55; width: clamp(140px, 26vmin, 300px); height: clamp(140px, 26vmin, 300px); object-fit: contain; opacity: 0; transition: opacity .5s, left 2.2s ease-in-out, top 2.2s ease-in-out; image-rendering: pixelated; pointer-events: none; }
+    /* deformed vision-blocking popups */
+    .pj-popup { position: absolute; z-index: 10; pointer-events: none; object-fit: fill; box-shadow: 0 0 0 2px #fff, 0 10px 26px rgba(0,0,0,.65); image-rendering: pixelated; transition: opacity .3s; }
+    /* IWNT */
+    #iwnt { position: fixed; z-index: 70; top: 50%; left: 50%; transform: translate(-50%,-50%); width: clamp(160px, 32vmin, 420px); opacity: 0; pointer-events: none; transition: opacity .15s; image-rendering: pixelated; }
+    #iwntStatic { position: fixed; inset: 0; z-index: 71; opacity: 0; pointer-events: none; background: repeating-linear-gradient(0deg, #fff 0 1px, #000 1px 2px); mix-blend-mode: difference; }
+  </style>
+</head>
+<body>
+  <div class="gb-stage">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <filter id="pjSpiral" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence id="pjNoise" type="turbulence" baseFrequency="0.004 0.006" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap id="pjDisp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </svg>
+    <div class="gb-wall"></div>
+    <div id="bgFX"><div id="bgWash"></div><div id="bgChromaR"></div><div id="bgChromaB"></div></div>
+    <div class="gb-top"><span>PJRLL</span><span data-gb-clock></span></div>
+    <div class="gb-main">
+      <div id="him-wrap"><img id="him" class="no-drag" src="../../../media/him.png" alt="" draggable="false"></div>
+      <div id="hp-wrap">HIM <div id="hp-bar"><i id="hpFill"></i></div> <span id="hp">20</span>/2000000</div>
+      <div id="hud2">ARROWS / WASD — HORIZONTAL &amp; VERTICAL ONLY &middot; TAP A DIRECTION ON MOBILE</div>
+      <div id="row"><div id="board"></div><div id="meter-wrap"><div id="meter"><i id="fear"></i></div><span id="meterLbl">fearbar</span></div></div>
+    </div>
+    <div class="gb-task gb-caret">pjrll&gt;</div>
+    <div class="gb-overlay"></div>
+    <div id="danger"></div>
+    <img class="pg-blocker no-drag" id="pgBlocker" alt="" draggable="false">
+    <img id="iwnt" class="no-drag" alt="" draggable="false">
+    <div id="iwntStatic"></div>
+    <div id="scare"></div>
+  </div>
+  <script>
+    SAMSIDE_GB.init('red');
+
+    function sfx(name, vol) { try { var a = new Audio(SAMSIDE.url('sfx/' + name)); a.volume = vol || .1; a.play().catch(function () {}); } catch (e) {} }
+
+    function fitBoard() {
+      var main = document.querySelector('.gb-main');
+      var himH = document.getElementById('him-wrap').offsetHeight, hpH = document.getElementById('hp-wrap').offsetHeight, hudH = document.getElementById('hud2').offsetHeight;
+      var cs = getComputedStyle(main), gap = parseFloat(cs.rowGap || cs.gap) || 0;
+      var padT = parseFloat(cs.paddingTop) || 0, padB = parseFloat(cs.paddingBottom) || 0, padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+      var availH = main.clientHeight - himH - hpH - hudH - gap * 3 - padT - padB;
+      var availW = main.clientWidth - padL - padR - 54;
+      var b = Math.max(140, Math.min(availH, availW, 900));
+      document.documentElement.style.setProperty('--b-px', b + 'px');
+    }
+    addEventListener('resize', fitBoard);
+    addEventListener('load', fitBoard);
+    fitBoard(); setTimeout(fitBoard, 50);
+
+    var JUMPSCARE_IMG = SAMSIDE.site('media/super_secret_things/him.png');
+    var JUMPSCARE_SFX = SAMSIDE.site('sfx/super_secret_things/PJRLL-JS.mp3');
+    SAMSIDE.bgm(SAMSIDE.url('sfx/BLACK_ICE.mp3'), { loop: true, volume: .15 });
+    var himWrap = document.getElementById('him-wrap'), him = document.getElementById('him');
+    him.onerror = function () { him.replaceWith(Object.assign(document.createElement('div'), { id: 'him', textContent: 'HIM', style: 'font-size:7vh;color:var(--gb3)' })); };
+
+    var N = 10, MAXHP = 20, hp = MAXHP, fear = 0, dead = false, board = document.getElementById('board');
+    var FILE = { me: 'wheelform.png', frag: 'script_fragments.png', gm: 'glitchedmorphen.png' }, GL = { sinn: '☠', frag: '✦', me: '♥', gm: '➤' };
+
+    var SINBER_MAX = 10, SINBER_POOL = [];
+    for (var sbi = 1; sbi <= SINBER_MAX; sbi++) (function (i) {
+      var im = new Image();
+      im.onload = function () { SINBER_POOL.push(SAMSIDE.url('media/sinber/sinber' + i + '.png')); };
+      im.src = SAMSIDE.url('media/sinber/sinber' + i + '.png');
+    })(sbi);
+
+    function mk(kind) {
+      var o = { el: document.createElement('div'), x: 0, y: 0 }; o.el.className = 'e ' + kind;
+      if (kind === 'sinn') {
+        var face = SINBER_POOL.length ? SAMSIDE.pick(SINBER_POOL) : null;
+        if (face) { var im0 = new Image(); im0.draggable = false; im0.onerror = function () { im0.remove(); o.el.textContent = GL.sinn; }; im0.src = face; o.el.appendChild(im0); }
+        else o.el.textContent = GL.sinn;
+      } else if (FILE[kind]) {
+        var im = new Image(); im.draggable = false; im.onerror = function () { im.remove(); o.el.textContent = GL[kind]; }; im.src = SAMSIDE.url('media/' + FILE[kind]); o.el.appendChild(im);
+      } else o.el.textContent = GL[kind];
+      board.appendChild(o.el); return o;
+    }
+    function put(o, x, y) { o.x = x; o.y = y; o.el.style.left = x * 10 + '%'; o.el.style.top = y * 10 + '%'; }
+    var me = mk('me'), sinns = [], frags = [];
+    function taken(x, y) { return [me].concat(sinns, frags).some(function (o) { return o.x === x && o.y === y; }); }
+    function free(minDist) { var x, y, n = 0; do { x = Math.floor(Math.random() * N); y = Math.floor(Math.random() * N); n++; } while ((taken(x, y) || Math.max(Math.abs(x - me.x), Math.abs(y - me.y)) < (minDist || 0)) && n < 200); return [x, y]; }
+    put(me, 4, 9);
+    for (var i = 0; i < 5; i++) { var f = mk('frag'); frags.push(f); var c = free(); put(f, c[0], c[1]); }
+    function addSinn() { var s = mk('sinn'); sinns.push(s); var c = free(3); put(s, c[0], c[1]); }
+    setTimeout(function () { for (i = 0; i < 1; i++) addSinn(); }, 150);
+
+    function bias() { return Math.min(1, (MAXHP - hp) / MAXHP); }
+
+    function setHP(v) {
+      hp = v; document.getElementById('hp').textContent = Math.round(Math.max(0, hp*100000)); document.getElementById('hpFill').style.width = (Math.max(0, hp) / MAXHP * 100) + '%';
+      document.getElementById('danger').style.opacity = Math.min(.9, bias() * .95);
+    }
+    setHP(hp);
+
+    function scare() {
+      if (dead) return; dead = true;
+      var s = document.getElementById('scare'); s.style.backgroundImage = 'url(' + JUMPSCARE_IMG + ')'; s.classList.add('on');
+      try { var a = new Audio(JUMPSCARE_SFX); a.volume = 1; a.play().catch(function () {}); } catch (e) {}
+      setTimeout(function () { window.location.href = SAMSIDE.url('null/'); }, 1000);
+    }
+    function win() { dead = true; document.getElementById('hud2').textContent = '...'; setTimeout(function () { window.location.href = SAMSIDE.url('faulty_one/'); }, 900); }
+
+    var iwntDanger = false;
+    function move(dx, dy) {
+      if (dead) return;
+      if (iwntDanger && (dx || dy)) return scare();
+      var x = me.x + dx, y = me.y + dy;
+      if (x < 0 || y < 0 || x >= N || y >= N || (!dx && !dy)) return;
+      put(me, x, y); fear = Math.max(0, fear - 1.1);
+      if (sinns.some(function (s) { return s.x === x && s.y === y; })) return scare();
+      frags.forEach(function (f) {
+        if (f.x === x && f.y === y) { var c = free(); put(f, c[0], c[1]); setHP(hp - 0.25); sfx('got_fragment.mp3', .15); if (hp <= 0) win(); else if ((MAXHP - hp) % 6 === 0) addSinn(); }
+      });
+    }
+    // CARDINAL MOVEMENT ONLY -- no diagonals
+    var invertControls = false;
+    function doMove(dx, dy) { if (invertControls) { dx = -dx; dy = -dy; } move(dx, dy); }
+    var KEYS = { ArrowUp: [0,-1], w: [0,-1], ArrowDown: [0,1], s: [0,1], ArrowLeft: [-1,0], a: [-1,0], ArrowRight: [1,0], d: [1,0] };
+    addEventListener('keydown', function (e) { var d = KEYS[e.key.length > 1 ? e.key : e.key.toLowerCase()]; if (d) { e.preventDefault(); doMove(d[0], d[1]); } });
+    addEventListener('pointerdown', function (e) {
+      var r = me.el.getBoundingClientRect(), cs = r.width, ox = e.clientX - (r.left + cs / 2), oy = e.clientY - (r.top + cs / 2);
+      if (Math.max(Math.abs(ox), Math.abs(oy)) < cs * .5) return;
+      if (Math.abs(ox) > Math.abs(oy)) doMove(Math.sign(ox), 0); else doMove(0, Math.sign(oy));
+    });
+
+    // PHASE 1
+    var DIRS = [[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[-1,1],[1,-1],[1,1]];
+    (function wander() {
+      if (!dead) sinns.forEach(function (s) {
+        var d = SAMSIDE.pick(DIRS), x = s.x + d[0], y = s.y + d[1];
+        if (x >= 0 && y >= 0 && x < N && y < N && !frags.some(function (f) { return f.x === x && f.y === y; })) put(s, x, y);
+        if (s.x === me.x && s.y === me.y) scare();
+        // sfx('sinber_laugh.mp3', 0.025);
+      });
+      setTimeout(wander, Math.max(400, 800 - (MAXHP - hp) * 20));
+    })();
+
+    // PHASE 2
+    (function sweep() {
+      if (!dead && hp <= 15) {
+        var row = SAMSIDE.chance(.5), i = Math.floor(Math.random() * N), l = document.createElement('div'); l.className = 'line';
+        sfx('lights_loop.mp3', 0.25);
+        l.style.cssText = row ? 'left:0;right:0;top:' + i * 10 + '%;height:10%' : 'top:0;bottom:0;left:' + i * 10 + '%;width:10%'; board.appendChild(l);
+        var hit = function () { if (row ? me.y === i : me.x === i) scare(); };
+        setTimeout(function () { l.classList.add('fire'); hit(); }, 1000); setTimeout(function () { hit(); l.remove(); }, 1350);
+      }
+      setTimeout(sweep, Math.max(2200, 6500 - (MAXHP - hp) * 220));
+    })();
+    (function pgBlocker() {
+      var el = document.getElementById('pgBlocker'), VARIANTS = ['pg1', 'pg2', 'pg3'].map(function (n) { return SAMSIDE.url('media/PG/' + n + '.png'); });
+      var swapTimer = null;
+      function show() {
+        var vw = innerWidth, vh = innerHeight;
+        el.style.left = SAMSIDE.rand(vw * .1, vw * .7) + 'px'; el.style.top = SAMSIDE.rand(vh * .12, vh * .55) + 'px';
+        el.src = SAMSIDE.pick(VARIANTS); el.style.opacity = 1;
+        swapTimer = setInterval(function () { el.src = SAMSIDE.pick(VARIANTS); }, 380);
+        setTimeout(function () { el.style.opacity = 0; clearInterval(swapTimer); }, 1800);
+      }
+      (function loop() { if (!dead && hp <= 15) show(); setTimeout(loop, SAMSIDE.rand(6000, 11000)); })();
+    })();
+
+    // PHASE 3
+    var gm = null, gmWarnT = null, gmEndT = null;
+    (function gmSpawner() {
+      if (!dead && hp <= 10 && !gm) { var c = free(3); gm = mk('gm'); put(gm, c[0], c[1]); sfx('glitchedmorphen.mp3', .1);}
+      setTimeout(gmSpawner, SAMSIDE.rand(9000, 15000));
+    })();
+    (function gmHome() {
+      if (!dead && gm) {
+        var dx = me.x - gm.x, dy = me.y - gm.y;
+        if (Math.abs(dx) >= Math.abs(dy) && dx !== 0) put(gm, gm.x + Math.sign(dx), gm.y);
+        else if (dy !== 0) put(gm, gm.x, gm.y + Math.sign(dy));
+        if (gm.x === me.x && gm.y === me.y) {
+          gm.el.remove(); gm = null;
+          clearTimeout(gmWarnT); clearTimeout(gmEndT);
+          invertControls = true; me.el.classList.remove('gm-warn'); me.el.classList.add('gm-active');
+          gmWarnT = setTimeout(function () { me.el.classList.add('gm-warn'); }, 3000);
+          gmEndT = setTimeout(function () { invertControls = false; me.el.classList.remove('gm-active', 'gm-warn'); }, 5000);
+        }
+      }
+      setTimeout(gmHome, 420);
+    })();
+    function spawnPopup() {
+      var el = document.createElement('img'); el.className = 'pj-popup no-drag'; el.draggable = false;
+      el.src = SAMSIDE.url('media/POPUPS/p' + (1 + Math.floor(Math.random() * 23)) + '.png');
+      var vw = innerWidth, vh = innerHeight, w = SAMSIDE.rand(100, 240), h = SAMSIDE.rand(70, 210);
+      el.style.width = w + 'px'; el.style.height = h + 'px';
+      var left = Math.max(0, vw - w), top = Math.max(0, vh * .72 - h);
+      el.style.left = ((SAMSIDE.rand(0, left) + SAMSIDE.rand(0, left)) / 2) + 'px';
+      el.style.top = ((SAMSIDE.rand(0, top) + SAMSIDE.rand(0, top)) / 2) + 'px';
+      el.style.transform = 'skew(' + SAMSIDE.rand(-25, 25) + 'deg) scale(' + SAMSIDE.rand(.7, 1.9) + ',' + SAMSIDE.rand(.7, 1.9) + ') rotate(' + SAMSIDE.rand(-14, 14) + 'deg)';
+      el.onerror = function () { el.remove(); };
+      document.body.appendChild(el);
+      sfx('windows_error.mp3', .35);
+      setTimeout(function () { el.style.opacity = 0; setTimeout(function () { el.remove(); }, 320); }, SAMSIDE.rand(1400, 2600));
+    }
+    (function popupLoop() { if (!dead && hp <= 10) { spawnPopup(); if (SAMSIDE.chance(.35)) spawnPopup(); } setTimeout(popupLoop, SAMSIDE.rand(2200, 4500)); })();
+    var actx;
+    function beepError() {
+      try {
+        actx = actx || new (window.AudioContext || window.webkitAudioContext)(); var t = actx.currentTime;
+        [880, 440].forEach(function (f, i) {
+          var o = actx.createOscillator(), g = actx.createGain(); o.type = 'square'; o.frequency.value = f;
+          g.gain.setValueAtTime(.0001, t + i * .12); g.gain.exponentialRampToValueAtTime(.22, t + i * .12 + .01); g.gain.exponentialRampToValueAtTime(.0001, t + i * .12 + .1);
+          o.connect(g); g.connect(actx.destination); o.start(t + i * .12); o.stop(t + i * .12 + .12);
+        });
+      } catch (e) {}
+    }
+
+    // PHASE 4
+    (function iwntLoop() {
+      if (!dead && hp <= 5) {
+        var el = document.getElementById('iwnt'); el.src = SAMSIDE.url('media/IWNT.png'); el.style.opacity = 1;
+        sfx('ransom_doors.mp3', .075);
+        setTimeout(function () { iwntDanger = true; }, 900);
+        setTimeout(function () {
+          el.style.opacity = 0;
+          var s = document.getElementById('iwntStatic'); s.style.opacity = .9;
+          var iv = setInterval(function () { s.style.backgroundPosition = SAMSIDE.rand(0, 100) + '% ' + SAMSIDE.rand(0, 100) + '%'; }, 45);
+          setTimeout(function () { clearInterval(iv); s.style.opacity = 0; iwntDanger = false; }, 300);
+        }, 1000);
+      }
+      setTimeout(iwntLoop, SAMSIDE.rand(8000, 13000));
+    })();
+
+    // HIM
+    (function himGlitch() {
+      var b = bias();
+      if (!dead && Math.random() < .1 + b * .55) {
+        var mag = 3 + b * 24;
+        himWrap.style.transform = 'translateX(' + SAMSIDE.rand(-mag, mag) + 'px) skewX(' + SAMSIDE.rand(-mag / 2, mag / 2) + 'deg)';
+        himWrap.style.filter = 'hue-rotate(' + (SAMSIDE.rand(-30, 30) * (1 + b * 2)).toFixed(0) + 'deg) contrast(' + (100 + b * 90).toFixed(0) + '%)';
+        setTimeout(function () { himWrap.style.transform = ''; himWrap.style.filter = ''; }, 50 + Math.random() * 90);
+      }
+      setTimeout(himGlitch, Math.max(90, 380 - b * 260));
+    })();
+
+    // BACKGROUND FX: red/purple wash (red predominates as HP drops) + chromatic aberration + spiral warp.
+    var wash = document.getElementById('bgWash'), chR = document.getElementById('bgChromaR'), chB = document.getElementById('bgChromaB');
+    var noise = document.getElementById('pjNoise'), disp = document.getElementById('pjDisp');
+    (function bgTick(t) {
+      var b = bias();
+      chR.style.opacity = (b * .32).toFixed(2); chB.style.opacity = (b * .32).toFixed(2);
+      chR.style.transform = 'translateX(' + (b * 7).toFixed(1) + 'px)'; chB.style.transform = 'translateX(' + (-b * 7).toFixed(1) + 'px)';
+      disp.setAttribute('scale', (b * 55).toFixed(1));
+      noise.setAttribute('baseFrequency', (0.003 + b * 0.006).toFixed(4) + ' ' + (0.004 + b * 0.008).toFixed(4));
+      requestAnimationFrame(bgTick);
+    })(0);
+    (function flickerLoop() {
+      if (dead) return;
+      var b = bias(), redDur = 1400 + 3600 * b, purpleDur = Math.max(500, 3200 - 2700 * b);
+      wash.style.backgroundColor = 'rgba(200,10,10,' + (.35 + b * .2).toFixed(2) + ')';
+      setTimeout(function () {
+        if (dead) return;
+        wash.style.backgroundColor = 'rgba(120,20,220,' + (.32 - b * .12).toFixed(2) + ')';
+        setTimeout(flickerLoop, purpleDur);
+      }, redDur);
+    })();
+
+    // fear meter
+    setInterval(function () {
+      if (dead) return; fear += 2.6 * (1 + (MAXHP - hp) * .085) * .1;
+      document.getElementById('fear').style.height = Math.min(100, fear) + '%';
+      if (fear >= 100) scare();
+    }, 100);
+  </script>
+</body>
+</html>
